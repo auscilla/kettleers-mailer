@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotuit Kettleers Email Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rye&family=Roboto+Slab:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        kettleer: {
+                            maroon: '#611724',
+                            maroonDark: '#4A0D18',
+                            maroonLight: '#8a2b3d',
+                            cream: '#F4F1E1',
+                            creamDark: '#e8e4d1',
+                            navy: '#1A2B4C',
+                            green: '#387843',
+                            red: '#9c2020'
+                        }
+                    },
+                    fontFamily: {
+                        display: ['Rye', 'cursive'],
+                        body: ['Roboto Slab', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Roboto Slab', serif; }
+        .nav-item.active { background-color: rgba(255,255,255,0.05); background: linear-gradient(90deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%); }
+        .nav-item.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background-color: #F4F1E1; }
+        .hidden-view { display: none !important; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.3); }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden bg-kettleer-maroonDark text-gray-800">
+
+    <!-- Sidebar -->
+    <aside class="w-[260px] bg-[#4f111c] flex flex-col h-full shrink-0 z-20 shadow-xl">
+        <!-- Logo Area -->
+        <div class="p-8 bg-[#F4F1E1] text-[#4f111c] text-center relative flex flex-col items-center justify-center">
+            <h1 class="font-display text-3xl leading-none uppercase mb-3 tracking-wide">Cotuit<br>Kettleers</h1>
+            <div class="w-20 h-20 rounded-full border-[3px] border-[#4f111c] flex items-center justify-center relative bg-white">
+                <div class="absolute inset-1 rounded-full border-2 border-dashed border-[#4f111c] opacity-40"></div>
+                <span class="font-display text-4xl mt-1">C</span>
+            </div>
+            <div class="text-[0.6rem] font-bold tracking-widest mt-3">BASEBALL</div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 overflow-y-auto py-6 text-[#F4F1E1]">
+            <ul class="space-y-1 text-lg">
+                <li><button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item active relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="edit-3" class="w-5 h-5 opacity-80"></i> Dashboard</button></li>
+                <li><button onclick="switchTab('campaigns')" id="nav-campaigns" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="megaphone" class="w-5 h-5 opacity-80"></i> Campaigns</button></li>
+                <li><button onclick="switchTab('subscribers')" id="nav-subscribers" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="users" class="w-5 h-5 opacity-80"></i> Subscribers</button></li>
+                <li><button class="w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors opacity-70 cursor-not-allowed"><i data-lucide="clipboard-list" class="w-5 h-5 opacity-80"></i> Forms</button></li>
+                <li><button class="w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors opacity-70 cursor-not-allowed"><i data-lucide="layout-template" class="w-5 h-5 opacity-80"></i> Templates</button></li>
+                
+                <li class="pl-8 pr-6 py-2 mt-6 text-xs font-bold uppercase tracking-wider text-[#F4F1E1]/50">Messages</li>
+                <li><button class="w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors opacity-70 cursor-not-allowed"><i data-lucide="zap" class="w-5 h-5 opacity-80"></i> Transactional</button></li>
+                <li><button class="w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors opacity-70 cursor-not-allowed"><i data-lucide="bar-chart-2" class="w-5 h-5 opacity-80"></i> Analytics</button></li>
+                <li><button class="w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors opacity-70 cursor-not-allowed"><i data-lucide="settings" class="w-5 h-5 opacity-80"></i> Settings</button></li>
+            </ul>
+        </nav>
+
+        <div class="p-6 text-center text-xs font-display tracking-widest opacity-60 text-[#F4F1E1] border-t border-white/10">
+            KETTLEERS BASEBALL<br>EST. 1947
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <!-- We use a gradient background to match the mockups -->
+    <main class="flex-1 flex flex-col min-w-0 bg-gradient-to-b from-[#611724] to-[#c29b8c] relative">
+        
+        <!-- ================= DASHBOARD VIEW ================= -->
+        <div id="view-dashboard" class="flex-1 flex flex-col p-10 overflow-y-auto max-w-6xl mx-auto w-full">
+            <header class="flex justify-between items-end mb-8 text-kettleer-cream">
+                <div>
+                    <h2 class="font-display text-5xl uppercase tracking-wider shadow-sm">Email Dashboard</h2>
+                    <p class="text-xl mt-2 opacity-90 font-medium">Kettleers Broadcast</p>
+                </div>
+                <button onclick="switchTab('campaigns')" class="bg-[#F4F1E1] text-[#4f111c] font-display px-6 py-2 border-[3px] border-[#4f111c] rounded shadow-[4px_4px_0px_#4f111c] hover:translate-y-1 hover:shadow-[2px_2px_0px_#4f111c] transition-all uppercase tracking-wider text-xl">Create Campaign</button>
+            </header>
+
+            <div class="bg-[#F4F1E1] rounded-2xl p-10 shadow-2xl flex-1">
+                <!-- Filters -->
+                <div class="flex gap-8 mb-10 pb-8 border-b border-gray-300">
+                    <div class="flex flex-col">
+                        <label class="font-bold text-lg mb-2 text-black">Time Frame:</label>
+                        <div class="relative">
+                            <select class="appearance-none bg-transparent border-2 border-[#4f111c] text-xl py-2 pl-4 pr-10 rounded focus:outline-none text-black font-medium w-64">
+                                <option>Previous 30 days</option>
+                            </select>
+                            <i data-lucide="chevron-down" class="absolute right-3 top-3 w-5 h-5 text-[#4f111c]"></i>
+                        </div>
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="font-bold text-lg mb-2 text-black">Start date</label>
+                        <div class="relative">
+                            <input type="text" value="10-31-2022" class="bg-transparent border-2 border-[#4f111c] text-xl py-2 pl-4 pr-10 rounded focus:outline-none text-black font-medium w-48" readonly>
+                            <i data-lucide="calendar" class="absolute right-3 top-2.5 w-5 h-5 text-[#4f111c]"></i>
+                        </div>
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="font-bold text-lg mb-2 text-black">End date</label>
+                        <div class="relative">
+                            <input type="text" value="11-29-2022" class="bg-transparent border-2 border-[#4f111c] text-xl py-2 pl-4 pr-10 rounded focus:outline-none text-black font-medium w-48" readonly>
+                            <i data-lucide="calendar" class="absolute right-3 top-2.5 w-5 h-5 text-[#4f111c]"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Metrics -->
+                <h3 class="font-display text-4xl mb-6 text-black">Performance</h3>
+                <div class="grid grid-cols-4 gap-8 mb-12">
+                    <div>
+                        <div class="text-xl text-black mb-1">Fans reached</div>
+                        <div class="font-display text-6xl text-[#611724] mb-3">12,458</div>
+                        <div class="text-sm font-bold text-kettleer-green flex items-center gap-1"><i data-lucide="arrow-up" class="w-4 h-4"></i> Up 5.4% (1.5K)</div>
+                    </div>
+                    <div>
+                        <div class="text-xl text-black mb-1">Open rate</div>
+                        <div class="font-display text-6xl text-[#611724] mb-3">41.2%</div>
+                        <div class="text-sm font-bold text-kettleer-green flex items-center gap-1"><i data-lucide="arrow-up" class="w-4 h-4"></i> Up 33.6% (29.6%)</div>
+                    </div>
+                    <div>
+                        <div class="text-xl text-black mb-1">Click rate</div>
+                        <div class="font-display text-6xl text-[#611724] mb-3">28.5%</div>
+                        <div class="text-sm font-bold text-kettleer-green flex items-center gap-1"><i data-lucide="arrow-down" class="w-4 h-4"></i> Down 33.1% (39.5%)</div>
+                    </div>
+                    <div>
+                        <div class="text-xl text-black mb-1">Unsubscribe rate</div>
+                        <div class="font-display text-6xl text-[#611724] mb-3">0.4%</div>
+                        <div class="text-sm font-bold text-kettleer-green flex items-center gap-1"><i data-lucide="arrow-down" class="w-4 h-4"></i> Down 0.4% (2%)</div>
+                    </div>
+                </div>
+
+                <!-- Recent Campaigns -->
+                <h3 class="font-display text-3xl mb-4 text-black border-b border-gray-300 pb-2">Recent Campaigns</h3>
+                <div class="flex flex-col">
+                    <div class="py-6 flex justify-between items-center border-b border-gray-300">
+                        <h4 class="font-display text-2xl uppercase tracking-wider text-black">NEXT GAME:<br>KETTLEERS VS. HARWICH</h4>
+                        <div class="flex gap-10">
+                            <div class="text-center">
+                                <div class="text-sm text-gray-600 mb-1">Open</div>
+                                <div class="font-bold text-xl text-black">63%</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-sm text-gray-600 mb-1">CTR</div>
+                                <div class="font-bold text-xl text-black">1.5%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="py-6 flex justify-between items-center border-b border-gray-300">
+                        <h4 class="font-display text-2xl uppercase tracking-wider text-black">WEEKLY BALLPARK UPDATE</h4>
+                        <div class="flex gap-10">
+                            <div class="text-center">
+                                <div class="text-sm text-gray-600 mb-1">Open</div>
+                                <div class="font-bold text-xl text-black">63%</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-sm text-gray-600 mb-1">CTR</div>
+                                <div class="font-bold text-xl text-black">1.5%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= SUBSCRIBERS VIEW ================= -->
+        <div id="view-subscribers" class="hidden-view flex-1 flex flex-col p-10 overflow-y-auto max-w-6xl mx-auto w-full">
+             <header class="flex justify-between items-end mb-8 text-kettleer-cream">
+                <div>
+                    <h2 class="font-display text-5xl uppercase tracking-wider shadow-sm">Subscribers</h2>
+                    <p class="text-xl mt-2 opacity-90 font-medium">Fan Directory & Rosters</p>
+                </div>
+                <button class="bg-[#F4F1E1] text-[#4f111c] font-display px-6 py-2 border-[3px] border-[#4f111c] rounded shadow-[4px_4px_0px_#4f111c] hover:translate-y-1 hover:shadow-[2px_2px_0px_#4f111c] transition-all uppercase tracking-wider text-xl">Add Subscriber</button>
+            </header>
+
+            <div class="bg-[#F4F1E1] rounded-2xl p-10 shadow-2xl flex-1 flex flex-col">
+                <div class="mb-8">
+                    <label class="block font-display text-2xl text-black mb-2">Search Subscribers</label>
+                    <input type="text" class="w-full bg-transparent border-2 border-[#4f111c] rounded-md py-3 px-4 text-xl focus:outline-none focus:bg-white transition-colors text-black">
+                </div>
+
+                <div class="flex-1 overflow-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="border-b border-gray-300 text-xl text-black">
+                                <th class="pb-4 font-bold">Name</th>
+                                <th class="pb-4 font-bold">Email</th>
+                                <th class="pb-4 font-bold">Segment</th>
+                                <th class="pb-4 font-bold">Status</th>
+                                <th class="pb-4 font-bold">Date Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-lg">
+                            <tr class="border-b border-gray-200">
+                                <td class="py-5 font-bold text-[#611724]">Bobby Witt</td>
+                                <td class="py-5 text-gray-800">bobbywitt@example.com</td>
+                                <td class="py-5 text-gray-800">All-Star Member</td>
+                                <td class="py-5"><span class="bg-kettleer-green text-white text-xs font-bold px-3 py-1 rounded tracking-wider uppercase">Active</span></td>
+                                <td class="py-5 text-gray-800">04-12-2021</td>
+                            </tr>
+                            <tr class="border-b border-gray-200">
+                                <td class="py-5 font-bold text-[#611724]">Jack Johnson</td>
+                                <td class="py-5 text-gray-800">jack.johnson@example.com</td>
+                                <td class="py-5 text-gray-800">Supporter</td>
+                                <td class="py-5"><span class="bg-kettleer-green text-white text-xs font-bold px-3 py-1 rounded tracking-wider uppercase">Active</span></td>
+                                <td class="py-5 text-gray-800">07-22-2022</td>
+                            </tr>
+                            <tr class="border-b border-gray-200">
+                                <td class="py-5 font-bold text-[#611724]">Sally Miller</td>
+                                <td class="py-5 text-gray-800">sallym@example.com</td>
+                                <td class="py-5 text-gray-800">Alumni</td>
+                                <td class="py-5"><span class="bg-kettleer-green text-white text-xs font-bold px-3 py-1 rounded tracking-wider uppercase">Active</span></td>
+                                <td class="py-5 text-gray-800">09-05-2022</td>
+                            </tr>
+                            <tr class="border-b border-gray-200">
+                                <td class="py-5 font-bold text-[#611724]">Frank Davis</td>
+                                <td class="py-5 text-gray-800">fdavis@example.com</td>
+                                <td class="py-5 text-gray-800">General Fan</td>
+                                <td class="py-5"><span class="bg-kettleer-green text-white text-xs font-bold px-3 py-1 rounded tracking-wider uppercase">Active</span></td>
+                                <td class="py-5 text-gray-800">11-18-2022</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-6 pt-6 border-t border-gray-300 flex justify-between items-center text-lg text-gray-700">
+                    <div>Showing 1-10 of 12,458</div>
+                    <div class="flex gap-4 cursor-pointer items-center">
+                        <span class="hover:text-black">&lt; Previous</span>
+                        <span class="font-bold text-black">1</span>
+                        <span class="hover:text-black">2</span>
+                        <span class="hover:text-black">3</span>
+                        <span>...</span>
+                        <span class="hover:text-black">1,246</span>
+                        <span class="hover:text-black">Next &gt;</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= CREATE CAMPAIGN VIEW ================= -->
+        <div id="view-campaigns" class="hidden-view flex-1 flex flex-col min-h-0 bg-kettleer-maroonDark relative text-gray-800">
+             
+            <!-- Top Header -->
+             <div class="bg-kettleer-maroonDark text-[#F4F1E1] py-4 px-8 flex justify-between items-center shrink-0 border-b border-white/10 z-10 shadow-sm">
+                <div class="flex items-center gap-6">
+                    <button onclick="switchTab('dashboard')" class="hover:text-white flex items-center gap-1 text-sm uppercase tracking-widest"><i data-lucide="chevron-left" class="w-5 h-5"></i> Back</button>
+                    <span class="font-display text-4xl tracking-wider">Create Campaign</span>
+                </div>
+                <div class="text-sm flex gap-6 items-center">
+                    <a href="#" class="hover:text-white">Help</a>
+                    <a href="#" class="hover:text-white flex items-center gap-1 border-l border-white/20 pl-6">Preview and Test <i data-lucide="chevron-down" class="w-4 h-4"></i></a>
+                    <a href="#" class="hover:text-white border-l border-white/20 pl-6">Save as Template</a>
+                    <a href="#" class="hover:text-white flex items-center gap-1 border-l border-white/20 pl-6">Save and Exit <i data-lucide="chevron-down" class="w-4 h-4"></i></a>
+                </div>
+            </div>
+
+            <!-- Editor Split Layout -->
+            <div class="flex flex-1 overflow-hidden">
+                
+                <!-- LEFT PANE: Live Preview Canvas -->
+                <div class="flex-1 bg-[#E8E6D9] p-8 overflow-y-auto flex justify-center border-r border-black/10">
+                    
+                    <!-- The Email Mockup -->
+                    <div class="bg-white max-w-[650px] w-full shadow-2xl h-min">
+                        <div class="text-right text-xs text-gray-500 py-3 px-6 border-b border-gray-100">
+                            <a href="#" class="underline hover:text-black transition-colors">View this email in your browser</a>
+                        </div>
+                        
+                        <!-- Email Header Banner -->
+                        <div class="bg-kettleer-navy h-48 relative overflow-hidden flex items-center justify-end px-10">
+                            <!-- Faux Player Image -->
+                            <div class="absolute left-10 bottom-0 flex items-end">
+                                <img src="https://images.unsplash.com/photo-1508344928928-7137b29de216?q=80&w=300&auto=format&fit=crop" class="w-40 h-48 object-cover object-top opacity-80 mix-blend-luminosity grayscale contrast-150 rounded-t-xl" alt="Player Silhouette">
+                            </div>
+                            <div class="relative z-10 text-right">
+                                <div class="font-display text-5xl uppercase leading-none text-[#F4F1E1] tracking-wide text-shadow">Cotuit<br>Kettleers</div>
+                            </div>
+                        </div>
+
+                        <!-- Editable Email Body -->
+                        <div class="p-10 text-center border-b border-gray-200">
+                            <h1 id="live-heading" class="font-bold text-3xl text-black mb-4 font-sans tracking-tight">Welcome to the Kettleers Newsletter!</h1>
+                            <p id="live-body" class="font-sans text-xl text-gray-800 leading-relaxed">
+                                The first newsletter from Kettleers Nation!
+                            </p>
+                        </div>
+
+                        <!-- Promo Block -->
+                        <div class="p-10">
+                            <h2 class="font-display text-3xl text-kettleer-navy mb-6 text-center uppercase tracking-wider">Stocking Stuffers Promo</h2>
+                            <div class="flex gap-6 items-center">
+                                <!-- Faux Merch Block -->
+                                <div class="w-48 h-36 bg-kettleer-navy rounded-lg relative flex items-center justify-center shadow-inner overflow-hidden shrink-0">
+                                    <div class="absolute top-2 left-2 w-12 h-10 bg-white rounded flex items-center justify-center opacity-80 shadow">
+                                        <div class="w-full h-1 bg-red-600 mb-1"></div>
+                                    </div>
+                                    <div class="w-24 h-16 bg-[#611724] rounded-t-[50%] flex items-center justify-center border-b-4 border-kettleer-navy shadow-lg z-10">
+                                         <span class="font-display text-white text-2xl">C</span>
+                                    </div>
+                                    <div class="absolute bottom-2 right-2 w-8 h-12 bg-red-700 rounded shadow transform rotate-12"></div>
+                                </div>
+                                <p class="font-sans text-lg text-gray-800 leading-snug">
+                                    The Perfect Stocking Stuffers! Holiday Season Special: Use code <strong class="text-black">FANS20</strong> at checkout for 20% off all caps, tees, and collectibles.
+                                </p>
+                            </div>
+                            <div class="text-center mt-8">
+                                <button class="bg-[#2E5B82] text-white font-sans font-bold uppercase tracking-wider px-8 py-3 rounded shadow-md hover:bg-[#1f405c] transition-colors">Shop Holiday Special</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT PANE: Editing Controls -->
+                <div class="w-[500px] bg-[#F4F1E1] flex flex-col shrink-0">
+                    
+                    <div class="pt-6 pb-4 text-center border-b border-gray-300 bg-[#E8E4D1]">
+                        <h3 class="font-display text-3xl text-[#4f111c] mb-4">Text</h3>
+                        <div class="flex mx-6 border-2 border-[#4f111c] rounded overflow-hidden">
+                            <button class="flex-1 bg-[#4f111c] text-[#F4F1E1] py-2 font-bold text-sm tracking-wide">Content</button>
+                            <button class="flex-1 bg-transparent text-[#4f111c] py-2 font-bold text-sm tracking-wide border-l border-r border-[#4f111c] hover:bg-black/5">Style</button>
+                            <button class="flex-1 bg-transparent text-[#4f111c] py-2 font-bold text-sm tracking-wide hover:bg-black/5">Settings</button>
+                        </div>
+                    </div>
+
+                    <!-- WYSIWYG Mockup -->
+                    <div class="flex-1 overflow-y-auto p-6 bg-[#F4F1E1]">
+                        <div class="bg-white border-2 border-gray-300 rounded shadow flex flex-col min-h-[400px]">
+                            
+                            <!-- Toolbar -->
+                            <div class="border-b-2 border-gray-200 bg-gray-50 p-3 flex flex-col gap-3">
+                                <div class="flex gap-2 text-gray-700">
+                                    <button class="p-1 hover:bg-gray-200 rounded font-bold">B</button>
+                                    <button class="p-1 hover:bg-gray-200 rounded italic">I</button>
+                                    <button class="p-1 hover:bg-gray-200 rounded underline">U</button>
+                                    <div class="w-px bg-gray-300 mx-2"></div>
+                                    <button class="p-1 hover:bg-gray-200 rounded"><i data-lucide="link" class="w-5 h-5"></i></button>
+                                    <button class="p-1 hover:bg-gray-200 rounded"><i data-lucide="image" class="w-5 h-5"></i></button>
+                                    <div class="w-px bg-gray-300 mx-2"></div>
+                                    <button class="p-1 hover:bg-gray-200 rounded"><i data-lucide="list" class="w-5 h-5"></i></button>
+                                    <button class="p-1 hover:bg-gray-200 rounded"><i data-lucide="align-left" class="w-5 h-5"></i></button>
+                                </div>
+                                <div>
+                                    <select class="border border-gray-300 rounded p-1 text-sm bg-white">
+                                        <option>Font</option>
+                                        <option>Sans-serif</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Text Input Area -->
+                            <div class="p-6 flex-1 flex flex-col">
+                                <input type="text" id="editor-heading" class="w-full font-sans font-bold text-xl mb-4 text-black outline-none border-b border-dashed border-gray-300 pb-2 focus:border-kettleer-maroon" value="Welcome to the Kettleers Newsletter!">
+                                <textarea id="editor-body" class="w-full flex-1 resize-none outline-none font-sans text-lg text-gray-800 leading-relaxed">The first newsletter from Kettleers Nation!</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="p-6 border-t border-gray-300 bg-[#E8E4D1] flex justify-between items-center">
+                        <button class="bg-[#4f111c] text-[#F4F1E1] font-bold tracking-wide px-6 py-2 rounded shadow hover:bg-red-900 transition-colors">Save & Close</button>
+                        <span class="text-sm text-gray-600 font-medium italic">autosaved</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Breadcrumbs / Next Bar -->
+            <div class="bg-kettleer-maroonDark text-white py-4 px-8 flex justify-between text-sm shrink-0 font-medium border-t border-white/10">
+                 <div class="w-16"></div>
+                 <div class="flex gap-4 tracking-wide items-center">
+                     <span class="opacity-60 cursor-pointer hover:opacity-100 transition-opacity">Recipients</span> <i data-lucide="chevron-right" class="w-4 h-4 opacity-40"></i>
+                     <span class="opacity-60 cursor-pointer hover:opacity-100 transition-opacity">Setup</span> <i data-lucide="chevron-right" class="w-4 h-4 opacity-40"></i>
+                     <span class="opacity-60 cursor-pointer hover:opacity-100 transition-opacity">Template</span> <i data-lucide="chevron-right" class="w-4 h-4 opacity-40"></i>
+                     <span class="font-bold text-white text-base">Design</span> <i data-lucide="chevron-right" class="w-4 h-4 opacity-40"></i>
+                     <span class="opacity-60 cursor-pointer hover:opacity-100 transition-opacity">Confirm</span>
+                 </div>
+                 <button class="hover:text-white flex items-center gap-1 uppercase tracking-wider font-bold">Next <i data-lucide="chevron-right" class="w-5 h-5"></i></button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // View Router
+        function switchTab(tabId) {
+            // Hide all views
+            document.getElementById('view-dashboard').classList.add('hidden-view');
+            document.getElementById('view-subscribers').classList.add('hidden-view');
+            document.getElementById('view-campaigns').classList.add('hidden-view');
+            
+            // Show selected view
+            document.getElementById('view-' + tabId).classList.remove('hidden-view');
+            
+            // Update active state in sidebar
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('nav-' + tabId).classList.add('active');
+        }
+
+        // Live Preview Binding
+        const editorHeading = document.getElementById('editor-heading');
+        const editorBody = document.getElementById('editor-body');
+        const liveHeading = document.getElementById('live-heading');
+        const liveBody = document.getElementById('live-body');
+
+        // Initial setup for default text
+        liveHeading.textContent = editorHeading.value;
+        liveBody.innerHTML = editorBody.value.replace(/\n/g, '<br>');
+
+        editorHeading.addEventListener('input', (e) => {
+            liveHeading.textContent = e.target.value;
+        });
+
+        editorBody.addEventListener('input', (e) => {
+            // Convert line breaks to HTML breaks for the live preview
+            liveBody.innerHTML = e.target.value.replace(/\n/g, '<br>');
+        });
+    </script>
+</body>
+</html>
