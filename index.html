@@ -48,14 +48,9 @@
 
     <!-- Sidebar -->
     <aside class="w-[260px] bg-[#4f111c] flex flex-col h-full shrink-0 z-20 shadow-xl">
-        <!-- Logo Area -->
-        <div class="p-8 bg-[#F4F1E1] text-[#4f111c] text-center relative flex flex-col items-center justify-center">
-            <h1 class="font-display text-3xl leading-none uppercase mb-3 tracking-wide">Cotuit<br>Kettleers</h1>
-            <div class="w-20 h-20 rounded-full border-[3px] border-[#4f111c] flex items-center justify-center relative bg-white">
-                <div class="absolute inset-1 rounded-full border-2 border-dashed border-[#4f111c] opacity-40"></div>
-                <span class="font-display text-4xl mt-1">C</span>
-            </div>
-            <div class="text-[0.6rem] font-bold tracking-widest mt-3">BASEBALL</div>
+        <!-- Logo Area - Updated to use real logo.png -->
+        <div class="p-8 bg-[#F4F1E1] text-center relative flex flex-col items-center justify-center border-b-4 border-[#e8e4d1]">
+            <img src="logo.png" alt="Cotuit Kettleers Baseball" class="w-48 mx-auto object-contain">
         </div>
 
         <!-- Navigation -->
@@ -80,7 +75,6 @@
     </aside>
 
     <!-- Main Content Area -->
-    <!-- We use a gradient background to match the mockups -->
     <main class="flex-1 flex flex-col min-w-0 bg-gradient-to-b from-[#611724] to-[#c29b8c] relative">
         
         <!-- ================= DASHBOARD VIEW ================= -->
@@ -278,18 +272,17 @@
                 <div class="flex-1 bg-[#E8E6D9] p-8 overflow-y-auto flex justify-center border-r border-black/10">
                     
                     <!-- The Email Mockup -->
-                    <div class="bg-white max-w-[650px] w-full shadow-2xl h-min">
+                    <div class="bg-white max-w-[650px] w-full shadow-2xl h-min pb-12">
                         <div class="text-right text-xs text-gray-500 py-3 px-6 border-b border-gray-100">
                             <a href="#" class="underline hover:text-black transition-colors">View this email in your browser</a>
                         </div>
                         
-                        <!-- Email Header Banner -->
-                        <div class="bg-kettleer-navy h-48 relative overflow-hidden flex items-center justify-end px-10">
-                            <!-- Faux Player Image -->
-                            <div class="absolute left-10 bottom-0 flex items-end">
-                                <img src="https://images.unsplash.com/photo-1508344928928-7137b29de216?q=80&w=300&auto=format&fit=crop" class="w-40 h-48 object-cover object-top opacity-80 mix-blend-luminosity grayscale contrast-150 rounded-t-xl" alt="Player Silhouette">
-                            </div>
-                            <div class="relative z-10 text-right">
+                        <!-- Email Header Banner - Updated to use real bannerplayer.png -->
+                        <div class="bg-kettleer-navy h-48 relative overflow-hidden flex items-center px-10">
+                            <!-- Player Image uploaded to GitHub -->
+                            <img src="bannerplayer.png" alt="Cotuit Player" class="h-full object-contain mr-auto">
+                            
+                            <div class="relative z-10 text-right ml-auto">
                                 <div class="font-display text-5xl uppercase leading-none text-[#F4F1E1] tracking-wide text-shadow">Cotuit<br>Kettleers</div>
                             </div>
                         </div>
