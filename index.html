@@ -161,30 +161,31 @@
                     </div>
                 </div>
 
-                <!-- Recent Campaigns -->
+                <!-- Recent Campaigns (Fixed Alignment for Mobile) -->
                 <h3 class="font-display text-2xl md:text-3xl mb-4 text-black border-b border-gray-300 pb-2">Recent Campaigns</h3>
                 <div class="flex flex-col">
-                    <div class="py-4 md:py-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-300">
-                        <h4 class="font-display text-lg md:text-2xl uppercase tracking-wider text-black">NEXT GAME:<br class="hidden md:block">KETTLEERS VS. HARWICH</h4>
-                        <div class="flex gap-6 md:gap-10 w-full md:w-auto justify-end bg-gray-100 md:bg-transparent p-3 md:p-0 rounded">
-                            <div class="text-center">
+                    <div class="py-4 md:py-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-2 md:gap-4 border-b border-gray-300">
+                        <h4 class="font-display text-lg md:text-2xl uppercase tracking-wider text-black w-full">NEXT GAME:<br class="hidden md:block">KETTLEERS VS. HARWICH</h4>
+                        <!-- Changed justify-end to justify-start on mobile, and adjusted padding -->
+                        <div class="flex gap-6 md:gap-10 w-full md:w-auto justify-start md:justify-end bg-transparent p-0 rounded">
+                            <div class="text-left md:text-center">
                                 <div class="text-xs md:text-sm text-gray-600 mb-1">Open</div>
                                 <div class="font-bold text-lg md:text-xl text-black">63%</div>
                             </div>
-                            <div class="text-center">
+                            <div class="text-left md:text-center">
                                 <div class="text-xs md:text-sm text-gray-600 mb-1">CTR</div>
                                 <div class="font-bold text-lg md:text-xl text-black">1.5%</div>
                             </div>
                         </div>
                     </div>
-                    <div class="py-4 md:py-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-300">
-                        <h4 class="font-display text-lg md:text-2xl uppercase tracking-wider text-black">WEEKLY BALLPARK UPDATE</h4>
-                        <div class="flex gap-6 md:gap-10 w-full md:w-auto justify-end bg-gray-100 md:bg-transparent p-3 md:p-0 rounded">
-                            <div class="text-center">
+                    <div class="py-4 md:py-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-2 md:gap-4 border-b border-gray-300">
+                        <h4 class="font-display text-lg md:text-2xl uppercase tracking-wider text-black w-full">WEEKLY BALLPARK UPDATE</h4>
+                        <div class="flex gap-6 md:gap-10 w-full md:w-auto justify-start md:justify-end bg-transparent p-0 rounded">
+                            <div class="text-left md:text-center">
                                 <div class="text-xs md:text-sm text-gray-600 mb-1">Open</div>
                                 <div class="font-bold text-lg md:text-xl text-black">63%</div>
                             </div>
-                            <div class="text-center">
+                            <div class="text-left md:text-center">
                                 <div class="text-xs md:text-sm text-gray-600 mb-1">CTR</div>
                                 <div class="font-bold text-lg md:text-xl text-black">1.5%</div>
                             </div>
@@ -273,7 +274,8 @@
         </div>
 
         <!-- ================= CREATE CAMPAIGN VIEW ================= -->
-        <div id="view-campaigns" class="hidden-view flex-1 flex flex-col min-h-0 bg-kettleer-maroonDark relative text-gray-800">
+        <!-- Fixed scroll trap for mobile: removed overflow-hidden and flex-1 so the entire parent can scroll naturally -->
+        <div id="view-campaigns" class="hidden-view w-full min-h-full bg-kettleer-maroonDark relative text-gray-800 flex flex-col md:overflow-hidden">
              
             <!-- Top Header -->
              <div class="bg-kettleer-maroonDark text-[#F4F1E1] py-3 md:py-4 px-4 md:px-8 flex flex-col md:flex-row justify-between items-start md:items-center shrink-0 border-b border-white/10 z-10 shadow-sm gap-4">
@@ -289,10 +291,12 @@
                 </div>
             </div>
 
-            <!-- Editor Split Layout (Stacks on mobile) -->
+            <!-- Editor Split Layout -->
+            <!-- Made this pane scrollable on mobile as well so it doesn't lock up -->
             <div class="flex flex-col md:flex-row flex-1 overflow-y-auto md:overflow-hidden">
                 
                 <!-- TOP/RIGHT PANE: Editing Controls (Moves to top on mobile for usability) -->
+                <!-- Removed min-h on the mobile version so it shrinks to fit its content without trapping scroll -->
                 <div class="w-full md:w-[500px] bg-[#F4F1E1] flex flex-col shrink-0 order-1 md:order-2 md:h-full">
                     
                     <div class="pt-4 md:pt-6 pb-2 md:pb-4 text-center border-b border-gray-300 bg-[#E8E4D1]">
@@ -305,8 +309,8 @@
                     </div>
 
                     <!-- WYSIWYG Mockup -->
-                    <div class="flex-1 overflow-y-auto p-4 md:p-6 bg-[#F4F1E1] min-h-[300px] md:min-h-0">
-                        <div class="bg-white border-2 border-gray-300 rounded shadow flex flex-col h-full md:min-h-[400px]">
+                    <div class="md:flex-1 p-4 md:p-6 bg-[#F4F1E1]">
+                        <div class="bg-white border-2 border-gray-300 rounded shadow flex flex-col h-auto md:h-full md:min-h-[400px]">
                             
                             <!-- Toolbar -->
                             <div class="border-b-2 border-gray-200 bg-gray-50 p-2 md:p-3 flex flex-wrap gap-2 md:gap-3 items-center">
@@ -328,14 +332,15 @@
                             </div>
                             
                             <!-- Text Input Area -->
-                            <div class="p-4 md:p-6 flex-1 flex flex-col min-h-[200px]">
+                            <!-- Set explicit height for mobile so it doesn't take over the whole screen -->
+                            <div class="p-4 md:p-6 flex-1 flex flex-col h-[250px] md:h-auto">
                                 <input type="text" id="editor-heading" class="w-full font-sans font-bold text-lg md:text-xl mb-3 md:mb-4 text-black outline-none border-b border-dashed border-gray-300 pb-2 focus:border-kettleer-maroon" value="Welcome to the Kettleers Newsletter!">
                                 <textarea id="editor-body" class="w-full flex-1 resize-none outline-none font-sans text-base md:text-lg text-gray-800 leading-relaxed">The first newsletter from Kettleers Nation!</textarea>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Footer (Hidden on mobile to save space, redundant with top nav) -->
+                    <!-- Footer -->
                     <div class="hidden md:flex p-6 border-t border-gray-300 bg-[#E8E4D1] justify-between items-center">
                         <button class="bg-[#4f111c] text-[#F4F1E1] font-bold tracking-wide px-6 py-2 rounded shadow hover:bg-red-900 transition-colors">Save & Close</button>
                         <span class="text-sm text-gray-600 font-medium italic">autosaved</span>
@@ -343,10 +348,11 @@
                 </div>
                 
                 <!-- BOTTOM/LEFT PANE: Live Preview Canvas -->
-                <div class="w-full md:flex-1 bg-[#E8E6D9] p-4 md:p-8 overflow-y-auto flex justify-center border-t md:border-t-0 md:border-r border-black/10 order-2 md:order-1 md:h-full">
+                <!-- Removed overflow-y-auto on mobile to allow the entire page to scroll as one unit -->
+                <div class="w-full md:flex-1 bg-[#E8E6D9] p-4 md:p-8 flex justify-center border-t md:border-t-0 md:border-r border-black/10 order-2 md:order-1 md:overflow-y-auto h-auto md:h-full">
                     
                     <!-- The Email Mockup -->
-                    <div class="bg-white max-w-[650px] w-full shadow-2xl h-min pb-8 md:pb-12">
+                    <div class="bg-white max-w-[650px] w-full shadow-2xl h-min pb-8 md:pb-12 mb-8 md:mb-0">
                         <div class="text-center md:text-right text-[10px] md:text-xs text-gray-500 py-2 md:py-3 px-4 md:px-6 border-b border-gray-100">
                             <a href="#" class="underline hover:text-black transition-colors">View this email in your browser</a>
                         </div>
@@ -391,7 +397,8 @@
             </div>
 
             <!-- Breadcrumbs / Next Bar -->
-            <div class="bg-kettleer-maroonDark text-white py-3 md:py-4 px-4 md:px-8 flex justify-between text-xs md:text-sm shrink-0 font-medium border-t border-white/10 z-10">
+            <!-- Added sticky positioning to keep it accessible on mobile -->
+            <div class="bg-kettleer-maroonDark text-white py-3 md:py-4 px-4 md:px-8 flex justify-between text-xs md:text-sm shrink-0 font-medium border-t border-white/10 z-20 sticky bottom-0 md:static">
                  <div class="hidden sm:block w-16"></div>
                  <div class="flex gap-2 md:gap-4 tracking-wide items-center overflow-x-auto whitespace-nowrap hide-scrollbar">
                      <span class="opacity-60 hidden sm:inline">Recipients</span> <i data-lucide="chevron-right" class="w-3 h-3 md:w-4 md:h-4 opacity-40 hidden sm:inline"></i>
