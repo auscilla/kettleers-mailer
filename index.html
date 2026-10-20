@@ -77,9 +77,9 @@
                 <li><button onclick="switchTab('templates')" id="nav-templates" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="layout-template" class="w-5 h-5 opacity-80"></i> Templates</button></li>
                 
                 <li class="pl-8 pr-6 py-2 mt-4 md:mt-6 text-xs font-bold uppercase tracking-wider text-[#F4F1E1]/50">Messages</li>
-                <li><button class="w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors opacity-70 cursor-not-allowed"><i data-lucide="zap" class="w-5 h-5 opacity-80"></i> Transactional</button></li>
-                <li><button class="w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors opacity-70 cursor-not-allowed"><i data-lucide="bar-chart-2" class="w-5 h-5 opacity-80"></i> Analytics</button></li>
-                <li><button class="w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors opacity-70 cursor-not-allowed"><i data-lucide="settings" class="w-5 h-5 opacity-80"></i> Settings</button></li>
+                <li><button onclick="switchTab('transactional')" id="nav-transactional" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="zap" class="w-5 h-5 opacity-80"></i> Transactional</button></li>
+                <li><button onclick="switchTab('analytics')" id="nav-analytics" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="bar-chart-2" class="w-5 h-5 opacity-80"></i> Analytics</button></li>
+                <li><button onclick="switchTab('settings')" id="nav-settings" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="settings" class="w-5 h-5 opacity-80"></i> Settings</button></li>
             </ul>
         </nav>
 
@@ -231,7 +231,7 @@
                                 <td class="py-4 text-sm text-gray-700">Target: Dec 1, 2026</td>
                                 <td class="py-4 text-center text-xs text-gray-400 italic font-sans">—</td>
                                 <td class="py-4 text-right pr-2">
-                                    <button onclick="openCampaignEditor()" class="bg-[#4f111c] text-[#F4F1E1] text-xs font-bold px-3 py-1.5 rounded uppercase hover:bg-black transition-colors">Edit</button>
+                                    <button onclick="openCampaignEditor('Campaign Editor')" class="bg-[#4f111c] text-[#F4F1E1] text-xs font-bold px-3 py-1.5 rounded uppercase hover:bg-black transition-colors">Edit</button>
                                 </td>
                             </tr>
                             <!-- Sent 1 -->
@@ -275,7 +275,7 @@
                     <h2 class="font-display text-4xl md:text-5xl uppercase tracking-wider shadow-sm leading-tight">Templates</h2>
                     <p class="text-lg md:text-xl mt-1 md:mt-2 opacity-90 font-medium">Pre-Engineered Newsletter Frameworks</p>
                 </div>
-                <button class="w-full md:w-auto bg-[#F4F1E1] text-[#4f111c] font-display px-6 py-2 md:py-3 border-[3px] border-[#4f111c] rounded shadow-[4px_4px_0px_#4f111c] hover:translate-y-1 hover:shadow-[2px_2px_0px_#4f111c] transition-all uppercase tracking-wider text-lg md:text-xl flex items-center justify-center gap-2">
+                <button onclick="openCampaignEditor('Template Builder')" class="w-full md:w-auto bg-[#F4F1E1] text-[#4f111c] font-display px-6 py-2 md:py-3 border-[3px] border-[#4f111c] rounded shadow-[4px_4px_0px_#4f111c] hover:translate-y-1 hover:shadow-[2px_2px_0px_#4f111c] transition-all uppercase tracking-wider text-lg md:text-xl flex items-center justify-center gap-2">
                     <i data-lucide="plus" class="w-5 h-5"></i> New Template
                 </button>
             </header>
@@ -306,7 +306,7 @@
                     </div>
 
                     <div class="flex gap-3 pt-4 border-t border-gray-300">
-                        <button onclick="openCampaignEditor()" class="flex-1 bg-[#4f111c] text-[#F4F1E1] font-display text-sm uppercase py-2.5 rounded shadow hover:bg-black transition-colors">Use In Campaign</button>
+                        <button onclick="openCampaignEditor('Campaign Editor')" class="flex-1 bg-[#4f111c] text-[#F4F1E1] font-display text-sm uppercase py-2.5 rounded shadow hover:bg-black transition-colors">Use In Campaign</button>
                         <button class="border-2 border-[#4f111c] text-[#4f111c] font-display text-sm uppercase px-4 py-2.5 rounded hover:bg-[#4f111c] hover:text-[#F4F1E1] transition-colors">Preview</button>
                     </div>
                 </div>
@@ -336,7 +336,7 @@
                     </div>
 
                     <div class="flex gap-3 pt-4 border-t border-gray-300">
-                        <button onclick="openCampaignEditor()" class="flex-1 bg-[#4f111c] text-[#F4F1E1] font-display text-sm uppercase py-2.5 rounded shadow hover:bg-black transition-colors">Use In Campaign</button>
+                        <button onclick="openCampaignEditor('Campaign Editor')" class="flex-1 bg-[#4f111c] text-[#F4F1E1] font-display text-sm uppercase py-2.5 rounded shadow hover:bg-black transition-colors">Use In Campaign</button>
                         <button class="border-2 border-[#4f111c] text-[#4f111c] font-display text-sm uppercase px-4 py-2.5 rounded hover:bg-[#4f111c] hover:text-[#F4F1E1] transition-colors">Preview</button>
                     </div>
                 </div>
@@ -432,9 +432,8 @@
             </header>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-                
                 <!-- Blank Canvas -->
-                <div class="bg-[#F4F1E1] rounded-2xl p-6 shadow-xl border-4 border-[#e8e4d1] flex flex-col hover:border-[#611724] transition-colors cursor-pointer group" onclick="openCampaignEditor()">
+                <div class="bg-[#F4F1E1] rounded-2xl p-6 shadow-xl border-4 border-[#e8e4d1] flex flex-col hover:border-[#611724] transition-colors cursor-pointer group" onclick="openCampaignEditor('Campaign Editor')">
                     <div class="flex-1 flex flex-col items-center justify-center py-8 text-gray-400 group-hover:text-[#611724] transition-colors">
                         <i data-lucide="file-plus-2" class="w-16 h-16 mb-4"></i>
                         <h3 class="font-display text-2xl uppercase">Blank Canvas</h3>
@@ -443,7 +442,7 @@
                 </div>
 
                 <!-- Weekly Bulletin -->
-                <div class="bg-[#F4F1E1] rounded-2xl p-6 shadow-xl border-4 border-[#e8e4d1] flex flex-col hover:border-[#611724] transition-colors cursor-pointer group" onclick="openCampaignEditor()">
+                <div class="bg-[#F4F1E1] rounded-2xl p-6 shadow-xl border-4 border-[#e8e4d1] flex flex-col hover:border-[#611724] transition-colors cursor-pointer group" onclick="openCampaignEditor('Campaign Editor')">
                     <div class="flex justify-between items-start mb-4">
                         <span class="bg-kettleer-navy text-[#F4F1E1] text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded">In-Season</span>
                     </div>
@@ -457,7 +456,7 @@
                 </div>
 
                 <!-- Monthly Gazette -->
-                <div class="bg-[#F4F1E1] rounded-2xl p-6 shadow-xl border-4 border-[#e8e4d1] flex flex-col hover:border-[#611724] transition-colors cursor-pointer group" onclick="openCampaignEditor()">
+                <div class="bg-[#F4F1E1] rounded-2xl p-6 shadow-xl border-4 border-[#e8e4d1] flex flex-col hover:border-[#611724] transition-colors cursor-pointer group" onclick="openCampaignEditor('Campaign Editor')">
                     <div class="flex justify-between items-start mb-4">
                         <span class="bg-[#8a2b3d] text-[#F4F1E1] text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded">Offseason</span>
                     </div>
@@ -478,9 +477,8 @@
             <!-- Top Header -->
              <div class="bg-kettleer-maroonDark text-[#F4F1E1] py-3 md:py-4 px-4 md:px-8 flex flex-col md:flex-row justify-between items-start md:items-center shrink-0 border-b border-white/10 z-10 shadow-sm gap-4">
                 <div class="flex items-center gap-4 md:gap-6">
-                    <!-- Changed Back button to route to selector instead of directly out, keeping logical flow -->
                     <button onclick="document.getElementById('view-campaign-editor').classList.add('hidden-view'); document.getElementById('view-template-selector').classList.remove('hidden-view');" class="hover:text-white flex items-center gap-1 text-xs md:text-sm uppercase tracking-widest"><i data-lucide="chevron-left" class="w-4 h-4 md:w-5 md:h-5"></i> Back</button>
-                    <span class="font-display text-2xl md:text-4xl tracking-wider truncate">Editor</span>
+                    <span id="editor-title" class="font-display text-2xl md:text-4xl tracking-wider truncate">Campaign Editor</span>
                 </div>
                 <div class="text-xs md:text-sm flex flex-wrap gap-x-4 gap-y-2 items-center text-white/80 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
                     <a href="#" class="hover:text-white shrink-0">Help</a>
@@ -686,7 +684,6 @@
                     <h3 class="font-display text-2xl md:text-3xl mb-4 text-black">24-Hour Engagement</h3>
                     
                     <div class="w-full flex-1 bg-white border border-gray-200 rounded-lg p-6 relative min-h-[300px] flex items-end justify-between px-10">
-                        <!-- CSS bar chart mockup -->
                         <div class="w-12 bg-gray-200 h-[10%] rounded-t relative group"><div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">10AM</div></div>
                         <div class="w-12 bg-kettleer-green h-[80%] rounded-t relative group"><div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">11AM</div></div>
                         <div class="w-12 bg-kettleer-green h-[60%] rounded-t relative group"><div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">12PM</div></div>
@@ -700,6 +697,82 @@
                     </div>
                 </div>
 
+            </div>
+        </div>
+
+        <!-- ================= 8. TRANSACTIONAL VIEW ================= -->
+        <div id="view-transactional" class="hidden-view flex-1 flex flex-col p-4 md:p-10 overflow-y-auto max-w-6xl mx-auto w-full">
+            <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-8 text-kettleer-cream gap-4">
+                <div>
+                    <h2 class="font-display text-4xl md:text-5xl uppercase tracking-wider shadow-sm leading-tight">Transactional</h2>
+                    <p class="text-lg md:text-xl mt-1 md:mt-2 opacity-90 font-medium">Automated Receipts & Event Triggers</p>
+                </div>
+            </header>
+            <div class="bg-[#F4F1E1] rounded-xl md:rounded-2xl p-6 md:p-10 shadow-2xl flex-1">
+                <p class="text-gray-700 font-sans text-lg mb-6">Manage automated emails triggered by user actions (like buying merch or donating to the CAA).</p>
+                <div class="border border-gray-300 rounded-lg overflow-hidden">
+                    <div class="bg-white p-4 border-b border-gray-300 flex justify-between items-center">
+                        <div>
+                            <h4 class="font-bold text-lg text-black">Merchandise Order Receipt</h4>
+                            <p class="text-sm text-gray-500">Sent immediately after store checkout.</p>
+                        </div>
+                        <button class="bg-kettleer-green text-white px-4 py-1.5 rounded text-sm font-bold">Active</button>
+                    </div>
+                    <div class="bg-white p-4 border-b border-gray-300 flex justify-between items-center">
+                        <div>
+                            <h4 class="font-bold text-lg text-black">CAA Donation Thank You</h4>
+                            <p class="text-sm text-gray-500">Sent to donors upon successful contribution.</p>
+                        </div>
+                        <button class="bg-kettleer-green text-white px-4 py-1.5 rounded text-sm font-bold">Active</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 9. ANALYTICS VIEW ================= -->
+        <div id="view-analytics" class="hidden-view flex-1 flex flex-col p-4 md:p-10 overflow-y-auto max-w-6xl mx-auto w-full">
+            <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-8 text-kettleer-cream gap-4">
+                <div>
+                    <h2 class="font-display text-4xl md:text-5xl uppercase tracking-wider shadow-sm leading-tight">Analytics</h2>
+                    <p class="text-lg md:text-xl mt-1 md:mt-2 opacity-90 font-medium">Audience Insights & Growth</p>
+                </div>
+            </header>
+            <div class="bg-[#F4F1E1] rounded-xl md:rounded-2xl p-6 md:p-10 shadow-2xl flex-1 flex flex-col">
+                <h3 class="font-display text-2xl md:text-3xl mb-4 text-black border-b border-gray-300 pb-2">Subscriber Growth (2026 Season)</h3>
+                <div class="flex-1 bg-white border border-gray-200 rounded-lg p-6 relative min-h-[300px] flex items-end justify-between px-10">
+                    <div class="w-12 bg-kettleer-navy h-[20%] rounded-t"></div>
+                    <div class="w-12 bg-kettleer-navy h-[35%] rounded-t"></div>
+                    <div class="w-12 bg-kettleer-navy h-[55%] rounded-t"></div>
+                    <div class="w-12 bg-kettleer-navy h-[80%] rounded-t"></div>
+                    <div class="w-12 bg-kettleer-navy h-[100%] rounded-t"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 10. SETTINGS VIEW ================= -->
+        <div id="view-settings" class="hidden-view flex-1 flex flex-col p-4 md:p-10 overflow-y-auto max-w-6xl mx-auto w-full">
+            <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-8 text-kettleer-cream gap-4">
+                <div>
+                    <h2 class="font-display text-4xl md:text-5xl uppercase tracking-wider shadow-sm leading-tight">Settings</h2>
+                    <p class="text-lg md:text-xl mt-1 md:mt-2 opacity-90 font-medium">Account & API Configuration</p>
+                </div>
+            </header>
+            <div class="bg-[#F4F1E1] rounded-xl md:rounded-2xl p-6 md:p-10 shadow-2xl flex-1">
+                <div class="max-w-2xl">
+                    <h3 class="font-display text-2xl mb-4 text-black border-b border-gray-300 pb-2">Resend Mail API</h3>
+                    <div class="mb-6">
+                        <label class="block font-bold text-gray-700 mb-2">API Secret Key</label>
+                        <input type="password" value="re_1234567890abcdefghijklmnopqrstuvwxyz" class="w-full bg-white border border-gray-300 rounded p-3 text-gray-500 font-mono" readonly>
+                        <p class="text-xs text-gray-500 mt-1">Managed securely via Supabase Edge Functions.</p>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block font-bold text-gray-700 mb-2">Sending Domain</label>
+                        <input type="text" value="updates.kettleers.org" class="w-full bg-white border border-gray-300 rounded p-3 text-black font-sans" readonly>
+                        <div class="flex items-center gap-2 mt-2 text-sm text-green-700 font-bold">
+                            <i data-lucide="check-circle" class="w-4 h-4"></i> Domain Verified
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -720,13 +793,15 @@
         // View Router
         function switchTab(tabId) {
             // Hide all views
-            document.getElementById('view-dashboard').classList.add('hidden-view');
-            document.getElementById('view-campaigns').classList.add('hidden-view');
-            document.getElementById('view-templates').classList.add('hidden-view');
-            document.getElementById('view-subscribers').classList.add('hidden-view');
-            document.getElementById('view-template-selector').classList.add('hidden-view');
-            document.getElementById('view-campaign-editor').classList.add('hidden-view');
-            document.getElementById('view-report').classList.add('hidden-view');
+            const views = [
+                'view-dashboard', 'view-campaigns', 'view-templates', 'view-subscribers', 
+                'view-template-selector', 'view-campaign-editor', 'view-report',
+                'view-transactional', 'view-analytics', 'view-settings'
+            ];
+            
+            views.forEach(id => {
+                document.getElementById(id).classList.add('hidden-view');
+            });
             
             // Show selected view
             document.getElementById('view-' + tabId).classList.remove('hidden-view');
@@ -747,62 +822,31 @@
 
         // Direct action to open Template Selector (Step 1 of Campaign Creation)
         function openTemplateSelector() {
-            document.getElementById('view-dashboard').classList.add('hidden-view');
-            document.getElementById('view-campaigns').classList.add('hidden-view');
-            document.getElementById('view-templates').classList.add('hidden-view');
-            document.getElementById('view-subscribers').classList.add('hidden-view');
-            document.getElementById('view-campaign-editor').classList.add('hidden-view');
-            document.getElementById('view-report').classList.add('hidden-view');
-            
-            document.getElementById('view-template-selector').classList.remove('hidden-view');
-
+            switchTab('template-selector');
+            // Force nav active state to stay on Campaigns
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById('nav-campaigns').classList.add('active');
-
-            if(window.innerWidth < 768) {
-                sidebar.classList.add('hidden');
-            }
-            lucide.createIcons();
         }
 
         // Direct action to open Campaign Designer studio (Step 2 of Campaign Creation)
-        function openCampaignEditor() {
-            document.getElementById('view-dashboard').classList.add('hidden-view');
-            document.getElementById('view-campaigns').classList.add('hidden-view');
-            document.getElementById('view-templates').classList.add('hidden-view');
-            document.getElementById('view-subscribers').classList.add('hidden-view');
-            document.getElementById('view-template-selector').classList.add('hidden-view');
-            document.getElementById('view-report').classList.add('hidden-view');
+        function openCampaignEditor(title = "Campaign Editor") {
+            switchTab('campaign-editor');
+            document.getElementById('editor-title').textContent = title;
             
-            document.getElementById('view-campaign-editor').classList.remove('hidden-view');
-
+            // Highlight Templates or Campaigns in sidebar based on context
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById('nav-campaigns').classList.add('active');
-
-            if(window.innerWidth < 768) {
-                sidebar.classList.add('hidden');
+            if(title === 'Template Builder') {
+                document.getElementById('nav-templates').classList.add('active');
+            } else {
+                document.getElementById('nav-campaigns').classList.add('active');
             }
-            lucide.createIcons();
         }
 
         // Direct action to open Report View
         function openReportView() {
-            document.getElementById('view-dashboard').classList.add('hidden-view');
-            document.getElementById('view-campaigns').classList.add('hidden-view');
-            document.getElementById('view-templates').classList.add('hidden-view');
-            document.getElementById('view-subscribers').classList.add('hidden-view');
-            document.getElementById('view-template-selector').classList.add('hidden-view');
-            document.getElementById('view-campaign-editor').classList.add('hidden-view');
-            
-            document.getElementById('view-report').classList.remove('hidden-view');
-
+            switchTab('report');
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById('nav-campaigns').classList.add('active');
-
-            if(window.innerWidth < 768) {
-                sidebar.classList.add('hidden');
-            }
-            lucide.createIcons();
         }
 
         // Live Preview Binding
@@ -811,16 +855,19 @@
         const liveHeading = document.getElementById('live-heading');
         const liveBody = document.getElementById('live-body');
 
-        liveHeading.textContent = editorHeading.value;
-        liveBody.innerHTML = editorBody.value.replace(/\n/g, '<br>');
+        if(editorHeading && liveHeading) {
+            liveHeading.textContent = editorHeading.value;
+            editorHeading.addEventListener('input', (e) => {
+                liveHeading.textContent = e.target.value;
+            });
+        }
 
-        editorHeading.addEventListener('input', (e) => {
-            liveHeading.textContent = e.target.value;
-        });
-
-        editorBody.addEventListener('input', (e) => {
-            liveBody.innerHTML = e.target.value.replace(/\n/g, '<br>');
-        });
+        if(editorBody && liveBody) {
+            liveBody.innerHTML = editorBody.value.replace(/\n/g, '<br>');
+            editorBody.addEventListener('input', (e) => {
+                liveBody.innerHTML = e.target.value.replace(/\n/g, '<br>');
+            });
+        }
     </script>
 </body>
 </html>
