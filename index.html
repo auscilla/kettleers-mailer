@@ -35,7 +35,6 @@
         body { font-family: 'Roboto Slab', serif; }
         .nav-item.active { background-color: rgba(255,255,255,0.05); background: linear-gradient(90deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%); }
         
-        /* Mobile-specific active state adjustment */
         @media (max-width: 768px) {
              .nav-item.active::before { display: none; }
              .nav-item.active { border-left: 4px solid #F4F1E1; }
@@ -46,7 +45,6 @@
 
         .hidden-view { display: none !important; }
         
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 4px; }
@@ -55,7 +53,7 @@
 </head>
 <body class="flex flex-col md:flex-row h-screen overflow-hidden bg-kettleer-maroonDark text-gray-800">
 
-    <!-- Mobile Header (Visible only on small screens) -->
+    <!-- Mobile Header -->
     <div class="md:hidden bg-[#F4F1E1] p-4 flex justify-between items-center border-b-4 border-[#4f111c] z-30 shrink-0">
         <img src="logo.png" alt="Cotuit Kettleers" class="h-12 object-contain">
         <button id="mobile-menu-btn" class="text-[#4f111c] p-2 focus:outline-none">
@@ -66,7 +64,7 @@
     <!-- Sidebar -->
     <aside id="sidebar" class="hidden md:flex w-full md:w-[260px] bg-[#4f111c] flex-col absolute md:relative h-[calc(100vh-80px)] md:h-full shrink-0 z-20 shadow-xl overflow-y-auto md:overflow-hidden top-[80px] md:top-0 left-0 transition-transform duration-300">
         
-        <!-- Logo Area - Hidden on mobile, shows in mobile header instead -->
+        <!-- Logo Area -->
         <div class="hidden md:flex p-8 bg-[#F4F1E1] text-center relative flex-col items-center justify-center border-b-4 border-[#e8e4d1]">
             <img src="logo.png" alt="Cotuit Kettleers Baseball" class="w-48 mx-auto object-contain">
         </div>
@@ -74,16 +72,15 @@
         <!-- Navigation -->
         <nav class="flex-1 overflow-y-auto py-4 md:py-6 text-[#F4F1E1]">
             <ul class="space-y-1 text-lg">
-                <li><button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item active relative w-full text-left pl-8 pr-6 py-3 md:py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="edit-3" class="w-5 h-5 opacity-80"></i> Dashboard</button></li>
-                <li><button onclick="switchTab('campaigns')" id="nav-campaigns" class="nav-item relative w-full text-left pl-8 pr-6 py-3 md:py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="megaphone" class="w-5 h-5 opacity-80"></i> Campaigns</button></li>
-                <li><button onclick="switchTab('subscribers')" id="nav-subscribers" class="nav-item relative w-full text-left pl-8 pr-6 py-3 md:py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="users" class="w-5 h-5 opacity-80"></i> Subscribers</button></li>
-                <li><button class="w-full text-left pl-8 pr-6 py-3 md:py-3 flex items-center gap-3 hover:bg-white/5 transition-colors opacity-70 cursor-not-allowed"><i data-lucide="clipboard-list" class="w-5 h-5 opacity-80"></i> Forms</button></li>
-                <li><button class="w-full text-left pl-8 pr-6 py-3 md:py-3 flex items-center gap-3 hover:bg-white/5 transition-colors opacity-70 cursor-not-allowed"><i data-lucide="layout-template" class="w-5 h-5 opacity-80"></i> Templates</button></li>
+                <li><button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item active relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="edit-3" class="w-5 h-5 opacity-80"></i> Dashboard</button></li>
+                <li><button onclick="switchTab('campaigns')" id="nav-campaigns" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="megaphone" class="w-5 h-5 opacity-80"></i> Campaigns</button></li>
+                <li><button onclick="switchTab('subscribers')" id="nav-subscribers" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="users" class="w-5 h-5 opacity-80"></i> Subscribers</button></li>
+                <li><button onclick="switchTab('templates')" id="nav-templates" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="layout-template" class="w-5 h-5 opacity-80"></i> Templates</button></li>
                 
                 <li class="pl-8 pr-6 py-2 mt-4 md:mt-6 text-xs font-bold uppercase tracking-wider text-[#F4F1E1]/50">Messages</li>
-                <li><button class="w-full text-left pl-8 pr-6 py-3 md:py-3 flex items-center gap-3 hover:bg-white/5 transition-colors opacity-70 cursor-not-allowed"><i data-lucide="zap" class="w-5 h-5 opacity-80"></i> Transactional</button></li>
-                <li><button class="w-full text-left pl-8 pr-6 py-3 md:py-3 flex items-center gap-3 hover:bg-white/5 transition-colors opacity-70 cursor-not-allowed"><i data-lucide="bar-chart-2" class="w-5 h-5 opacity-80"></i> Analytics</button></li>
-                <li><button class="w-full text-left pl-8 pr-6 py-3 md:py-3 flex items-center gap-3 hover:bg-white/5 transition-colors opacity-70 cursor-not-allowed"><i data-lucide="settings" class="w-5 h-5 opacity-80"></i> Settings</button></li>
+                <li><button class="w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors opacity-70 cursor-not-allowed"><i data-lucide="zap" class="w-5 h-5 opacity-80"></i> Transactional</button></li>
+                <li><button class="w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors opacity-70 cursor-not-allowed"><i data-lucide="bar-chart-2" class="w-5 h-5 opacity-80"></i> Analytics</button></li>
+                <li><button class="w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors opacity-70 cursor-not-allowed"><i data-lucide="settings" class="w-5 h-5 opacity-80"></i> Settings</button></li>
             </ul>
         </nav>
 
@@ -95,14 +92,14 @@
     <!-- Main Content Area -->
     <main class="flex-1 flex flex-col min-w-0 bg-gradient-to-b from-[#611724] to-[#c29b8c] relative h-[calc(100vh-80px)] md:h-screen">
         
-        <!-- ================= DASHBOARD VIEW ================= -->
+        <!-- ================= 1. DASHBOARD VIEW ================= -->
         <div id="view-dashboard" class="flex-1 flex flex-col p-4 md:p-10 overflow-y-auto max-w-6xl mx-auto w-full">
             <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-8 text-kettleer-cream gap-4">
                 <div>
                     <h2 class="font-display text-4xl md:text-5xl uppercase tracking-wider shadow-sm leading-tight">Email Dashboard</h2>
                     <p class="text-lg md:text-xl mt-1 md:mt-2 opacity-90 font-medium">Kettleers Broadcast</p>
                 </div>
-                <button onclick="switchTab('campaigns')" class="w-full md:w-auto bg-[#F4F1E1] text-[#4f111c] font-display px-6 py-2 md:py-3 border-[3px] border-[#4f111c] rounded shadow-[4px_4px_0px_#4f111c] hover:translate-y-1 hover:shadow-[2px_2px_0px_#4f111c] transition-all uppercase tracking-wider text-lg md:text-xl">Create Campaign</button>
+                <button onclick="openCampaignEditor()" class="w-full md:w-auto bg-[#F4F1E1] text-[#4f111c] font-display px-6 py-2 md:py-3 border-[3px] border-[#4f111c] rounded shadow-[4px_4px_0px_#4f111c] hover:translate-y-1 hover:shadow-[2px_2px_0px_#4f111c] transition-all uppercase tracking-wider text-lg md:text-xl">Create Campaign</button>
             </header>
 
             <div class="bg-[#F4F1E1] rounded-xl md:rounded-2xl p-6 md:p-10 shadow-2xl flex-1">
@@ -161,12 +158,11 @@
                     </div>
                 </div>
 
-                <!-- Recent Campaigns (Fixed Alignment for Mobile) -->
+                <!-- Recent Campaigns -->
                 <h3 class="font-display text-2xl md:text-3xl mb-4 text-black border-b border-gray-300 pb-2">Recent Campaigns</h3>
                 <div class="flex flex-col">
                     <div class="py-4 md:py-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-2 md:gap-4 border-b border-gray-300">
                         <h4 class="font-display text-lg md:text-2xl uppercase tracking-wider text-black w-full">NEXT GAME:<br class="hidden md:block">KETTLEERS VS. HARWICH</h4>
-                        <!-- Changed justify-end to justify-start on mobile, and adjusted padding -->
                         <div class="flex gap-6 md:gap-10 w-full md:w-auto justify-start md:justify-end bg-transparent p-0 rounded">
                             <div class="text-left md:text-center">
                                 <div class="text-xs md:text-sm text-gray-600 mb-1">Open</div>
@@ -195,7 +191,156 @@
             </div>
         </div>
 
-        <!-- ================= SUBSCRIBERS VIEW ================= -->
+        <!-- ================= 2. CAMPAIGNS LIST VIEW ================= -->
+        <div id="view-campaigns" class="hidden-view flex-1 flex flex-col p-4 md:p-10 overflow-y-auto max-w-6xl mx-auto w-full">
+            <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-8 text-kettleer-cream gap-4">
+                <div>
+                    <h2 class="font-display text-4xl md:text-5xl uppercase tracking-wider shadow-sm leading-tight">Campaigns</h2>
+                    <p class="text-lg md:text-xl mt-1 md:mt-2 opacity-90 font-medium">Broadcasts & Dispatched Blasts</p>
+                </div>
+                <button onclick="openCampaignEditor()" class="w-full md:w-auto bg-[#F4F1E1] text-[#4f111c] font-display px-6 py-2 md:py-3 border-[3px] border-[#4f111c] rounded shadow-[4px_4px_0px_#4f111c] hover:translate-y-1 hover:shadow-[2px_2px_0px_#4f111c] transition-all uppercase tracking-wider text-lg md:text-xl flex items-center justify-center gap-2">
+                    <i data-lucide="plus" class="w-5 h-5"></i> Create Campaign
+                </button>
+            </header>
+
+            <div class="bg-[#F4F1E1] rounded-xl md:rounded-2xl p-6 md:p-10 shadow-2xl flex-1 flex flex-col">
+                <div class="flex-1 overflow-x-auto -mx-4 md:mx-0 px-4 md:px-0">
+                    <table class="w-full text-left min-w-[650px]">
+                        <thead>
+                            <tr class="border-b border-gray-300 text-sm md:text-xl text-black whitespace-nowrap">
+                                <th class="pb-3 md:pb-4 font-bold">Campaign Name</th>
+                                <th class="pb-3 md:pb-4 font-bold">Status</th>
+                                <th class="pb-3 md:pb-4 font-bold">Template</th>
+                                <th class="pb-3 md:pb-4 font-bold">Date</th>
+                                <th class="pb-3 md:pb-4 font-bold text-center">Performance</th>
+                                <th class="pb-3 md:pb-4 font-bold text-right pr-2">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-base md:text-lg divide-y divide-gray-200">
+                            <!-- Draft Campaign -->
+                            <tr class="hover:bg-black/5 transition-colors">
+                                <td class="py-4 font-bold text-[#611724]">
+                                    <div>Holiday Stocking Stuffers Special</div>
+                                    <div class="text-xs font-normal text-gray-500 font-sans">Draft • Dec 1 Holiday Merchandise Launch</div>
+                                </td>
+                                <td class="py-4"><span class="bg-amber-600 text-white text-[10px] md:text-xs font-bold px-2.5 py-1 rounded tracking-wider uppercase">Draft</span></td>
+                                <td class="py-4 text-sm text-gray-700">Monthly Gazette</td>
+                                <td class="py-4 text-sm text-gray-700">Target: Dec 1, 2026</td>
+                                <td class="py-4 text-center text-xs text-gray-400 italic font-sans">—</td>
+                                <td class="py-4 text-right pr-2">
+                                    <button onclick="openCampaignEditor()" class="bg-[#4f111c] text-[#F4F1E1] text-xs font-bold px-3 py-1.5 rounded uppercase hover:bg-black transition-colors">Edit</button>
+                                </td>
+                            </tr>
+                            <!-- Sent 1 -->
+                            <tr class="hover:bg-black/5 transition-colors">
+                                <td class="py-4 font-bold text-black">
+                                    <div>Next Game: Kettleers vs. Harwich</div>
+                                    <div class="text-xs font-normal text-gray-500 font-sans">Lowell Park • 5:00 PM First Pitch</div>
+                                </td>
+                                <td class="py-4"><span class="bg-kettleer-green text-white text-[10px] md:text-xs font-bold px-2.5 py-1 rounded tracking-wider uppercase">Sent</span></td>
+                                <td class="py-4 text-sm text-gray-700">Weekly Bulletin</td>
+                                <td class="py-4 text-sm text-gray-700">Oct 28, 2026</td>
+                                <td class="py-4 text-center text-sm font-bold text-black">63% Open / 1.5% CTR</td>
+                                <td class="py-4 text-right pr-2">
+                                    <button class="border border-gray-400 text-gray-700 text-xs font-bold px-3 py-1.5 rounded uppercase hover:bg-white transition-colors">Report</button>
+                                </td>
+                            </tr>
+                            <!-- Sent 2 -->
+                            <tr class="hover:bg-black/5 transition-colors">
+                                <td class="py-4 font-bold text-black">
+                                    <div>Weekly Ballpark Update: Standings & Roster</div>
+                                    <div class="text-xs font-normal text-gray-500 font-sans">Cape League Mid-Season Standings</div>
+                                </td>
+                                <td class="py-4"><span class="bg-kettleer-green text-white text-[10px] md:text-xs font-bold px-2.5 py-1 rounded tracking-wider uppercase">Sent</span></td>
+                                <td class="py-4 text-sm text-gray-700">Weekly Bulletin</td>
+                                <td class="py-4 text-sm text-gray-700">Oct 21, 2026</td>
+                                <td class="py-4 text-center text-sm font-bold text-black">61% Open / 2.1% CTR</td>
+                                <td class="py-4 text-right pr-2">
+                                    <button class="border border-gray-400 text-gray-700 text-xs font-bold px-3 py-1.5 rounded uppercase hover:bg-white transition-colors">Report</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 3. TEMPLATES VIEW ================= -->
+        <div id="view-templates" class="hidden-view flex-1 flex flex-col p-4 md:p-10 overflow-y-auto max-w-6xl mx-auto w-full">
+            <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-8 text-kettleer-cream gap-4">
+                <div>
+                    <h2 class="font-display text-4xl md:text-5xl uppercase tracking-wider shadow-sm leading-tight">Templates</h2>
+                    <p class="text-lg md:text-xl mt-1 md:mt-2 opacity-90 font-medium">Pre-Engineered Newsletter Frameworks</p>
+                </div>
+                <button class="w-full md:w-auto bg-[#F4F1E1] text-[#4f111c] font-display px-6 py-2 md:py-3 border-[3px] border-[#4f111c] rounded shadow-[4px_4px_0px_#4f111c] hover:translate-y-1 hover:shadow-[2px_2px_0px_#4f111c] transition-all uppercase tracking-wider text-lg md:text-xl flex items-center justify-center gap-2">
+                    <i data-lucide="plus" class="w-5 h-5"></i> New Template
+                </button>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Weekly Template Card -->
+                <div class="bg-[#F4F1E1] rounded-2xl p-6 shadow-2xl border-4 border-[#e8e4d1] flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="bg-kettleer-navy text-[#F4F1E1] text-xs font-bold uppercase tracking-wider px-3 py-1 rounded">In-Season Regular</span>
+                            <span class="text-xs text-gray-500 font-sans font-bold">Updated June 2026</span>
+                        </div>
+                        <h3 class="font-display text-3xl text-[#611724] mb-2 uppercase">The Weekly Ballpark Bulletin</h3>
+                        <p class="text-gray-700 text-sm md:text-base leading-relaxed mb-6 font-sans">
+                            Dispatched every Monday during the Cape League season. Built specifically to drive attendance to Lowell Park with game times, theme nights, starting pitching match-ups, and ballpark concessions.
+                        </p>
+                        
+                        <!-- Template Preview Badge List -->
+                        <div class="bg-white/60 p-4 rounded-lg border border-gray-200 mb-6 space-y-2">
+                            <div class="text-xs font-bold uppercase tracking-wider text-gray-500">Includes Modules:</div>
+                            <div class="flex flex-wrap gap-2 text-xs font-semibold text-gray-700 font-sans">
+                                <span class="bg-white px-2 py-1 rounded border">Homestand Schedule</span>
+                                <span class="bg-white px-2 py-1 rounded border">Starting Matchups</span>
+                                <span class="bg-white px-2 py-1 rounded border">Snack Shack Specials</span>
+                                <span class="bg-white px-2 py-1 rounded border">Post-Game Autograph Days</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3 pt-4 border-t border-gray-300">
+                        <button onclick="openCampaignEditor()" class="flex-1 bg-[#4f111c] text-[#F4F1E1] font-display text-sm uppercase py-2.5 rounded shadow hover:bg-black transition-colors">Use In Campaign</button>
+                        <button class="border-2 border-[#4f111c] text-[#4f111c] font-display text-sm uppercase px-4 py-2.5 rounded hover:bg-[#4f111c] hover:text-[#F4F1E1] transition-colors">Preview</button>
+                    </div>
+                </div>
+
+                <!-- Monthly Template Card -->
+                <div class="bg-[#F4F1E1] rounded-2xl p-6 shadow-2xl border-4 border-[#e8e4d1] flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="bg-[#8a2b3d] text-[#F4F1E1] text-xs font-bold uppercase tracking-wider px-3 py-1 rounded">Monthly & Offseason</span>
+                            <span class="text-xs text-gray-500 font-sans font-bold">Updated Oct 2026</span>
+                        </div>
+                        <h3 class="font-display text-3xl text-[#611724] mb-2 uppercase">The Kettleers Gazette</h3>
+                        <p class="text-gray-700 text-sm md:text-base leading-relaxed mb-6 font-sans">
+                            Long-form human interest publication. Focuses on host family spotlights, player draft updates, MLB alumni features, Cotuit Athletic Association donor campaigns, and offseason store merchandise.
+                        </p>
+                        
+                        <!-- Template Preview Badge List -->
+                        <div class="bg-white/60 p-4 rounded-lg border border-gray-200 mb-6 space-y-2">
+                            <div class="text-xs font-bold uppercase tracking-wider text-gray-500">Includes Modules:</div>
+                            <div class="flex flex-wrap gap-2 text-xs font-semibold text-gray-700 font-sans">
+                                <span class="bg-white px-2 py-1 rounded border">Host Family Spotlight</span>
+                                <span class="bg-white px-2 py-1 rounded border">Alumni in the Big Leagues</span>
+                                <span class="bg-white px-2 py-1 rounded border">Merchandise & Promo Blocks</span>
+                                <span class="bg-white px-2 py-1 rounded border">CAA Advancement Notes</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3 pt-4 border-t border-gray-300">
+                        <button onclick="openCampaignEditor()" class="flex-1 bg-[#4f111c] text-[#F4F1E1] font-display text-sm uppercase py-2.5 rounded shadow hover:bg-black transition-colors">Use In Campaign</button>
+                        <button class="border-2 border-[#4f111c] text-[#4f111c] font-display text-sm uppercase px-4 py-2.5 rounded hover:bg-[#4f111c] hover:text-[#F4F1E1] transition-colors">Preview</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 4. SUBSCRIBERS VIEW ================= -->
         <div id="view-subscribers" class="hidden-view flex-1 flex flex-col p-4 md:p-10 overflow-y-auto max-w-6xl mx-auto w-full">
              <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-8 text-kettleer-cream gap-4">
                 <div>
@@ -273,14 +418,13 @@
             </div>
         </div>
 
-        <!-- ================= CREATE CAMPAIGN VIEW ================= -->
-        <!-- Fixed scroll trap for mobile: removed overflow-hidden and flex-1 so the entire parent can scroll naturally -->
-        <div id="view-campaigns" class="hidden-view w-full min-h-full bg-kettleer-maroonDark relative text-gray-800 flex flex-col md:overflow-hidden">
+        <!-- ================= 5. CAMPAIGN DESIGN STUDIO VIEW ================= -->
+        <div id="view-campaign-editor" class="hidden-view w-full min-h-full bg-kettleer-maroonDark relative text-gray-800 flex flex-col md:overflow-hidden">
              
             <!-- Top Header -->
              <div class="bg-kettleer-maroonDark text-[#F4F1E1] py-3 md:py-4 px-4 md:px-8 flex flex-col md:flex-row justify-between items-start md:items-center shrink-0 border-b border-white/10 z-10 shadow-sm gap-4">
                 <div class="flex items-center gap-4 md:gap-6">
-                    <button onclick="switchTab('dashboard')" class="hover:text-white flex items-center gap-1 text-xs md:text-sm uppercase tracking-widest"><i data-lucide="chevron-left" class="w-4 h-4 md:w-5 md:h-5"></i> Back</button>
+                    <button onclick="switchTab('campaigns')" class="hover:text-white flex items-center gap-1 text-xs md:text-sm uppercase tracking-widest"><i data-lucide="chevron-left" class="w-4 h-4 md:w-5 md:h-5"></i> Back</button>
                     <span class="font-display text-2xl md:text-4xl tracking-wider truncate">Create Campaign</span>
                 </div>
                 <div class="text-xs md:text-sm flex flex-wrap gap-x-4 gap-y-2 items-center text-white/80 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
@@ -292,11 +436,9 @@
             </div>
 
             <!-- Editor Split Layout -->
-            <!-- Made this pane scrollable on mobile as well so it doesn't lock up -->
             <div class="flex flex-col md:flex-row flex-1 overflow-y-auto md:overflow-hidden">
                 
-                <!-- TOP/RIGHT PANE: Editing Controls (Moves to top on mobile for usability) -->
-                <!-- Removed min-h on the mobile version so it shrinks to fit its content without trapping scroll -->
+                <!-- TOP/RIGHT PANE: Editing Controls -->
                 <div class="w-full md:w-[500px] bg-[#F4F1E1] flex flex-col shrink-0 order-1 md:order-2 md:h-full">
                     
                     <div class="pt-4 md:pt-6 pb-2 md:pb-4 text-center border-b border-gray-300 bg-[#E8E4D1]">
@@ -332,7 +474,6 @@
                             </div>
                             
                             <!-- Text Input Area -->
-                            <!-- Set explicit height for mobile so it doesn't take over the whole screen -->
                             <div class="p-4 md:p-6 flex-1 flex flex-col h-[250px] md:h-auto">
                                 <input type="text" id="editor-heading" class="w-full font-sans font-bold text-lg md:text-xl mb-3 md:mb-4 text-black outline-none border-b border-dashed border-gray-300 pb-2 focus:border-kettleer-maroon" value="Welcome to the Kettleers Newsletter!">
                                 <textarea id="editor-body" class="w-full flex-1 resize-none outline-none font-sans text-base md:text-lg text-gray-800 leading-relaxed">The first newsletter from Kettleers Nation!</textarea>
@@ -348,7 +489,6 @@
                 </div>
                 
                 <!-- BOTTOM/LEFT PANE: Live Preview Canvas -->
-                <!-- Removed overflow-y-auto on mobile to allow the entire page to scroll as one unit -->
                 <div class="w-full md:flex-1 bg-[#E8E6D9] p-4 md:p-8 flex justify-center border-t md:border-t-0 md:border-r border-black/10 order-2 md:order-1 md:overflow-y-auto h-auto md:h-full">
                     
                     <!-- The Email Mockup -->
@@ -357,9 +497,8 @@
                             <a href="#" class="underline hover:text-black transition-colors">View this email in your browser</a>
                         </div>
                         
-                        <!-- Email Header Banner - Uses bannerplayer.png -->
+                        <!-- Email Header Banner -->
                         <div class="bg-kettleer-navy h-24 md:h-48 relative overflow-hidden flex items-center px-4 md:px-10">
-                            <!-- Player Image -->
                             <img src="bannerplayer.png" alt="Cotuit Player" class="h-full object-contain mr-auto">
                             
                             <div class="relative z-10 text-right ml-auto">
@@ -379,7 +518,6 @@
                         <div class="p-6 md:p-10">
                             <h2 class="font-display text-2xl md:text-3xl text-kettleer-navy mb-4 md:mb-6 text-center uppercase tracking-wider">Stocking Stuffers Promo</h2>
                             <div class="flex flex-col sm:flex-row gap-4 md:gap-6 items-center text-center sm:text-left">
-                                <!-- Actual Uploaded Promo Image -->
                                 <div class="w-full sm:w-48 h-auto sm:h-32 bg-gray-50 flex items-center justify-center shrink-0 rounded-lg p-2">
                                     <img src="StockingStuffer.png" alt="Stocking Stuffers" class="max-w-full max-h-32 object-contain">
                                 </div>
@@ -397,7 +535,6 @@
             </div>
 
             <!-- Breadcrumbs / Next Bar -->
-            <!-- Added sticky positioning to keep it accessible on mobile -->
             <div class="bg-kettleer-maroonDark text-white py-3 md:py-4 px-4 md:px-8 flex justify-between text-xs md:text-sm shrink-0 font-medium border-t border-white/10 z-20 sticky bottom-0 md:static">
                  <div class="hidden sm:block w-16"></div>
                  <div class="flex gap-2 md:gap-4 tracking-wide items-center overflow-x-auto whitespace-nowrap hide-scrollbar">
@@ -414,7 +551,7 @@
     </main>
 
     <script>
-        // Initialize Lucide Icons
+        // Initialize Icons
         lucide.createIcons();
 
         // Mobile Menu Toggle
@@ -429,20 +566,43 @@
         function switchTab(tabId) {
             // Hide all views
             document.getElementById('view-dashboard').classList.add('hidden-view');
-            document.getElementById('view-subscribers').classList.add('hidden-view');
             document.getElementById('view-campaigns').classList.add('hidden-view');
+            document.getElementById('view-templates').classList.add('hidden-view');
+            document.getElementById('view-subscribers').classList.add('hidden-view');
+            document.getElementById('view-campaign-editor').classList.add('hidden-view');
             
             // Show selected view
             document.getElementById('view-' + tabId).classList.remove('hidden-view');
             
             // Update active state in sidebar
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById('nav-' + tabId).classList.add('active');
+            const activeNav = document.getElementById('nav-' + tabId);
+            if (activeNav) activeNav.classList.add('active');
             
             // Auto-close menu on mobile after selection
             if(window.innerWidth < 768) {
                 sidebar.classList.add('hidden');
             }
+
+            // Re-render lucide icons for newly revealed DOM nodes
+            lucide.createIcons();
+        }
+
+        // Direct action to open Campaign Designer studio
+        function openCampaignEditor() {
+            document.getElementById('view-dashboard').classList.add('hidden-view');
+            document.getElementById('view-campaigns').classList.add('hidden-view');
+            document.getElementById('view-templates').classList.add('hidden-view');
+            document.getElementById('view-subscribers').classList.add('hidden-view');
+            document.getElementById('view-campaign-editor').classList.remove('hidden-view');
+
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('nav-campaigns').classList.add('active');
+
+            if(window.innerWidth < 768) {
+                sidebar.classList.add('hidden');
+            }
+            lucide.createIcons();
         }
 
         // Live Preview Binding
@@ -451,7 +611,6 @@
         const liveHeading = document.getElementById('live-heading');
         const liveBody = document.getElementById('live-body');
 
-        // Initial setup for default text
         liveHeading.textContent = editorHeading.value;
         liveBody.innerHTML = editorBody.value.replace(/\n/g, '<br>');
 
@@ -460,7 +619,6 @@
         });
 
         editorBody.addEventListener('input', (e) => {
-            // Convert line breaks to HTML breaks for the live preview
             liveBody.innerHTML = e.target.value.replace(/\n/g, '<br>');
         });
     </script>
