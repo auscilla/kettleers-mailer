@@ -205,6 +205,131 @@ function applyDashboardFilters() {
 }
 
 // -------------------------------------------------------------
+// Live Analytics Screen Rendering
+// -------------------------------------------------------------
+function renderAnalyticsView() {
+    const totalDeliveriesEl = document.getElementById('analytics-total-deliveries');
+    const avgOpenEl = document.getElementById('analytics-avg-open');
+    const avgClickEl = document.getElementById('analytics-avg-click');
+    const bounceRateEl = document.getElementById('analytics-bounce-rate');
+    const totalBouncesEl = document.getElementById('analytics-total-bounces');
+    const totalSubscribersEl = document.getElementById('analytics-total-subscribers');
+    const segmentBarsContainer = document.getElementById('analytics-segment-bars');
+    const campaignsChartContainer = document.getElementById('analytics-campaigns-chart');
+
+    const sent = loadedCampaigns.filter(c => c.status === 'Sent');
+
+    const deliveriesCount = sent.reduce((sum, c) => sum + (Number(c.deliveries) || 0), 0);
+    const opensCount = sent.reduce((sum, c) => sum + (Number(c.opens) || 0), 0);
+    const clicksCount = sent.reduce((sum, c) => sum + (Number(c.clicks) || 0), 0);
+    const bouncesCount = sent.reduce((sum, c) => sum + (Number(c.bounces) || 0), 0);
+
+    const avgOpenRate = sent.length > 0 
+        ? (sent.reduce((sum, c) => sum + Number(c.open_rate || 0), 0) / sent.length).toFixed(1)
+        : '0.0';
+
+    const avgClickRate = sent.length > 0 
+        ? (sent.reduce((sum, c) => sum + Number(c.click_rate || 0), 0) / sent.length).toFixed(1)
+        : '0.0';
+
+    const totalAttempts = deliveriesCount + bouncesCount;
+    const bounceRate = totalAttempts > 0 
+        ? ((bouncesCount / totalAttempts) * 100).toFixed(1)
+        : '0.0';
+
+    if (totalDeliveriesEl) totalDeliveriesEl.textContent = deliveriesCount.toLocaleString();
+    if (avgOpenEl) avgOpenEl.textContent = `${avgOpenRate}%`;
+    if (avgClickEl) avgClickEl.textContent = `${avgClickRate}%`;
+    if (bounceRateEl) bounceRateEl.textContent = `${bounceRate}%`;
+    if (totalBouncesEl) totalBouncesEl.textContent = `${bouncesCount} total bounces`;
+    if (totalSubscribersEl) totalSubscribersEl.textContent = `${allSubscribers.length.toLocaleString()} Total Fans`;
+
+    // 1. Funnel Calculations
+    const funnelDeliveredVal = document.getElementById('funnel-delivered-val');
+    const funnelOpenedVal = document.getElementById('funnel-opened-val');
+    const funnelOpenedBar = document.getElementById('funnel-opened-bar');
+    const funnelClickedVal = document.getElementById('funnel-clicked-val');
+    const funnelClickedBar = document.getElementById('funnel-clicked-bar');
+    const funnelBouncedVal = document.getElementById('funnel-bounced-val');
+    const funnelBouncedBar = document.getElementById('funnel-bounced-bar');
+
+    if (funnelDeliveredVal) funnelDeliveredVal.textContent = `${deliveriesCount} (100%)`;
+
+    const openPct = deliveriesCount > 0 ? Math.min(100, Math.round((opensCount / deliveriesCount) * 100)) : (Number(avgOpenRate) || 0);
+    if (funnelOpenedVal) funnelOpenedVal.textContent = `${opensCount} (${openPct}%)`;
+    if (funnelOpenedBar) funnelOpenedBar.style.width = `${openPct}%`;
+
+    const clickPct = deliveriesCount > 0 ? Math.min(100, Math.round((clicksCount / deliveriesCount) * 100)) : (Number(avgClickRate) || 0);
+    if (funnelClickedVal) funnelClickedVal.textContent = `${clicksCount} (${clickPct}%)`;
+    if (funnelClickedBar) funnelClickedBar.style.width = `${clickPct}%`;
+
+    if (funnelBouncedVal) funnelBouncedVal.textContent = `${bouncesCount} (${bounceRate}%)`;
+    if (funnelBouncedBar) funnelBouncedBar.style.width = `${Math.min(100, Number(bounceRate))}%`;
+
+    // 2. Audience Segment Progress Bars
+    if (segmentBarsContainer) {
+        const segments = ['General Fan', 'All-Star Member', 'Supporter', 'Host Family', 'Alumni'];
+        const total = allSubscribers.length || 1;
+
+        segmentBarsContainer.innerHTML = segments.map(seg => {
+            const count = allSubscribers.filter(s => s.segment === seg).length;
+            const pct = Math.round((count / total) * 100);
+            return `
+                <div>
+                    <div class="flex justify-between font-bold mb-1">
+                        <span>${seg}</span>
+                        <span>${count} fans (${pct}%)</span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                        <div class="bg-[#4f111c] h-2.5 rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // 3. Campaign Engagement History Chart
+    if (campaignsChartContainer) {
+        if (sent.length === 0) {
+            campaignsChartContainer.innerHTML = `<div class="text-center text-gray-400 py-8 font-sans italic">No campaign blasts dispatched yet. Send a broadcast to generate engagement graphs.</div>`;
+        } else {
+            campaignsChartContainer.innerHTML = sent.slice(0, 5).map(c => {
+                const openVal = Math.min(100, Number(c.open_rate || 0));
+                const clickVal = Math.min(100, Number(c.click_rate || 0));
+                return `
+                    <div class="font-sans text-xs border-b border-gray-100 pb-3">
+                        <div class="flex justify-between items-center mb-1 font-bold">
+                            <span class="text-gray-900">${escapeHtml(c.title)}</span>
+                            <span class="text-gray-500">${c.target_date || 'Recent'}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mt-2">
+                            <div>
+                                <div class="flex justify-between text-[11px] mb-1">
+                                    <span class="text-gray-600">Opens</span>
+                                    <span class="font-bold text-[#611724]">${openVal}%</span>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-2">
+                                    <div class="bg-[#611724] h-2 rounded-full" style="width: ${openVal}%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-[11px] mb-1">
+                                    <span class="text-gray-600">Clicks</span>
+                                    <span class="font-bold text-[#387843]">${clickVal}%</span>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-2">
+                                    <div class="bg-[#387843] h-2 rounded-full" style="width: ${clickVal}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    }
+}
+
+// -------------------------------------------------------------
 // Data Fetching & Subscriber Handling
 // -------------------------------------------------------------
 async function loadSubscribers() {
@@ -217,6 +342,7 @@ async function loadSubscribers() {
         allSubscribers = data || [];
         renderSubscribers(allSubscribers);
         updateAudienceCounts();
+        renderAnalyticsView();
     } catch (err) {
         console.error('Error fetching subscribers:', err);
         if (tableBody) tableBody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-red-700 font-sans">Error connecting to Supabase: ${escapeHtml(err.message)}</td></tr>`;
@@ -314,6 +440,7 @@ async function loadDashboardAndCampaigns() {
 
         loadedCampaigns = campaigns || [];
         applyDashboardFilters();
+        renderAnalyticsView();
 
         if (campaignsTableBody) {
             if (loadedCampaigns.length === 0) {
@@ -380,7 +507,6 @@ function updateStyle(field, value) {
     if (!wizardData.style) wizardData.style = { ...defaultStyle };
     wizardData.style[field] = value;
 
-    // Sync companion inputs
     const picker = document.getElementById(`style-${field.replace(/([A-Z])/g, '-$1').toLowerCase()}`);
     const text = document.getElementById(`style-${field.replace(/([A-Z])/g, '-$1').toLowerCase()}-text`);
     if (picker && picker.value !== value) picker.value = value;
@@ -898,6 +1024,7 @@ function switchTab(tabId) {
     if(window.innerWidth < 768 && sidebar) { sidebar.classList.add('hidden'); }
     if (tabId === 'dashboard' || tabId === 'campaigns') loadDashboardAndCampaigns();
     if (tabId === 'subscribers') loadSubscribers();
+    if (tabId === 'analytics') renderAnalyticsView();
     safeCreateIcons();
 }
 
