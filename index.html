@@ -135,7 +135,6 @@
                 <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-8 text-kettleer-cream gap-4">
                     <div>
                         <h2 class="font-display text-4xl md:text-5xl uppercase tracking-wider shadow-sm leading-tight">Email Dashboard</h2>
-                        <p class="text-lg md:text-xl mt-1 md:mt-2 opacity-90 font-medium">Kettleers Broadcast</p>
                     </div>
                     <button onclick="startNewCampaignWizard()" class="w-full md:w-auto bg-[#F4F1E1] text-[#4f111c] font-display px-6 py-2 md:py-3 border-[3px] border-[#4f111c] rounded shadow-[4px_4px_0px_#4f111c] hover:translate-y-1 hover:shadow-[2px_2px_0px_#4f111c] transition-all uppercase tracking-wider text-lg md:text-xl flex items-center justify-center gap-2">
                         <i data-lucide="plus" class="w-5 h-5"></i> Create Campaign
@@ -143,35 +142,6 @@
                 </header>
 
                 <div class="bg-[#F4F1E1] rounded-xl md:rounded-2xl p-6 md:p-10 shadow-2xl flex-1">
-                    <div class="flex flex-col md:flex-row gap-4 md:gap-8 mb-8 md:mb-10 pb-6 md:pb-8 border-b border-gray-300">
-                        <div class="flex flex-col w-full md:w-auto">
-                            <label class="font-bold text-sm md:text-lg mb-1 md:mb-2 text-black">Time Frame:</label>
-                            <div class="relative w-full">
-                                <select class="appearance-none w-full bg-transparent border-2 border-[#4f111c] text-base md:text-xl py-2 pl-3 md:pl-4 pr-10 rounded focus:outline-none text-black font-medium md:w-64">
-                                    <option>Previous 30 days</option>
-                                </select>
-                                <i data-lucide="chevron-down" class="absolute right-3 top-2.5 md:top-3 w-5 h-5 text-[#4f111c]"></i>
-                            </div>
-                        </div>
-                        
-                        <div class="flex gap-4 w-full md:w-auto">
-                            <div class="flex flex-col flex-1 md:flex-none">
-                                <label class="font-bold text-sm md:text-lg mb-1 md:mb-2 text-black">Start date</label>
-                                <div class="relative w-full">
-                                    <input type="text" value="09-20-2026" class="w-full bg-transparent border-2 border-[#4f111c] text-base md:text-xl py-2 pl-3 md:pl-4 pr-8 md:pr-10 rounded focus:outline-none text-black font-medium md:w-48" readonly>
-                                    <i data-lucide="calendar" class="absolute right-2 md:right-3 top-2.5 w-4 md:w-5 h-4 md:h-5 text-[#4f111c]"></i>
-                                </div>
-                            </div>
-                            <div class="flex flex-col flex-1 md:flex-none">
-                                <label class="font-bold text-sm md:text-lg mb-1 md:mb-2 text-black">End date</label>
-                                <div class="relative w-full">
-                                    <input type="text" value="10-20-2026" class="w-full bg-transparent border-2 border-[#4f111c] text-base md:text-xl py-2 pl-3 md:pl-4 pr-8 md:pr-10 rounded focus:outline-none text-black font-medium md:w-48" readonly>
-                                    <i data-lucide="calendar" class="absolute right-2 md:right-3 top-2.5 w-4 md:w-5 h-4 md:h-5 text-[#4f111c]"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <h3 class="font-display text-3xl md:text-4xl mb-4 md:mb-6 text-black">Performance</h3>
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-8 md:mb-12">
                         <div>
@@ -521,35 +491,50 @@
                             <div class="pt-6 pb-4 text-center border-b border-gray-300 bg-[#E8E4D1] sticky top-0 z-20">
                                 <h3 class="font-display text-2xl text-[#4f111c] mb-3">Builder Tools</h3>
                                 <div class="flex mx-6 border-2 border-[#4f111c] rounded overflow-hidden">
-                                    <button class="flex-1 bg-[#4f111c] text-[#F4F1E1] py-2 font-bold text-xs tracking-wide">Blocks</button>
-                                    <button class="flex-1 bg-transparent text-[#4f111c] py-2 font-bold text-xs tracking-wide border-l border-r border-[#4f111c] hover:bg-black/5">Style</button>
-                                    <button class="flex-1 bg-transparent text-[#4f111c] py-2 font-bold text-xs tracking-wide hover:bg-black/5">Settings</button>
+                                    <button id="btn-tab-blocks" onclick="switchBuilderTab('blocks')" class="flex-1 bg-[#4f111c] text-[#F4F1E1] py-2 font-bold text-xs tracking-wide">Blocks</button>
+                                    <button id="btn-tab-style" onclick="switchBuilderTab('style')" class="flex-1 bg-transparent text-[#4f111c] py-2 font-bold text-xs tracking-wide border-l border-r border-[#4f111c] hover:bg-black/5">Style</button>
+                                    <button id="btn-tab-settings" onclick="switchBuilderTab('settings')" class="flex-1 bg-transparent text-[#4f111c] py-2 font-bold text-xs tracking-wide hover:bg-black/5">Settings</button>
                                 </div>
                             </div>
 
-                            <!-- Dynamic Blocks List -->
-                            <div class="p-4 flex-1 overflow-y-auto font-sans">
-                                <div id="editor-blocks-list" class="space-y-4">
-                                    <!-- Blocks injected via JS -->
-                                </div>
+                            <!-- Editor Panes -->
+                            <div class="p-4 flex-1 overflow-y-auto font-sans relative">
+                                
+                                <!-- BLOCKS PANE -->
+                                <div id="pane-blocks" class="block">
+                                    <div id="editor-blocks-list" class="space-y-4">
+                                        <!-- Blocks injected via JS -->
+                                    </div>
 
-                                <!-- Add Block Buttons -->
-                                <div class="mt-8 border-t border-gray-300 pt-6">
-                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-3 text-center">Add Content Block</label>
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <button onclick="addBlock('text')" class="flex flex-col items-center justify-center bg-white border-2 border-dashed border-gray-300 rounded-lg p-3 hover:border-[#611724] hover:text-[#611724] transition-colors text-gray-600 group">
-                                            <i data-lucide="align-left" class="w-6 h-6 mb-1 opacity-60 group-hover:opacity-100"></i>
-                                            <span class="text-xs font-bold uppercase">Text</span>
-                                        </button>
-                                        <button onclick="addBlock('promo')" class="flex flex-col items-center justify-center bg-white border-2 border-dashed border-gray-300 rounded-lg p-3 hover:border-[#611724] hover:text-[#611724] transition-colors text-gray-600 group">
-                                            <i data-lucide="image" class="w-6 h-6 mb-1 opacity-60 group-hover:opacity-100"></i>
-                                            <span class="text-xs font-bold uppercase">Promo</span>
-                                        </button>
-                                        <button onclick="addBlock('divider')" class="col-span-2 flex flex-col items-center justify-center bg-white border-2 border-dashed border-gray-300 rounded-lg p-2 hover:border-[#611724] hover:text-[#611724] transition-colors text-gray-600 group">
-                                            <span class="text-xs font-bold uppercase">Divider Line</span>
-                                        </button>
+                                    <!-- Add Block Buttons -->
+                                    <div class="mt-8 border-t border-gray-300 pt-6">
+                                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-3 text-center">Add Content Block</label>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <button onclick="addBlock('text')" class="flex flex-col items-center justify-center bg-white border-2 border-dashed border-gray-300 rounded-lg p-3 hover:border-[#611724] hover:text-[#611724] transition-colors text-gray-600 group">
+                                                <i data-lucide="align-left" class="w-6 h-6 mb-1 opacity-60 group-hover:opacity-100"></i>
+                                                <span class="text-xs font-bold uppercase">Text</span>
+                                            </button>
+                                            <button onclick="addBlock('promo')" class="flex flex-col items-center justify-center bg-white border-2 border-dashed border-gray-300 rounded-lg p-3 hover:border-[#611724] hover:text-[#611724] transition-colors text-gray-600 group">
+                                                <i data-lucide="image" class="w-6 h-6 mb-1 opacity-60 group-hover:opacity-100"></i>
+                                                <span class="text-xs font-bold uppercase">Promo</span>
+                                            </button>
+                                            <button onclick="addBlock('divider')" class="col-span-2 flex flex-col items-center justify-center bg-white border-2 border-dashed border-gray-300 rounded-lg p-2 hover:border-[#611724] hover:text-[#611724] transition-colors text-gray-600 group">
+                                                <span class="text-xs font-bold uppercase">Divider Line</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
+
+                                <!-- STYLE PANE (Placeholder) -->
+                                <div id="pane-style" class="hidden-view p-6 text-center text-gray-500 font-sans text-sm border-2 border-dashed border-gray-300 rounded-lg bg-white/50">
+                                    Global color and typography settings coming soon.
+                                </div>
+
+                                <!-- SETTINGS PANE (Placeholder) -->
+                                <div id="pane-settings" class="hidden-view p-6 text-center text-gray-500 font-sans text-sm border-2 border-dashed border-gray-300 rounded-lg bg-white/50">
+                                    Advanced campaign layout settings coming soon.
+                                </div>
+
                             </div>
 
                             <div class="p-4 border-t border-gray-300 bg-[#E8E4D1] flex justify-between items-center sticky bottom-0">
@@ -1064,6 +1049,22 @@
         // -------------------------------------------------------------
         // Block Engine (Design Phase)
         // -------------------------------------------------------------
+
+        function switchBuilderTab(tab) {
+            const tabs = ['blocks', 'style', 'settings'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`btn-tab-${t}`);
+                const pane = document.getElementById(`pane-${t}`);
+                
+                if (t === tab) {
+                    btn.className = "flex-1 bg-[#4f111c] text-[#F4F1E1] py-2 font-bold text-xs tracking-wide" + (t === 'style' ? ' border-l border-r border-[#4f111c]' : '');
+                    if (pane) pane.classList.remove('hidden-view');
+                } else {
+                    btn.className = "flex-1 bg-transparent text-[#4f111c] py-2 font-bold text-xs tracking-wide hover:bg-black/5" + (t === 'style' ? ' border-l border-r border-[#4f111c]' : '');
+                    if (pane) pane.classList.add('hidden-view');
+                }
+            });
+        }
 
         function renderEditorBlocks() {
             const listEl = document.getElementById('editor-blocks-list');
