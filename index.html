@@ -1639,29 +1639,46 @@
             if (exitAfterSave) switchTab('campaigns');
         }
 
-        async function dispatchCampaignBlast() {
+async function dispatchCampaignBlast() {
             const btn = document.getElementById('confirm-dispatch-btn');
             btn.textContent = 'Dispatching to fans...';
             btn.disabled = true;
 
             await saveCampaign(false);
 
-            if (currentEditingCampaignId) {
-                await db.from('campaigns').update({ 
-                    status: 'Sent', 
-                    open_rate: '0.0', 
-                    click_rate: '0.0',
-                    target_date: new Date().toLocaleDateString()
-                }).eq('id', currentEditingCampaignId);
+            syncSetupFields();
+            const subject = (wizardData.subject || '').trim() || 'Kettleers Broadcast';
+            const html_content = generateEmailHtml(true);
+            const segment = wizardData.segment || 'all';
+
+            try {
+                const { data, error } = await db.functions.invoke('send-campaign', {
+                    body: { subject, html_content, is_test: false, segment: segment }
+                });
+
+                if (error) throw error;
+
+                if (currentEditingCampaignId) {
+                    await db.from('campaigns').update({ 
+                        status: 'Sent', 
+                        open_rate: '0.0', 
+                        click_rate: '0.0',
+                        target_date: new Date().toLocaleDateString()
+                    }).eq('id', currentEditingCampaignId);
+                }
+
+                btn.textContent = 'Campaign Dispatched!';
+                setTimeout(() => {
+                    switchTab('campaigns');
+                    loadDashboardAndCampaigns();
+                }, 1200);
+
+            } catch (error) {
+                console.error('Error dispatching live blast:', error);
+                btn.textContent = 'Send Campaign Now';
+                btn.disabled = false;
+                alert('Error sending campaign: ' + (error.message || 'Check console'));
             }
-
-            await sendTestEmail();
-
-            btn.textContent = 'Campaign Dispatched!';
-            setTimeout(() => {
-                switchTab('campaigns');
-                loadDashboardAndCampaigns();
-            }, 1200);
         }
 
         async function sendTestEmail() {
@@ -1674,12 +1691,12 @@
 
             try {
                 const { data, error } = await db.functions.invoke('send-campaign', {
-                    body: { subject, html_content, test_email: 'aaron@uscilla.com' }
+                    body: { subject, html_content, is_test: true }
                 });
 
                 if (error) throw error;
                 if (statusText) statusText.textContent = 'Test sent!';
-                alert('Success! Check your inbox at aaron@uscilla.com.');
+                alert('Success! Test sent to aaron@uscilla.com.');
             } catch (error) {
                 console.error('Error sending email:', error);
                 if (statusText) statusText.textContent = 'Send failed';
