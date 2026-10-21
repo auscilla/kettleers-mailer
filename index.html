@@ -723,7 +723,7 @@
 
                 </div>
 
-                <!-- Footer Wizard Progress Bar -->
+                <!-- Footer Wizard Progress Bar with High-Contrast Next Button -->
                 <div class="bg-kettleer-maroonDark text-white py-3 md:py-4 px-4 md:px-8 flex justify-between items-center text-xs md:text-sm shrink-0 font-medium border-t border-white/10 z-20 sticky bottom-0">
                     <button onclick="wizardPrevStep()" id="wizard-prev-btn" class="hover:text-white flex items-center gap-1 uppercase tracking-wider font-bold shrink-0 bg-white/10 px-3 md:px-4 py-1.5 rounded transition-colors">
                         <i data-lucide="chevron-left" class="w-4 h-4"></i> <span id="wizard-prev-label">Back</span>
@@ -742,7 +742,8 @@
                         <button onclick="goToWizardStep('confirm')" id="step-nav-confirm" class="wizard-step-link opacity-60 hover:opacity-100 text-xs md:text-sm">Confirm</button>
                     </div>
 
-                    <button onclick="wizardNextStep()" id="wizard-next-btn" class="hover:text-white flex items-center gap-1 uppercase tracking-wider font-bold shrink-0 bg-[#F4F1E1] text-[#4f111c] px-4 py-1.5 rounded hover:bg-white transition-all shadow">
+                    <!-- FIXED: High contrast hover styling -->
+                    <button onclick="wizardNextStep()" id="wizard-next-btn" class="flex items-center gap-1 uppercase tracking-wider font-bold shrink-0 bg-[#F4F1E1] text-[#4f111c] px-4 py-1.5 rounded border-2 border-[#4f111c] hover:bg-[#4f111c] hover:text-[#F4F1E1] transition-all shadow">
                         <span id="wizard-next-label">Next</span> <i data-lucide="chevron-right" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -814,23 +815,129 @@
                 </div>
             </div>
 
-            <!-- ================= 8. ANALYTICS VIEW ================= -->
+            <!-- ================= 8. ANALYTICS VIEW (RESEND LIVE METRICS & MULTI-GRAPHS) ================= -->
             <div id="view-analytics" class="hidden-view flex-1 flex flex-col p-4 md:p-10 overflow-y-auto max-w-6xl mx-auto w-full">
                 <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-8 text-kettleer-cream gap-4">
                     <div>
                         <h2 class="font-display text-4xl md:text-5xl uppercase tracking-wider shadow-sm leading-tight">Analytics</h2>
-                        <p class="text-lg md:text-xl mt-1 md:mt-2 opacity-90 font-medium">Audience Insights & Growth</p>
+                        <p class="text-lg md:text-xl mt-1 md:mt-2 opacity-90 font-medium">Live Audience Insights & Delivery Intelligence</p>
+                    </div>
+                    <div class="flex items-center gap-2 bg-[#F4F1E1]/10 px-3 py-1.5 rounded border border-[#F4F1E1]/20 text-xs font-mono text-white">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Resend Webhook Active
                     </div>
                 </header>
-                <div class="bg-[#F4F1E1] rounded-xl md:rounded-2xl p-6 md:p-10 shadow-2xl flex-1 flex flex-col">
-                    <h3 class="font-display text-2xl md:text-3xl mb-4 text-black border-b border-gray-300 pb-2">Subscriber Growth (2026 Season)</h3>
-                    <div class="flex-1 bg-white border border-gray-200 rounded-lg p-6 relative min-h-[300px] flex items-end justify-between px-10">
-                        <div class="w-12 bg-kettleer-navy h-[20%] rounded-t"></div>
-                        <div class="w-12 bg-kettleer-navy h-[35%] rounded-t"></div>
-                        <div class="w-12 bg-kettleer-navy h-[55%] rounded-t"></div>
-                        <div class="w-12 bg-kettleer-navy h-[80%] rounded-t"></div>
-                        <div class="w-12 bg-kettleer-navy h-[100%] rounded-t"></div>
+
+                <div class="bg-[#F4F1E1] rounded-xl md:rounded-2xl p-6 md:p-10 shadow-2xl flex-1 flex flex-col space-y-8">
+                    
+                    <!-- Top Metric Cards -->
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 border-b border-gray-300 pb-6">
+                        <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm">
+                            <span class="text-xs uppercase font-bold text-gray-500 block mb-1">Delivered Volume</span>
+                            <div id="analytics-total-deliveries" class="font-display text-3xl md:text-4xl text-[#611724]">0</div>
+                            <div class="text-[11px] text-gray-500 font-sans mt-1">Confirmed Resend deliveries</div>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm">
+                            <span class="text-xs uppercase font-bold text-gray-500 block mb-1">Avg Open Rate</span>
+                            <div id="analytics-avg-open" class="font-display text-3xl md:text-4xl text-[#611724]">0.0%</div>
+                            <div class="text-[11px] text-emerald-700 font-bold font-sans mt-1">Target: &gt; 35.0%</div>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm">
+                            <span class="text-xs uppercase font-bold text-gray-500 block mb-1">Avg Click Rate (CTR)</span>
+                            <div id="analytics-avg-click" class="font-display text-3xl md:text-4xl text-[#611724]">0.0%</div>
+                            <div class="text-[11px] text-emerald-700 font-bold font-sans mt-1">Target: &gt; 4.0%</div>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm">
+                            <span class="text-xs uppercase font-bold text-gray-500 block mb-1">Bounce Health</span>
+                            <div id="analytics-bounce-rate" class="font-display text-3xl md:text-4xl text-gray-800">0.0%</div>
+                            <div id="analytics-total-bounces" class="text-[11px] text-gray-500 font-sans mt-1">0 total bounces</div>
+                        </div>
                     </div>
+
+                    <!-- Split Multi-Graph Widgets -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        
+                        <!-- Graph 1: Delivery Funnel -->
+                        <div class="bg-white p-5 rounded-xl border border-gray-300 shadow-sm flex flex-col justify-between">
+                            <div class="border-b pb-3 mb-4 flex justify-between items-center">
+                                <h4 class="font-display text-lg text-black uppercase tracking-wider">Email Engagement Funnel</h4>
+                                <span class="text-xs font-bold text-gray-500">Live Sends</span>
+                            </div>
+                            
+                            <div class="space-y-4 font-sans text-xs flex-1 flex flex-col justify-around">
+                                <div>
+                                    <div class="flex justify-between font-bold mb-1">
+                                        <span>Delivered</span>
+                                        <span id="funnel-delivered-val">0 (100%)</span>
+                                    </div>
+                                    <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                                        <div id="funnel-delivered-bar" class="bg-[#1A2B4C] h-3 rounded-full transition-all duration-500" style="width: 100%"></div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between font-bold mb-1">
+                                        <span>Opened</span>
+                                        <span id="funnel-opened-val">0 (0%)</span>
+                                    </div>
+                                    <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                                        <div id="funnel-opened-bar" class="bg-[#611724] h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between font-bold mb-1">
+                                        <span>Clicked</span>
+                                        <span id="funnel-clicked-val">0 (0%)</span>
+                                    </div>
+                                    <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                                        <div id="funnel-clicked-bar" class="bg-[#387843] h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between font-bold mb-1 text-gray-500">
+                                        <span>Bounced</span>
+                                        <span id="funnel-bounced-val">0 (0%)</span>
+                                    </div>
+                                    <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                                        <div id="funnel-bounced-bar" class="bg-red-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Graph 2: Audience Distribution -->
+                        <div class="bg-white p-5 rounded-xl border border-gray-300 shadow-sm flex flex-col justify-between">
+                            <div class="border-b pb-3 mb-4 flex justify-between items-center">
+                                <h4 class="font-display text-lg text-black uppercase tracking-wider">Audience By Segment</h4>
+                                <span id="analytics-total-subscribers" class="text-xs font-bold text-gray-500">0 Total Fans</span>
+                            </div>
+
+                            <div id="analytics-segment-bars" class="space-y-3 font-sans text-xs flex-1 flex flex-col justify-around">
+                                <div class="text-center text-gray-400 py-6">Loading subscriber segments...</div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Graph 3: Campaign Performance Breakdown -->
+                    <div class="bg-white p-5 rounded-xl border border-gray-300 shadow-sm">
+                        <div class="border-b pb-3 mb-4 flex justify-between items-center">
+                            <h4 class="font-display text-lg text-black uppercase tracking-wider">Campaign Performance History</h4>
+                            <div class="flex gap-4 text-xs font-bold font-sans">
+                                <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-[#611724] rounded-sm inline-block"></span> Open Rate %</span>
+                                <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-[#387843] rounded-sm inline-block"></span> Click Rate %</span>
+                            </div>
+                        </div>
+
+                        <div id="analytics-campaigns-chart" class="space-y-4 pt-2">
+                            <div class="text-center text-gray-400 py-8 font-sans italic">No campaign blasts dispatched yet.</div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
