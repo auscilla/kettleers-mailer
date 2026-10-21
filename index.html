@@ -109,6 +109,39 @@
                 </header>
 
                 <div class="bg-[#F4F1E1] rounded-xl md:rounded-2xl p-6 md:p-10 shadow-2xl flex-1">
+                    
+                    <!-- Dashboard Date & Timeframe Filters -->
+                    <div class="flex flex-col md:flex-row gap-4 md:gap-8 mb-8 md:mb-10 pb-6 md:pb-8 border-b border-gray-300">
+                        <div class="flex flex-col w-full md:w-auto">
+                            <label class="font-bold text-sm md:text-lg mb-1 md:mb-2 text-black">Time Frame:</label>
+                            <div class="relative w-full">
+                                <select id="dashboard-timeframe" onchange="handleTimeframeChange()" class="appearance-none w-full bg-transparent border-2 border-[#4f111c] text-base md:text-xl py-2 pl-3 md:pl-4 pr-10 rounded focus:outline-none text-black font-medium md:w-64 cursor-pointer">
+                                    <option value="30">Previous 30 days</option>
+                                    <option value="90">Previous 90 days</option>
+                                    <option value="year">This Year (2026)</option>
+                                    <option value="all">All Time</option>
+                                    <option value="custom">Custom Range</option>
+                                </select>
+                                <i data-lucide="chevron-down" class="absolute right-3 top-2.5 md:top-3 w-5 h-5 text-[#4f111c] pointer-events-none"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-4 w-full md:w-auto">
+                            <div class="flex flex-col flex-1 md:flex-none">
+                                <label class="font-bold text-sm md:text-lg mb-1 md:mb-2 text-black">Start date</label>
+                                <div class="relative w-full">
+                                    <input type="date" id="dashboard-start-date" onchange="handleCustomDateChange()" class="w-full bg-transparent border-2 border-[#4f111c] text-base md:text-xl py-2 px-3 rounded focus:outline-none text-black font-medium md:w-48 cursor-pointer">
+                                </div>
+                            </div>
+                            <div class="flex flex-col flex-1 md:flex-none">
+                                <label class="font-bold text-sm md:text-lg mb-1 md:mb-2 text-black">End date</label>
+                                <div class="relative w-full">
+                                    <input type="date" id="dashboard-end-date" onchange="handleCustomDateChange()" class="w-full bg-transparent border-2 border-[#4f111c] text-base md:text-xl py-2 px-3 rounded focus:outline-none text-black font-medium md:w-48 cursor-pointer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <h3 class="font-display text-3xl md:text-4xl mb-4 md:mb-6 text-black">Performance</h3>
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-8 md:mb-12">
                         <div>
@@ -119,12 +152,12 @@
                         <div>
                             <div class="text-sm md:text-xl text-black mb-1">Avg open rate</div>
                             <div id="stat-open-rate" class="font-display text-4xl md:text-6xl text-[#611724] mb-1 md:mb-3">...</div>
-                            <div class="text-xs md:text-sm font-bold text-kettleer-green flex items-center gap-1"><i data-lucide="arrow-up" class="w-3 md:w-4 h-3 md:h-4"></i> Across sent blasts</div>
+                            <div class="text-xs md:text-sm font-bold text-kettleer-green flex items-center gap-1"><i data-lucide="arrow-up" class="w-3 md:w-4 h-3 md:h-4"></i> Across filtered blasts</div>
                         </div>
                         <div>
                             <div class="text-sm md:text-xl text-black mb-1">Avg click rate</div>
                             <div id="stat-click-rate" class="font-display text-4xl md:text-6xl text-[#611724] mb-1 md:mb-3">...</div>
-                            <div class="text-xs md:text-sm font-bold text-kettleer-green flex items-center gap-1"><i data-lucide="arrow-up" class="w-3 md:w-4 h-3 md:h-4"></i> Across sent blasts</div>
+                            <div class="text-xs md:text-sm font-bold text-kettleer-green flex items-center gap-1"><i data-lucide="arrow-up" class="w-3 md:w-4 h-3 md:h-4"></i> Across filtered blasts</div>
                         </div>
                         <div>
                             <div class="text-sm md:text-xl text-black mb-1">Unsub rate</div>
@@ -492,14 +525,139 @@
                                     </div>
                                 </div>
 
-                                <!-- STYLE PANE (Placeholder) -->
-                                <div id="pane-style" class="hidden-view p-6 text-center text-gray-500 font-sans text-sm border-2 border-dashed border-gray-300 rounded-lg bg-white/50">
-                                    Global color and typography settings coming soon.
+                                <!-- STYLE PANE (Live Controls) -->
+                                <div id="pane-style" class="hidden-view space-y-5 font-sans">
+                                    <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm space-y-4">
+                                        <h4 class="font-display text-lg text-[#4f111c] uppercase tracking-wider border-b pb-2">Color Scheme</h4>
+                                        
+                                        <div>
+                                            <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Outer Canvas Background</label>
+                                            <div class="flex items-center gap-3">
+                                                <input type="color" id="style-canvas-bg" oninput="updateStyle('canvasBg', this.value)" class="w-10 h-10 rounded border border-gray-300 cursor-pointer p-0.5">
+                                                <input type="text" id="style-canvas-bg-text" oninput="updateStyle('canvasBg', this.value)" class="flex-1 bg-gray-50 border border-gray-300 rounded p-2 text-xs font-mono uppercase">
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Email Card Background</label>
+                                            <div class="flex items-center gap-3">
+                                                <input type="color" id="style-content-bg" oninput="updateStyle('contentBg', this.value)" class="w-10 h-10 rounded border border-gray-300 cursor-pointer p-0.5">
+                                                <input type="text" id="style-content-bg-text" oninput="updateStyle('contentBg', this.value)" class="flex-1 bg-gray-50 border border-gray-300 rounded p-2 text-xs font-mono uppercase">
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Header Banner Background</label>
+                                            <div class="flex items-center gap-3">
+                                                <input type="color" id="style-header-bg" oninput="updateStyle('headerBg', this.value)" class="w-10 h-10 rounded border border-gray-300 cursor-pointer p-0.5">
+                                                <input type="text" id="style-header-bg-text" oninput="updateStyle('headerBg', this.value)" class="flex-1 bg-gray-50 border border-gray-300 rounded p-2 text-xs font-mono uppercase">
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Accent / Border Color</label>
+                                            <div class="flex items-center gap-3">
+                                                <input type="color" id="style-accent-color" oninput="updateStyle('accentColor', this.value)" class="w-10 h-10 rounded border border-gray-300 cursor-pointer p-0.5">
+                                                <input type="text" id="style-accent-color-text" oninput="updateStyle('accentColor', this.value)" class="flex-1 bg-gray-50 border border-gray-300 rounded p-2 text-xs font-mono uppercase">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm space-y-4">
+                                        <h4 class="font-display text-lg text-[#4f111c] uppercase tracking-wider border-b pb-2">Typography</h4>
+                                        
+                                        <div>
+                                            <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Email Body Font</label>
+                                            <select id="style-font-family" onchange="updateStyle('fontFamily', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-xs font-medium focus:border-[#4f111c] focus:outline-none">
+                                                <option value="Arial, Helvetica, sans-serif">Arial / Clean Sans</option>
+                                                <option value="'Roboto Slab', Georgia, serif">Roboto Slab / Cape Cod Serif</option>
+                                                <option value="Georgia, 'Times New Roman', serif">Georgia / Classic Editorial</option>
+                                                <option value="'Trebuchet MS', sans-serif">Trebuchet MS / Dynamic</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm space-y-4">
+                                        <h4 class="font-display text-lg text-[#4f111c] uppercase tracking-wider border-b pb-2">Buttons & Links</h4>
+                                        
+                                        <div>
+                                            <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Button Color</label>
+                                            <div class="flex items-center gap-3">
+                                                <input type="color" id="style-button-bg" oninput="updateStyle('buttonBg', this.value)" class="w-10 h-10 rounded border border-gray-300 cursor-pointer p-0.5">
+                                                <input type="text" id="style-button-bg-text" oninput="updateStyle('buttonBg', this.value)" class="flex-1 bg-gray-50 border border-gray-300 rounded p-2 text-xs font-mono uppercase">
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Button Corner Rounding</label>
+                                            <select id="style-button-radius" onchange="updateStyle('buttonRadius', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-xs font-medium focus:border-[#4f111c] focus:outline-none">
+                                                <option value="0px">Sharp Corners (0px)</option>
+                                                <option value="4px">Subtle Rounded (4px)</option>
+                                                <option value="8px">Soft Rounded (8px)</option>
+                                                <option value="9999px">Pill / Stadium (9999px)</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <!-- SETTINGS PANE (Placeholder) -->
-                                <div id="pane-settings" class="hidden-view p-6 text-center text-gray-500 font-sans text-sm border-2 border-dashed border-gray-300 rounded-lg bg-white/50">
-                                    Advanced campaign layout settings coming soon.
+                                <!-- SETTINGS PANE (Live Controls) -->
+                                <div id="pane-settings" class="hidden-view space-y-5 font-sans">
+                                    <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm space-y-4">
+                                        <h4 class="font-display text-lg text-[#4f111c] uppercase tracking-wider border-b pb-2">Inbox Preview</h4>
+                                        
+                                        <div>
+                                            <div class="flex justify-between items-center mb-1">
+                                                <label class="text-xs font-bold uppercase text-gray-700">Preheader Snippet</label>
+                                                <span id="settings-preheader-count" class="text-[10px] text-gray-500 font-mono">0 / 120</span>
+                                            </div>
+                                            <textarea id="settings-preheader" rows="2" oninput="updateSettings('preheader', this.value)" placeholder="e.g. Lowell Park gates open at 4:30 PM this Friday..." class="w-full bg-white border border-gray-300 rounded p-2 text-xs focus:border-[#4f111c] focus:outline-none leading-relaxed"></textarea>
+                                            <p class="text-[10px] text-gray-500 mt-1">Snippet displayed next to the subject line in fan inboxes.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm space-y-4">
+                                        <h4 class="font-display text-lg text-[#4f111c] uppercase tracking-wider border-b pb-2">Layout & Header</h4>
+                                        
+                                        <div>
+                                            <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Email Max Width</label>
+                                            <select id="settings-max-width" onchange="updateSettings('maxWidth', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-xs font-medium focus:border-[#4f111c] focus:outline-none">
+                                                <option value="580px">Compact (580px)</option>
+                                                <option value="620px">Standard (620px)</option>
+                                                <option value="660px">Wide (660px)</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="flex items-center justify-between pt-2">
+                                            <div>
+                                                <span class="text-xs font-bold uppercase text-gray-800">Lowell Park Banner</span>
+                                                <p class="text-[10px] text-gray-500">Show Kettleers branded header</p>
+                                            </div>
+                                            <label class="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" id="settings-show-banner" onchange="updateSettings('showBanner', this.checked)" class="sr-only peer" checked>
+                                                <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#387843]"></div>
+                                            </label>
+                                        </div>
+
+                                        <div class="flex items-center justify-between pt-2">
+                                            <div>
+                                                <span class="text-xs font-bold uppercase text-gray-800">'View in Browser' Link</span>
+                                                <p class="text-[10px] text-gray-500">Display pre-header link at top</p>
+                                            </div>
+                                            <label class="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" id="settings-show-browser-link" onchange="updateSettings('showBrowserLink', this.checked)" class="sr-only peer" checked>
+                                                <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#387843]"></div>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm space-y-4">
+                                        <h4 class="font-display text-lg text-[#4f111c] uppercase tracking-wider border-b pb-2">Footer & Address</h4>
+                                        
+                                        <div>
+                                            <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Footer Copyright & Address</label>
+                                            <textarea id="settings-footer-text" rows="2" oninput="updateSettings('footerText', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-xs focus:border-[#4f111c] focus:outline-none leading-relaxed"></textarea>
+                                        </div>
+                                    </div>
                                 </div>
 
                             </div>
