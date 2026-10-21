@@ -821,12 +821,14 @@
             statusText.textContent = 'Saving...';
             saveBtn.disabled = true;
 
-            const payload = {
+const payload = {
                 title: title,
                 subject: subject,
+                headline: heading,
+                body_text: body,
                 template_name: currentEditingTemplate,
                 status: 'Draft',
-                html_content: JSON.stringify({ heading, body })
+                html_content: `<div style="font-family: sans-serif;"><h1>${heading}</h1><p>${body.replace(/\n/g, '<br>')}</p></div>`
             };
 
             let response;
@@ -868,20 +870,8 @@
             document.getElementById('editor-campaign-subject').value = c.subject || '';
 
             // Parse saved heading/body if present, or use defaults
-            let headingText = c.title;
-            let bodyText = c.subject || 'The first newsletter from Kettleers Nation!';
-
-            if (c.html_content) {
-                try {
-                    const parsed = JSON.parse(c.html_content);
-                    if (parsed.heading) headingText = parsed.heading;
-                    if (parsed.body) bodyText = parsed.body;
-                } catch(e) {
-                    // Raw string fallback
-                    bodyText = c.html_content;
-                }
-            }
-
+let headingText = c.headline || c.title || '';
+let bodyText = c.body_text || 'The first newsletter from Kettleers Nation!';
             document.getElementById('editor-heading').value = headingText;
             document.getElementById('editor-body').value = bodyText;
 
