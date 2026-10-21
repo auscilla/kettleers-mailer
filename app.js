@@ -20,6 +20,8 @@ let currentEditingCampaignId = null;
 const WIZARD_STEPS = ['recipients', 'setup', 'template', 'design', 'confirm'];
 let currentWizardStepIndex = 0;
 
+const ALL_AUDIENCE_SEGMENTS = ['General Fan', 'All-Star Member', 'Supporter', 'Host Family', 'Alumni'];
+
 const defaultStyle = {
     canvasBg: '#E8E4D1',
     contentBg: '#ffffff',
@@ -39,7 +41,7 @@ const defaultSettings = {
 };
 
 let wizardData = {
-    segment: 'all',
+    segments: ['all'],
     title: '',
     subject: '',
     template: 'Blank Canvas',
@@ -98,6 +100,136 @@ async function handleLogin(e) {
 
 async function handleLogout() {
     if (db) await db.auth.signOut();
+}
+
+// -------------------------------------------------------------
+// Multi-Audience Selection Engine
+// -------------------------------------------------------------
+function toggleAudienceSegment(clickedSegment) {
+    if (!wizardData.segments) wizardData.segments = [];
+    const err = document.getElementById('audience-error');
+    if (err) err.classList.add('hidden');
+
+    if (clickedSegment === 'all') {
+        if (wizardData.segments.includes('all')) {
+            wizardData.segments = [];
+        } else {
+            wizardData.segments = ['all'];
+        }
+    } else {
+        if (wizardData.segments.includes('all')) {
+            wizardData.segments = [clickedSegment];
+        } else {
+            const idx = wizardData.segments.indexOf(clickedSegment);
+            if (idx > -1) {
+                wizardData.segments.splice(idx, 1);
+            } else {
+                wizardData.segments.push(clickedSegment);
+                if (wizardData.segments.length === ALL_AUDIENCE_SEGMENTS.length) {
+                    wizardData.segments = ['all'];
+                }
+            }
+        }
+    }
+
+    renderAudienceCardsState();
+}
+
+function renderAudienceCardsState() {
+    const isAll = wizardData.segments && wizardData.segments.includes('all');
+    const summaryBadge = document.getElementById('audience-selection-summary');
+
+    const updateCard = (id, checkId, isSelected) => {
+        const card = document.getElementById(id);
+        const check = document.getElementById(checkId);
+        if (card) {
+            if (isSelected) {
+                card.classList.remove('border-gray-200', 'bg-white');
+                card.classList.add('border-[#611724]', 'bg-[#F4F1E1]/40');
+            } else {
+                card.classList.remove('border-[#611724]', 'bg-[#F4F1E1]/40');
+                card.classList.add('border-gray-200', 'bg-white');
+            }
+        }
+        if (check) {
+            if (isSelected) {
+                check.className = 'w-4 h-4 rounded border border-[#611724] bg-[#611724] text-white flex items-center justify-center text-[10px] font-bold';
+            } else {
+                check.className = 'w-4 h-4 rounded border border-gray-400 bg-white text-transparent flex items-center justify-center text-[10px] font-bold';
+            }
+        }
+    };
+
+    updateCard('segment-card-all', 'segment-check-all', isAll);
+
+    ALL_AUDIENCE_SEGMENTS.forEach(seg => {
+        const isSelected = isAll || (wizardData.segments && wizardData.segments.includes(seg));
+        updateCard(`segment-card-${seg}`, `segment-check-${seg}`, isSelected);
+    });
+
+    if (summaryBadge) {
+        if (isAll) {
+            summaryBadge.textContent = `All Active Subscribers (${allSubscribers.length} fans)`;
+        } else if (!wizardData.segments || wizardData.segments.length === 0) {
+            summaryBadge.textContent = `0 Groups Selected`;
+        } else {
+            const count = allSubscribers.filter(s => wizardData.segments.includes(s.segment)).length;
+            summaryBadge.textContent = `${wizardData.segments.length} Groups Selected (${count} fans)`;
+        }
+    }
+}
+
+// -------------------------------------------------------------
+// Step Validation (Title, Subject & Audience Required)
+// -------------------------------------------------------------
+function validateCurrentStep() {
+    if (currentWizardStepIndex === 0) {
+        if (!wizardData.segments || wizardData.segments.length === 0) {
+            const err = document.getElementById('audience-error');
+            if (err) err.classList.remove('hidden');
+            return false;
+        }
+        return true;
+    }
+
+    if (currentWizardStepIndex === 1) {
+        syncSetupFields();
+        const titleInput = document.getElementById('setup-campaign-title');
+        const subjectInput = document.getElementById('setup-campaign-subject');
+        const titleErr = document.getElementById('setup-title-error');
+        const subjectErr = document.getElementById('setup-subject-error');
+
+        let valid = true;
+
+        if (!wizardData.title || !wizardData.title.trim()) {
+            if (titleInput) {
+                titleInput.classList.add('border-red-500', 'bg-red-50/20');
+                titleInput.focus();
+            }
+            if (titleErr) titleErr.classList.remove('hidden');
+            valid = false;
+        } else {
+            if (titleInput) titleInput.classList.remove('border-red-500', 'bg-red-50/20');
+            if (titleErr) titleErr.classList.add('hidden');
+        }
+
+        if (!wizardData.subject || !wizardData.subject.trim()) {
+            if (subjectInput) {
+                subjectInput.classList.add('border-red-500', 'bg-red-50/20');
+                if (valid) subjectInput.focus();
+            }
+            if (subjectErr) subjectErr.classList.remove('hidden');
+            valid = false;
+        } else {
+            if (subjectInput) subjectInput.classList.remove('border-red-500', 'bg-red-50/20');
+            if (subjectErr) subjectErr.classList.add('hidden');
+        }
+
+        safeCreateIcons();
+        return valid;
+    }
+
+    return true;
 }
 
 // -------------------------------------------------------------
@@ -244,7 +376,7 @@ function renderAnalyticsView() {
     if (totalBouncesEl) totalBouncesEl.textContent = `${bouncesCount} total bounces`;
     if (totalSubscribersEl) totalSubscribersEl.textContent = `${allSubscribers.length.toLocaleString()} Total Fans`;
 
-    // 1. Funnel Calculations
+    // Funnel
     const funnelDeliveredVal = document.getElementById('funnel-delivered-val');
     const funnelOpenedVal = document.getElementById('funnel-opened-val');
     const funnelOpenedBar = document.getElementById('funnel-opened-bar');
@@ -266,12 +398,10 @@ function renderAnalyticsView() {
     if (funnelBouncedVal) funnelBouncedVal.textContent = `${bouncesCount} (${bounceRate}%)`;
     if (funnelBouncedBar) funnelBouncedBar.style.width = `${Math.min(100, Number(bounceRate))}%`;
 
-    // 2. Audience Segment Progress Bars
+    // Audience Bars
     if (segmentBarsContainer) {
-        const segments = ['General Fan', 'All-Star Member', 'Supporter', 'Host Family', 'Alumni'];
         const total = allSubscribers.length || 1;
-
-        segmentBarsContainer.innerHTML = segments.map(seg => {
+        segmentBarsContainer.innerHTML = ALL_AUDIENCE_SEGMENTS.map(seg => {
             const count = allSubscribers.filter(s => s.segment === seg).length;
             const pct = Math.round((count / total) * 100);
             return `
@@ -288,7 +418,7 @@ function renderAnalyticsView() {
         }).join('');
     }
 
-    // 3. Campaign Engagement History Chart
+    // History Chart
     if (campaignsChartContainer) {
         if (sent.length === 0) {
             campaignsChartContainer.innerHTML = `<div class="text-center text-gray-400 py-8 font-sans italic">No campaign blasts dispatched yet. Send a broadcast to generate engagement graphs.</div>`;
@@ -342,6 +472,7 @@ async function loadSubscribers() {
         allSubscribers = data || [];
         renderSubscribers(allSubscribers);
         updateAudienceCounts();
+        renderAudienceCardsState();
         renderAnalyticsView();
     } catch (err) {
         console.error('Error fetching subscribers:', err);
@@ -403,11 +534,9 @@ function updateAudienceCounts() {
     };
 
     setCardCount('segment-count-all', total);
-    setCardCount('segment-count-General Fan', allSubscribers.filter(s => s.segment === 'General Fan').length);
-    setCardCount('segment-count-All-Star Member', allSubscribers.filter(s => s.segment === 'All-Star Member').length);
-    setCardCount('segment-count-Supporter', allSubscribers.filter(s => s.segment === 'Supporter').length);
-    setCardCount('segment-count-Host Family', allSubscribers.filter(s => s.segment === 'Host Family').length);
-    setCardCount('segment-count-Alumni', allSubscribers.filter(s => s.segment === 'Alumni').length);
+    ALL_AUDIENCE_SEGMENTS.forEach(seg => {
+        setCardCount(`segment-count-${seg}`, allSubscribers.filter(s => s.segment === seg).length);
+    });
 }
 
 // -------------------------------------------------------------
@@ -563,8 +692,65 @@ function syncStyleAndSettingsUI() {
 }
 
 // -------------------------------------------------------------
-// Block Engine (Design Phase)
+// Mailchimp 13-Block Engine (Add, Edit, Move, Delete)
 // -------------------------------------------------------------
+function addBlock(type) {
+    if (!wizardData.blocks) wizardData.blocks = [];
+
+    switch (type) {
+        case 'text':
+            wizardData.blocks.push({ type: 'text', heading: 'New Headline', body: 'Start typing your newsletter announcement here...' });
+            break;
+        case 'boxed_text':
+            wizardData.blocks.push({ type: 'boxed_text', heading: 'Important Notice', body: 'Boxed callout message details go here...', bg_color: '#F4F1E1', border_color: '#611724' });
+            break;
+        case 'divider':
+            wizardData.blocks.push({ type: 'divider', line_style: 'solid', line_color: '#e8e4d1' });
+            break;
+        case 'image':
+            wizardData.blocks.push({ type: 'image', image_url: 'StockingStuffer.png', link_url: 'https://kettleers.org', alt_text: 'Kettleers Image' });
+            break;
+        case 'image_group':
+            wizardData.blocks.push({ type: 'image_group', image1_url: 'StockingStuffer.png', link1_url: '#', image2_url: 'bannerplayer.png', link2_url: '#' });
+            break;
+        case 'image_card':
+            wizardData.blocks.push({ type: 'image_card', image_url: 'StockingStuffer.png', heading: 'Featured Item', body: 'Card description and details.', cta_text: 'Learn More', cta_url: '#', bg_color: '#FFFDFB' });
+            break;
+        case 'image_caption':
+            wizardData.blocks.push({ type: 'image_caption', image_url: 'bannerplayer.png', caption: 'Lowell Park action during the Cape Cod Baseball League season.' });
+            break;
+        case 'social_share':
+            wizardData.blocks.push({ type: 'social_share', heading: 'Share this update with fellow fans' });
+            break;
+        case 'social_follow':
+            wizardData.blocks.push({ type: 'social_follow', facebook_url: 'https://facebook.com/kettleers', instagram_url: 'https://instagram.com/kettleers', twitter_url: 'https://x.com/kettleers', website_url: 'https://kettleers.org' });
+            break;
+        case 'button':
+            wizardData.blocks.push({ type: 'button', cta_text: 'Visit Lowell Park', cta_url: 'https://kettleers.org', align: 'center', button_color: '#2E5B82' });
+            break;
+        case 'footer':
+            wizardData.blocks.push({ type: 'footer', text: 'You are receiving this because you are an official supporter of Cotuit Kettleers Baseball.' });
+            break;
+        case 'code':
+            wizardData.blocks.push({ type: 'code', html_code: '<div style="padding: 15px; text-align: center; background: #f4f4f4; border: 1px dashed #ccc; font-family: sans-serif; font-size: 13px;">Custom HTML embed block</div>' });
+            break;
+        case 'video':
+            wizardData.blocks.push({ type: 'video', title: 'Cotuit Kettleers Highlights', video_url: 'https://youtube.com', thumbnail_url: 'bannerplayer.png' });
+            break;
+        case 'promo':
+            wizardData.blocks.push({ type: 'promo', heading: 'Stocking Stuffers Promo', body: 'The Perfect Stocking Stuffers! Use code FANS20 for 20% off.', cta: 'Shop Holiday Special', image: 'StockingStuffer.png' });
+            break;
+    }
+
+    renderEditorBlocks();
+    renderEmailPreview();
+    
+    setTimeout(() => {
+        const listEl = document.getElementById('editor-blocks-list');
+        if (listEl) listEl.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }, 50);
+}
+
 function renderEditorBlocks() {
     const listEl = document.getElementById('editor-blocks-list');
     if (!listEl) return;
@@ -589,23 +775,188 @@ function renderEditorBlocks() {
                     <textarea rows="4" oninput="updateBlock(${i}, 'body', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-sm focus:border-[#4f111c] focus:outline-none resize-none leading-relaxed">${escapeHtml(block.body || '')}</textarea>
                 </div>
             `;
-        } else if (block.type === 'promo') {
+        } else if (block.type === 'boxed_text') {
             innerInputs = `
                 <div class="mb-3">
-                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Promo Title</label>
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Boxed Heading</label>
                     <input type="text" value="${escapeHtml(block.heading || '')}" oninput="updateBlock(${i}, 'heading', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-sm focus:border-[#4f111c] focus:outline-none">
                 </div>
                 <div class="mb-3">
-                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Promo Details</label>
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Message Body</label>
                     <textarea rows="3" oninput="updateBlock(${i}, 'body', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-sm focus:border-[#4f111c] focus:outline-none resize-none leading-relaxed">${escapeHtml(block.body || '')}</textarea>
                 </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Button Text</label>
-                    <input type="text" value="${escapeHtml(block.cta || '')}" oninput="updateBlock(${i}, 'cta', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-sm focus:border-[#4f111c] focus:outline-none">
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Background Color</label>
+                        <input type="color" value="${block.bg_color || '#F4F1E1'}" oninput="updateBlock(${i}, 'bg_color', this.value)" class="w-full h-8 rounded border border-gray-300 p-0.5 cursor-pointer">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Border Color</label>
+                        <input type="color" value="${block.border_color || '#611724'}" oninput="updateBlock(${i}, 'border_color', this.value)" class="w-full h-8 rounded border border-gray-300 p-0.5 cursor-pointer">
+                    </div>
                 </div>
             `;
         } else if (block.type === 'divider') {
-            innerInputs = `<div class="text-xs text-gray-500 italic py-2">Horizontal separator line.</div>`;
+            innerInputs = `
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Line Style</label>
+                        <select onchange="updateBlock(${i}, 'line_style', this.value)" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
+                            <option value="solid" ${block.line_style === 'solid' ? 'selected' : ''}>Solid</option>
+                            <option value="dashed" ${block.line_style === 'dashed' ? 'selected' : ''}>Dashed</option>
+                            <option value="dotted" ${block.line_style === 'dotted' ? 'selected' : ''}>Dotted</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Line Color</label>
+                        <input type="color" value="${block.line_color || '#e8e4d1'}" oninput="updateBlock(${i}, 'line_color', this.value)" class="w-full h-8 rounded border border-gray-300 p-0.5 cursor-pointer">
+                    </div>
+                </div>
+            `;
+        } else if (block.type === 'image') {
+            innerInputs = `
+                <div class="mb-3">
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Image URL / Filename</label>
+                    <input type="text" value="${escapeHtml(block.image_url || '')}" oninput="updateBlock(${i}, 'image_url', this.value)" placeholder="StockingStuffer.png or https://..." class="w-full bg-white border border-gray-300 rounded p-2 text-sm focus:border-[#4f111c] focus:outline-none">
+                </div>
+                <div class="mb-3">
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Link URL (Optional)</label>
+                    <input type="text" value="${escapeHtml(block.link_url || '')}" oninput="updateBlock(${i}, 'link_url', this.value)" placeholder="https://kettleers.org" class="w-full bg-white border border-gray-300 rounded p-2 text-sm focus:border-[#4f111c] focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Alt Text</label>
+                    <input type="text" value="${escapeHtml(block.alt_text || '')}" oninput="updateBlock(${i}, 'alt_text', this.value)" placeholder="Image description" class="w-full bg-white border border-gray-300 rounded p-2 text-sm focus:border-[#4f111c] focus:outline-none">
+                </div>
+            `;
+        } else if (block.type === 'image_group') {
+            innerInputs = `
+                <div class="p-2 border border-gray-200 rounded mb-3 bg-gray-50">
+                    <label class="block text-[10px] font-bold uppercase text-gray-700 mb-1">Left Image</label>
+                    <input type="text" value="${escapeHtml(block.image1_url || '')}" oninput="updateBlock(${i}, 'image1_url', this.value)" placeholder="Image 1 URL" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs mb-1">
+                    <input type="text" value="${escapeHtml(block.link1_url || '')}" oninput="updateBlock(${i}, 'link1_url', this.value)" placeholder="Click Link 1" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
+                </div>
+                <div class="p-2 border border-gray-200 rounded bg-gray-50">
+                    <label class="block text-[10px] font-bold uppercase text-gray-700 mb-1">Right Image</label>
+                    <input type="text" value="${escapeHtml(block.image2_url || '')}" oninput="updateBlock(${i}, 'image2_url', this.value)" placeholder="Image 2 URL" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs mb-1">
+                    <input type="text" value="${escapeHtml(block.link2_url || '')}" oninput="updateBlock(${i}, 'link2_url', this.value)" placeholder="Click Link 2" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
+                </div>
+            `;
+        } else if (block.type === 'image_card') {
+            innerInputs = `
+                <div class="mb-2">
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Card Image</label>
+                    <input type="text" value="${escapeHtml(block.image_url || '')}" oninput="updateBlock(${i}, 'image_url', this.value)" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
+                </div>
+                <div class="mb-2">
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Card Heading</label>
+                    <input type="text" value="${escapeHtml(block.heading || '')}" oninput="updateBlock(${i}, 'heading', this.value)" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
+                </div>
+                <div class="mb-2">
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Card Text</label>
+                    <textarea rows="2" oninput="updateBlock(${i}, 'body', this.value)" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs resize-none">${escapeHtml(block.body || '')}</textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="text" value="${escapeHtml(block.cta_text || '')}" oninput="updateBlock(${i}, 'cta_text', this.value)" placeholder="Button Label" class="bg-white border border-gray-300 rounded p-1.5 text-xs">
+                    <input type="text" value="${escapeHtml(block.cta_url || '')}" oninput="updateBlock(${i}, 'cta_url', this.value)" placeholder="Button Link" class="bg-white border border-gray-300 rounded p-1.5 text-xs">
+                </div>
+            `;
+        } else if (block.type === 'image_caption') {
+            innerInputs = `
+                <div class="mb-2">
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Image URL</label>
+                    <input type="text" value="${escapeHtml(block.image_url || '')}" oninput="updateBlock(${i}, 'image_url', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-xs">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Caption Text</label>
+                    <textarea rows="2" oninput="updateBlock(${i}, 'caption', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-xs resize-none leading-relaxed">${escapeHtml(block.caption || '')}</textarea>
+                </div>
+            `;
+        } else if (block.type === 'social_share') {
+            innerInputs = `
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Callout Text</label>
+                    <input type="text" value="${escapeHtml(block.heading || '')}" oninput="updateBlock(${i}, 'heading', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-sm">
+                    <p class="text-[10px] text-gray-500 mt-1 italic">Automatically inserts Facebook, X, LinkedIn, and Email share buttons.</p>
+                </div>
+            `;
+        } else if (block.type === 'social_follow') {
+            innerInputs = `
+                <div class="space-y-2">
+                    <input type="text" value="${escapeHtml(block.facebook_url || '')}" oninput="updateBlock(${i}, 'facebook_url', this.value)" placeholder="Facebook URL" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
+                    <input type="text" value="${escapeHtml(block.instagram_url || '')}" oninput="updateBlock(${i}, 'instagram_url', this.value)" placeholder="Instagram URL" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
+                    <input type="text" value="${escapeHtml(block.twitter_url || '')}" oninput="updateBlock(${i}, 'twitter_url', this.value)" placeholder="X / Twitter URL" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
+                    <input type="text" value="${escapeHtml(block.website_url || '')}" oninput="updateBlock(${i}, 'website_url', this.value)" placeholder="Official Website" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
+                </div>
+            `;
+        } else if (block.type === 'button') {
+            innerInputs = `
+                <div class="mb-2">
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Button Text</label>
+                    <input type="text" value="${escapeHtml(block.cta_text || '')}" oninput="updateBlock(${i}, 'cta_text', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-sm">
+                </div>
+                <div class="mb-2">
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Destination URL</label>
+                    <input type="text" value="${escapeHtml(block.cta_url || '')}" oninput="updateBlock(${i}, 'cta_url', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Alignment</label>
+                        <select onchange="updateBlock(${i}, 'align', this.value)" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
+                            <option value="center" ${block.align === 'center' ? 'selected' : ''}>Center</option>
+                            <option value="left" ${block.align === 'left' ? 'selected' : ''}>Left</option>
+                            <option value="right" ${block.align === 'right' ? 'selected' : ''}>Right</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Button Color</label>
+                        <input type="color" value="${block.button_color || '#2E5B82'}" oninput="updateBlock(${i}, 'button_color', this.value)" class="w-full h-8 rounded border border-gray-300 p-0.5 cursor-pointer">
+                    </div>
+                </div>
+            `;
+        } else if (block.type === 'footer') {
+            innerInputs = `
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Footer Disclaimer & Address</label>
+                    <textarea rows="3" oninput="updateBlock(${i}, 'text', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-xs resize-none">${escapeHtml(block.text || '')}</textarea>
+                </div>
+            `;
+        } else if (block.type === 'code') {
+            innerInputs = `
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Custom Raw HTML</label>
+                    <textarea rows="4" oninput="updateBlock(${i}, 'html_code', this.value)" class="w-full bg-gray-900 text-emerald-400 font-mono border border-gray-700 rounded p-2 text-xs resize-none">${escapeHtml(block.html_code || '')}</textarea>
+                </div>
+            `;
+        } else if (block.type === 'video') {
+            innerInputs = `
+                <div class="mb-2">
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Video Title</label>
+                    <input type="text" value="${escapeHtml(block.title || '')}" oninput="updateBlock(${i}, 'title', this.value)" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
+                </div>
+                <div class="mb-2">
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Video URL (YouTube/Vimeo)</label>
+                    <input type="text" value="${escapeHtml(block.video_url || '')}" oninput="updateBlock(${i}, 'video_url', this.value)" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Video Thumbnail Image</label>
+                    <input type="text" value="${escapeHtml(block.thumbnail_url || '')}" oninput="updateBlock(${i}, 'thumbnail_url', this.value)" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
+                </div>
+            `;
+        } else if (block.type === 'promo') {
+            innerInputs = `
+                <div class="mb-2">
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Promo Title</label>
+                    <input type="text" value="${escapeHtml(block.heading || '')}" oninput="updateBlock(${i}, 'heading', this.value)" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
+                </div>
+                <div class="mb-2">
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Promo Details</label>
+                    <textarea rows="2" oninput="updateBlock(${i}, 'body', this.value)" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs resize-none">${escapeHtml(block.body || '')}</textarea>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Button Text</label>
+                    <input type="text" value="${escapeHtml(block.cta || '')}" oninput="updateBlock(${i}, 'cta', this.value)" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
+                </div>
+            `;
         }
 
         return `
@@ -613,7 +964,7 @@ function renderEditorBlocks() {
                 <div class="bg-gray-100 p-2.5 flex justify-between items-center border-b border-gray-200">
                     <div class="flex items-center gap-2 text-gray-700">
                         <i data-lucide="grip-vertical" class="w-4 h-4 opacity-50"></i>
-                        <span class="text-xs font-bold uppercase tracking-wider">${block.type} Block</span>
+                        <span class="text-xs font-bold uppercase tracking-wider">${block.type.replace('_', ' ')} Block</span>
                     </div>
                     <div class="flex gap-1">
                         <button onclick="moveBlock(${i}, -1)" class="p-1 hover:bg-white rounded text-gray-500 hover:text-black transition-colors" title="Move Up"><i data-lucide="arrow-up" class="w-3.5 h-3.5"></i></button>
@@ -638,24 +989,6 @@ function updateBlock(index, field, value) {
     }
 }
 
-function addBlock(type) {
-    if (!wizardData.blocks) wizardData.blocks = [];
-    if (type === 'text') {
-        wizardData.blocks.push({ type: 'text', heading: 'New Headline', body: 'Start typing your newsletter announcement here...' });
-    } else if (type === 'promo') {
-        wizardData.blocks.push({ type: 'promo', heading: 'Stocking Stuffers Promo', body: 'The Perfect Stocking Stuffers! Use code FANS20 for 20% off.', cta: 'Shop Holiday Special', image: 'StockingStuffer.png' });
-    } else if (type === 'divider') {
-        wizardData.blocks.push({ type: 'divider' });
-    }
-    renderEditorBlocks();
-    renderEmailPreview();
-    
-    setTimeout(() => {
-        const listEl = document.getElementById('editor-blocks-list');
-        if (listEl) listEl.scrollIntoView({ behavior: 'smooth', block: 'end' });
-    }, 50);
-}
-
 function moveBlock(index, direction) {
     if (!wizardData.blocks) return;
     const newIndex = index + direction;
@@ -675,7 +1008,7 @@ function deleteBlock(index) {
 }
 
 // -------------------------------------------------------------
-// Live HTML Generator with Full Styling & Settings Injection
+// Live HTML Generator for all 13 Blocks
 // -------------------------------------------------------------
 function generateEmailHtml(isLiveSend = false) {
     const baseUrl = isLiveSend ? (window.location.origin + window.location.pathname.replace('index.html', '')) : '';
@@ -688,39 +1021,150 @@ function generateEmailHtml(isLiveSend = false) {
         blocksHtml = `<div style="padding: 60px 20px; text-align: center; color: #999999; font-family: ${style.fontFamily}; font-style: italic;">Canvas is empty. Add a block to begin building.</div>`;
     } else {
         blocksHtml = wizardData.blocks.map(b => {
-            if (b.type === 'text') {
-                return `
-                <div style="padding: 30px 25px; border: 4px solid ${style.accentColor}; background-color: #FFFDFB; text-align: center; margin: 15px;">
-                    <h1 style="font-family: ${style.fontFamily}; font-size: 26px; font-weight: bold; color: #000000; margin: 0 0 14px 0;">${escapeHtml(b.heading || '')}</h1>
-                    <p style="font-family: ${style.fontFamily}; font-size: 16px; line-height: 1.6; color: #333333; margin: 0;">${escapeHtml(b.body || '').replace(/\n/g, '<br>')}</p>
-                </div>`;
-            } else if (b.type === 'promo') {
-                return `
-                <div style="padding: 35px 30px; text-align: center; background-color: #ffffff; margin-bottom: 15px;">
-                    <h2 style="font-family: 'Georgia', 'Times New Roman', serif; font-size: 24px; text-transform: uppercase; letter-spacing: 2px; color: #1A2B4C; margin: 0 0 20px 0;">${escapeHtml(b.heading || '')}</h2>
-                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 25px;">
+            switch (b.type) {
+                case 'text':
+                    return `
+                    <div style="padding: 20px 25px; margin: 10px 15px; font-family: ${style.fontFamily};">
+                        <h2 style="margin: 0 0 10px 0; color: #111827; font-size: 22px;">${escapeHtml(b.heading || '')}</h2>
+                        <p style="margin: 0; line-height: 1.6; color: #374151; font-size: 15px;">${escapeHtml(b.body || '').replace(/\n/g, '<br>')}</p>
+                    </div>`;
+
+                case 'boxed_text':
+                    return `
+                    <div style="margin: 15px; padding: 22px 20px; background-color: ${b.bg_color || '#F4F1E1'}; border: 2px solid ${b.border_color || style.accentColor}; border-radius: 6px; font-family: ${style.fontFamily};">
+                        <h3 style="margin: 0 0 8px 0; color: ${b.border_color || style.accentColor}; font-size: 18px; font-weight: bold;">${escapeHtml(b.heading || '')}</h3>
+                        <p style="margin: 0; line-height: 1.5; color: #374151; font-size: 14px;">${escapeHtml(b.body || '').replace(/\n/g, '<br>')}</p>
+                    </div>`;
+
+                case 'divider':
+                    return `
+                    <div style="padding: 12px 25px;">
+                        <hr style="border: 0; border-top: 2px ${b.line_style || 'solid'} ${b.line_color || '#e8e4d1'}; margin: 0;">
+                    </div>`;
+
+                case 'image':
+                    return `
+                    <div style="padding: 15px; text-align: center;">
+                        <a href="${b.link_url || '#'}" target="_blank">
+                            <img src="${baseUrl}${b.image_url || 'StockingStuffer.png'}" alt="${escapeHtml(b.alt_text || 'Image')}" style="max-width: 100%; height: auto; display: inline-block; border-radius: 4px;">
+                        </a>
+                    </div>`;
+
+                case 'image_group':
+                    return `
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="padding: 15px 10px;">
                         <tr>
-                            <td width="190" valign="middle" align="center" style="padding-right: 18px;">
-                                <div style="background-color: #F8F8F8; border-radius: 8px; padding: 10px; border: 1px solid #ECEAE0;">
-                                    <img src="${baseUrl}${b.image || 'StockingStuffer.png'}" alt="Promo" style="max-width: 170px; width: 100%; height: auto; display: block; margin: 0 auto;">
-                                </div>
+                            <td width="50%" align="center" style="padding: 0 5px;">
+                                <a href="${b.link1_url || '#'}" target="_blank">
+                                    <img src="${baseUrl}${b.image1_url || 'StockingStuffer.png'}" style="width: 100%; max-width: 280px; height: auto; display: block; border-radius: 4px;">
+                                </a>
                             </td>
-                            <td valign="middle" align="left" style="font-family: ${style.fontFamily}; font-size: 15px; line-height: 1.5; color: #333333;">
-                                ${escapeHtml(b.body || '').replace(/\n/g, '<br>')}
+                            <td width="50%" align="center" style="padding: 0 5px;">
+                                <a href="${b.link2_url || '#'}" target="_blank">
+                                    <img src="${baseUrl}${b.image2_url || 'bannerplayer.png'}" style="width: 100%; max-width: 280px; height: auto; display: block; border-radius: 4px;">
+                                </a>
                             </td>
                         </tr>
-                    </table>
-                    <div style="text-align: center; margin-top: 10px;">
-                        <a href="#" style="display: inline-block; background-color: ${style.buttonBg}; color: #ffffff; padding: 13px 32px; font-family: ${style.fontFamily}; font-size: 14px; font-weight: bold; text-decoration: none; border-radius: ${style.buttonRadius}; text-transform: uppercase; letter-spacing: 1px;">${escapeHtml(b.cta || 'Shop Now')}</a>
-                    </div>
-                </div>`;
-            } else if (b.type === 'divider') {
-                return `
-                <div style="padding: 10px 30px; background-color: #ffffff;">
-                    <hr style="border: 0; border-top: 2px solid #e8e4d1; margin: 0;">
-                </div>`;
+                    </table>`;
+
+                case 'image_card':
+                    return `
+                    <div style="margin: 15px; background-color: ${b.bg_color || '#FFFDFB'}; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+                        <img src="${baseUrl}${b.image_url || 'StockingStuffer.png'}" alt="Card" style="width: 100%; height: auto; display: block;">
+                        <div style="padding: 20px; font-family: ${style.fontFamily}; text-align: center;">
+                            <h3 style="margin: 0 0 10px 0; font-size: 20px; color: #111827;">${escapeHtml(b.heading || '')}</h3>
+                            <p style="margin: 0 0 15px 0; font-size: 14px; line-height: 1.5; color: #4b5563;">${escapeHtml(b.body || '').replace(/\n/g, '<br>')}</p>
+                            ${b.cta_text ? `<a href="${b.cta_url \vert{}\vert{} '#'}" style="display: inline-block; background-color: ${style.buttonBg}; color: #ffffff; padding: 10px 24px; font-size: 13px; font-weight: bold; text-decoration: none; border-radius: ${style.buttonRadius}; text-transform: uppercase;">${escapeHtml(b.cta_text)}</a>` : ''}
+                        </div>
+                    </div>`;
+
+                case 'image_caption':
+                    return `
+                    <div style="padding: 15px; text-align: center;">
+                        <img src="${baseUrl}${b.image_url || 'bannerplayer.png'}" alt="Caption" style="max-width: 100%; height: auto; display: inline-block; border-radius: 4px;">
+                        <p style="margin: 8px 0 0 0; font-size: 13px; font-style: italic; color: #6b7280; font-family: ${style.fontFamily};">${escapeHtml(b.caption || '')}</p>
+                    </div>`;
+
+                case 'social_share':
+                    return `
+                    <div style="padding: 20px 25px; text-align: center; border-top: 1px solid #f0f0f0;">
+                        <p style="margin: 0 0 12px 0; font-size: 13px; font-weight: bold; color: #4f111c; text-transform: uppercase; font-family: ${style.fontFamily};">${escapeHtml(b.heading || 'Share This Update')}</p>
+                        <table align="center" cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                                <td style="padding: 0 6px;"><a href="https://www.facebook.com/sharer/sharer.php?u=https://kettleers.org" target="_blank" style="display:inline-block;background-color:#1877F2;color:#ffffff;padding:6px 12px;font-size:11px;font-weight:bold;text-decoration:none;border-radius:4px;">Share on Facebook</a></td>
+                                <td style="padding: 0 6px;"><a href="https://twitter.com/intent/tweet?text=Cotuit%20Kettleers" target="_blank" style="display:inline-block;background-color:#000000;color:#ffffff;padding:6px 12px;font-size:11px;font-weight:bold;text-decoration:none;border-radius:4px;">Post on X</a></td>
+                                <td style="padding: 0 6px;"><a href="mailto:?subject=Cotuit Kettleers Update" style="display:inline-block;background-color:#611724;color:#ffffff;padding:6px 12px;font-size:11px;font-weight:bold;text-decoration:none;border-radius:4px;">Forward Email</a></td>
+                            </tr>
+                        </table>
+                    </div>`;
+
+                case 'social_follow':
+                    return `
+                    <div style="padding: 22px; text-align: center; background-color: #FAFAFA; border-top: 1px solid #eee;">
+                        <p style="margin: 0 0 12px 0; font-size: 12px; font-weight: bold; color: #4f111c; text-transform: uppercase; letter-spacing: 1px; font-family: ${style.fontFamily};">Follow The Cotuit Kettleers</p>
+                        <table align="center" cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                                <td style="padding: 0 6px;"><a href="${b.facebook_url || 'https://facebook.com/kettleers'}" target="_blank" style="display:inline-block;background-color:#1A2B4C;color:#ffffff;padding:6px 12px;font-size:11px;font-weight:bold;text-decoration:none;border-radius:4px;">Facebook</a></td>
+                                <td style="padding: 0 6px;"><a href="${b.instagram_url || 'https://instagram.com/kettleers'}" target="_blank" style="display:inline-block;background-color:#8a2b3d;color:#ffffff;padding:6px 12px;font-size:11px;font-weight:bold;text-decoration:none;border-radius:4px;">Instagram</a></td>
+                                <td style="padding: 0 6px;"><a href="${b.twitter_url || 'https://x.com/kettleers'}" target="_blank" style="display:inline-block;background-color:#111111;color:#ffffff;padding:6px 12px;font-size:11px;font-weight:bold;text-decoration:none;border-radius:4px;">X</a></td>
+                                <td style="padding: 0 6px;"><a href="${b.website_url || 'https://kettleers.org'}" target="_blank" style="display:inline-block;background-color:#387843;color:#ffffff;padding:6px 12px;font-size:11px;font-weight:bold;text-decoration:none;border-radius:4px;">Website</a></td>
+                            </tr>
+                        </table>
+                    </div>`;
+
+                case 'button':
+                    return `
+                    <div style="padding: 15px 25px; text-align: ${b.align || 'center'};">
+                        <a href="${b.cta_url || '#'}" target="_blank" style="display: inline-block; background-color: ${b.button_color || style.buttonBg}; color: #ffffff; padding: 12px 28px; font-family: ${style.fontFamily}; font-size: 14px; font-weight: bold; text-decoration: none; border-radius: ${style.buttonRadius}; text-transform: uppercase; letter-spacing: 1px;">${escapeHtml(b.cta_text || 'Click Here')}</a>
+                    </div>`;
+
+                case 'footer':
+                    return `
+                    <div style="padding: 20px 25px; text-align: center; border-top: 1px solid #eee; background-color: #FAFAFA; font-family: ${style.fontFamily};">
+                        <p style="margin: 0 0 6px 0; font-size: 12px; color: #6b7280; line-height: 1.4;">${escapeHtml(b.text || '')}</p>
+                        <p style="margin: 0; font-size: 11px; color: #9ca3af;">Lowell Park, Cotuit, MA 02635 • <a href="#" style="color:#6b7280;text-decoration:underline;">Unsubscribe</a></p>
+                    </div>`;
+
+                case 'code':
+                    return `<div style="padding: 10px 15px;">${b.html_code || ''}</div>`;
+
+                case 'video':
+                    return `
+                    <div style="padding: 18px 25px; text-align: center;">
+                        <div style="position: relative; max-width: 560px; margin: 0 auto; background: #000; border-radius: 8px; overflow: hidden;">
+                            <a href="${b.video_url || 'https://youtube.com'}" target="_blank" style="display: block; text-decoration: none;">
+                                <img src="${baseUrl}${b.thumbnail_url || 'bannerplayer.png'}" alt="Video" style="width: 100%; height: auto; display: block; opacity: 0.85;">
+                                <div style="padding: 12px; background-color: #1A2B4C; color: #F4F1E1; font-weight: bold; font-size: 13px; text-align: center; text-transform: uppercase; letter-spacing: 1px;">
+                                    &#9658; ${escapeHtml(b.title || 'Play Video')}
+                                </div>
+                            </a>
+                        </div>
+                    </div>`;
+
+                case 'promo':
+                    return `
+                    <div style="padding: 35px 30px; text-align: center; background-color: #ffffff; margin-bottom: 15px;">
+                        <h2 style="font-family: 'Georgia', 'Times New Roman', serif; font-size: 24px; text-transform: uppercase; letter-spacing: 2px; color: #1A2B4C; margin: 0 0 20px 0;">${escapeHtml(b.heading || '')}</h2>
+                        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 25px;">
+                            <tr>
+                                <td width="190" valign="middle" align="center" style="padding-right: 18px;">
+                                    <div style="background-color: #F8F8F8; border-radius: 8px; padding: 10px; border: 1px solid #ECEAE0;">
+                                        <img src="${baseUrl}${b.image || 'StockingStuffer.png'}" alt="Promo" style="max-width: 170px; width: 100%; height: auto; display: block; margin: 0 auto;">
+                                    </div>
+                                </td>
+                                <td valign="middle" align="left" style="font-family: ${style.fontFamily}; font-size: 15px; line-height: 1.5; color: #333333;">
+                                    ${escapeHtml(b.body || '').replace(/\n/g, '<br>')}
+                                </td>
+                            </tr>
+                        </table>
+                        <div style="text-align: center; margin-top: 10px;">
+                            <a href="#" style="display: inline-block; background-color: ${style.buttonBg}; color: #ffffff; padding: 13px 32px; font-family: ${style.fontFamily}; font-size: 14px; font-weight: bold; text-decoration: none; border-radius: ${style.buttonRadius}; text-transform: uppercase; letter-spacing: 1px;">${escapeHtml(b.cta || 'Shop Now')}</a>
+                        </div>
+                    </div>`;
+
+                default:
+                    return '';
             }
-            return '';
         }).join('');
     }
 
@@ -781,7 +1225,7 @@ function renderEmailPreview() {
 function startNewCampaignWizard() {
     currentEditingCampaignId = null;
     wizardData = {
-        segment: 'all',
+        segments: ['all'],
         title: '',
         subject: '',
         template: 'Blank Canvas',
@@ -826,7 +1270,7 @@ function editCampaign(campaignId) {
     }
 
     wizardData = {
-        segment: 'all',
+        segments: ['all'],
         title: c.title || '',
         subject: c.subject || '',
         template: c.template_name || 'Blank Canvas',
@@ -838,19 +1282,6 @@ function editCampaign(campaignId) {
     syncWizardUI();
     switchTab('campaign-editor');
     goToWizardStep('design');
-}
-
-function selectAudienceSegment(segment) {
-    wizardData.segment = segment;
-    document.querySelectorAll('.segment-card').forEach(card => {
-        card.classList.remove('border-[#611724]', 'bg-red-50/20');
-        card.classList.add('border-gray-200');
-    });
-    const activeCard = document.getElementById(`segment-card-${segment}`);
-    if (activeCard) {
-        activeCard.classList.remove('border-gray-200');
-        activeCard.classList.add('border-[#611724]', 'bg-red-50/20');
-    }
 }
 
 function selectWizardTemplate(templateName) {
@@ -882,8 +1313,23 @@ function selectWizardTemplate(templateName) {
 function syncSetupFields() {
     const titleInput = document.getElementById('setup-campaign-title');
     const subjectInput = document.getElementById('setup-campaign-subject');
-    if (titleInput) wizardData.title = titleInput.value;
-    if (subjectInput) wizardData.subject = subjectInput.value;
+    const titleErr = document.getElementById('setup-title-error');
+    const subjectErr = document.getElementById('setup-subject-error');
+
+    if (titleInput) {
+        wizardData.title = titleInput.value;
+        if (titleInput.value.trim()) {
+            titleInput.classList.remove('border-red-500', 'bg-red-50/20');
+            if (titleErr) titleErr.classList.add('hidden');
+        }
+    }
+    if (subjectInput) {
+        wizardData.subject = subjectInput.value;
+        if (subjectInput.value.trim()) {
+            subjectInput.classList.remove('border-red-500', 'bg-red-50/20');
+            if (subjectErr) subjectErr.classList.add('hidden');
+        }
+    }
 }
 
 function syncWizardUI() {
@@ -891,7 +1337,7 @@ function syncWizardUI() {
     const subjectInput = document.getElementById('setup-campaign-subject');
     if (titleInput) titleInput.value = wizardData.title || '';
     if (subjectInput) subjectInput.value = wizardData.subject || '';
-    selectAudienceSegment(wizardData.segment || 'all');
+    renderAudienceCardsState();
     selectWizardTemplate(wizardData.template || 'Blank Canvas');
     syncStyleAndSettingsUI();
 }
@@ -899,11 +1345,14 @@ function syncWizardUI() {
 function populateConfirmStep() {
     syncSetupFields();
     
-    const audienceCount = wizardData.segment === 'all' 
-        ? allSubscribers.length 
-        : allSubscribers.filter(s => s.segment === wizardData.segment).length;
+    const segments = wizardData.segments || ['all'];
+    let audienceName = 'All Active Subscribers';
+    let audienceCount = allSubscribers.length;
 
-    const audienceName = wizardData.segment === 'all' ? 'All Active Subscribers' : wizardData.segment;
+    if (!segments.includes('all')) {
+        audienceName = segments.join(', ');
+        audienceCount = allSubscribers.filter(s => segments.includes(s.segment)).length;
+    }
     
     const audEl = document.getElementById('confirm-review-audience');
     const subEl = document.getElementById('confirm-review-subject');
@@ -915,9 +1364,21 @@ function populateConfirmStep() {
 }
 
 function goToWizardStep(stepName) {
-    const stepIndex = WIZARD_STEPS.indexOf(stepName);
-    if (stepIndex === -1) return;
-    currentWizardStepIndex = stepIndex;
+    const targetIndex = WIZARD_STEPS.indexOf(stepName);
+    if (targetIndex === -1) return;
+
+    // Enforce step validation when trying to jump ahead
+    if (targetIndex > 0 && !validateCurrentStep()) {
+        return;
+    }
+    if (targetIndex > 1) {
+        currentWizardStepIndex = 1;
+        if (!validateCurrentStep()) {
+            return;
+        }
+    }
+
+    currentWizardStepIndex = targetIndex;
 
     document.querySelectorAll('.wizard-pane').forEach(el => el.classList.add('hidden-view'));
     const activePane = document.getElementById(`wizard-step-${stepName}`);
@@ -951,6 +1412,10 @@ function goToWizardStep(stepName) {
         }
     }
 
+    if (stepName === 'recipients') {
+        renderAudienceCardsState();
+    }
+
     if (stepName === 'design') {
         syncSetupFields();
         syncStyleAndSettingsUI();
@@ -966,6 +1431,9 @@ function goToWizardStep(stepName) {
 }
 
 function wizardNextStep() {
+    if (!validateCurrentStep()) {
+        return;
+    }
     if (currentWizardStepIndex < WIZARD_STEPS.length - 1) {
         goToWizardStep(WIZARD_STEPS[currentWizardStepIndex + 1]);
     }
@@ -1046,9 +1514,9 @@ function openReportView(campaignId = null) {
 
             if (rTitle) rTitle.textContent = c.title;
             if (rMeta) rMeta.textContent = `Dispatched • ${c.target_date || 'Recent'}`;
-            if (rOpens) rOpens.textContent = Math.round(12410 * (c.open_rate / 100)).toLocaleString();
+            if (rOpens) rOpens.textContent = (Number(c.opens) || Math.round(12410 * (c.open_rate / 100))).toLocaleString();
             if (rOpenRate) rOpenRate.textContent = `${c.open_rate}% Open Rate`;
-            if (rClicks) rClicks.textContent = Math.round(12410 * (c.click_rate / 100)).toLocaleString();
+            if (rClicks) rClicks.textContent = (Number(c.clicks) || Math.round(12410 * (c.click_rate / 100))).toLocaleString();
             if (rClickRate) rClickRate.textContent = `${c.click_rate}% Click Rate`;
         }
     }
@@ -1179,11 +1647,18 @@ async function dispatchCampaignBlast() {
     syncSetupFields();
     const subject = (wizardData.subject || '').trim() || 'Kettleers Broadcast';
     const html_content = generateEmailHtml(true);
-    const segment = wizardData.segment || 'all';
+    const segments = wizardData.segments || ['all'];
+    const segmentParam = segments.includes('all') ? 'all' : segments.join(',');
 
     try {
         const { data, error } = await db.functions.invoke('send-campaign', {
-            body: { subject, html_content, is_test: false, segment: segment }
+            body: { 
+                subject, 
+                html_content, 
+                is_test: false, 
+                segment: segmentParam,
+                segments: segments 
+            }
         });
 
         if (error) throw error;
