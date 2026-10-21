@@ -16,7 +16,6 @@ let loadedCampaigns = [];
 let allSubscribers = [];
 let currentEditingCampaignId = null;
 
-// Block Engine & Styling Defaults
 const WIZARD_STEPS = ['recipients', 'setup', 'template', 'design', 'confirm'];
 let currentWizardStepIndex = 0;
 
@@ -51,55 +50,108 @@ let wizardData = {
 };
 
 // -------------------------------------------------------------
-// Authentication Flow
+// Authentication Flow (Fail-Safe View Toggle)
 // -------------------------------------------------------------
+function setViewAuthenticated(isAuthenticated) {
+    const authView = document.getElementById('auth-view');
+    const appView = document.getElementById('app-view');
+
+    if (isAuthenticated) {
+        if (authView) {
+            authView.classList.add('hidden-view');
+            authView.style.setProperty('display', 'none', 'important');
+        }
+        if (appView) {
+            appView.classList.remove('hidden-view');
+            appView.style.removeProperty('display');
+        }
+    } else {
+        if (authView) {
+            authView.classList.remove('hidden-view');
+            authView.style.removeProperty('display');
+        }
+        if (appView) {
+            appView.classList.add('hidden-view');
+            appView.style.setProperty('display', 'none', 'important');
+        }
+    }
+}
+
 if (db) {
     db.auth.onAuthStateChange((event, session) => {
-        const authView = document.getElementById('auth-view');
-        const appView = document.getElementById('app-view');
-        
         if (session) {
-            authView.classList.add('hidden');
-            appView.classList.remove('hidden-view');
-            initDashboardFilters();
-            loadSubscribers();
-            loadDashboardAndCampaigns();
+            setViewAuthenticated(true);
+            try { initDashboardFilters(); } catch (e) { console.warn(e); }
+            try { loadSubscribers(); } catch (e) { console.warn(e); }
+            try { loadDashboardAndCampaigns(); } catch (e) { console.warn(e); }
         } else {
-            authView.classList.remove('hidden');
-            appView.classList.add('hidden-view');
+            setViewAuthenticated(false);
         }
     });
 }
 
 async function handleLogin(e) {
     if (e) e.preventDefault();
-    if (!db) return;
+    const errorDiv = document.getElementById('auth-error');
+    const submitBtn = document.getElementById('auth-submit-btn');
+
+    if (!db) {
+        if (errorDiv) {
+            errorDiv.textContent = 'Database failed to initialize. Please refresh.';
+            errorDiv.classList.remove('hidden');
+        }
+        return;
+    }
 
     const email = document.getElementById('auth-email').value;
     const password = document.getElementById('auth-password').value;
-    const submitBtn = document.getElementById('auth-submit-btn');
-    const errorDiv = document.getElementById('auth-error');
 
-    submitBtn.textContent = 'Authenticating...';
-    submitBtn.disabled = true;
-    errorDiv.classList.add('hidden');
+    if (submitBtn) {
+        submitBtn.textContent = 'Authenticating...';
+        submitBtn.disabled = true;
+    }
+    if (errorDiv) errorDiv.classList.add('hidden');
 
-    const { error } = await db.auth.signInWithPassword({ email, password });
+    try {
+        const { data, error } = await db.auth.signInWithPassword({ email, password });
 
-    if (error) {
-        errorDiv.textContent = error.message;
-        errorDiv.classList.remove('hidden');
-        submitBtn.textContent = 'Sign In';
-        submitBtn.disabled = false;
-    } else {
-        submitBtn.textContent = 'Sign In';
-        submitBtn.disabled = false;
-        document.getElementById('login-form').reset();
+        if (error) {
+            if (errorDiv) {
+                errorDiv.textContent = error.message;
+                errorDiv.classList.remove('hidden');
+            }
+            if (submitBtn) {
+                submitBtn.textContent = 'Sign In';
+                submitBtn.disabled = false;
+            }
+        } else if (data && data.session) {
+            // Immediate forced UI swap on authentication success
+            setViewAuthenticated(true);
+            if (submitBtn) {
+                submitBtn.textContent = 'Sign In';
+                submitBtn.disabled = false;
+            }
+            document.getElementById('login-form')?.reset();
+            try { initDashboardFilters(); } catch (e) { console.warn(e); }
+            try { loadSubscribers(); } catch (e) { console.warn(e); }
+            try { loadDashboardAndCampaigns(); } catch (e) { console.warn(e); }
+        }
+    } catch (err) {
+        console.error('Login exception:', err);
+        if (errorDiv) {
+            errorDiv.textContent = err.message || 'Authentication error';
+            errorDiv.classList.remove('hidden');
+        }
+        if (submitBtn) {
+            submitBtn.textContent = 'Sign In';
+            submitBtn.disabled = false;
+        }
     }
 }
 
 async function handleLogout() {
     if (db) await db.auth.signOut();
+    setViewAuthenticated(false);
 }
 
 // -------------------------------------------------------------
@@ -1074,7 +1126,7 @@ function generateEmailHtml(isLiveSend = false) {
                         <div style="padding: 20px; font-family: ${style.fontFamily}; text-align: center;">
                             <h3 style="margin: 0 0 10px 0; font-size: 20px; color: #111827;">${escapeHtml(b.heading || '')}</h3>
                             <p style="margin: 0 0 15px 0; font-size: 14px; line-height: 1.5; color: #4b5563;">${escapeHtml(b.body || '').replace(/\n/g, '<br>')}</p>
-                            ${b.cta_text ? `<a href="${b.cta_url \vert{}\vert{} '#'}" style="display: inline-block; background-color: ${style.buttonBg}; color: #ffffff; padding: 10px 24px; font-size: 13px; font-weight: bold; text-decoration: none; border-radius: ${style.buttonRadius}; text-transform: uppercase;">${escapeHtml(b.cta_text)}</a>` : ''}
+                            ${b.cta_text ? `<a href="${b.cta_url || '#'}" style="display: inline-block; background-color: ${style.buttonBg}; color: #ffffff; padding: 10px 24px; font-size: 13px; font-weight: bold; text-decoration: none; border-radius: ${style.buttonRadius}; text-transform: uppercase;">${escapeHtml(b.cta_text)}</a>` : ''}
                         </div>
                     </div>`;
 
@@ -1367,15 +1419,10 @@ function goToWizardStep(stepName) {
     const targetIndex = WIZARD_STEPS.indexOf(stepName);
     if (targetIndex === -1) return;
 
-    // Enforce step validation when trying to jump ahead
-    if (targetIndex > 0 && !validateCurrentStep()) {
-        return;
-    }
+    if (targetIndex > 0 && !validateCurrentStep()) return;
     if (targetIndex > 1) {
         currentWizardStepIndex = 1;
-        if (!validateCurrentStep()) {
-            return;
-        }
+        if (!validateCurrentStep()) return;
     }
 
     currentWizardStepIndex = targetIndex;
@@ -1412,28 +1459,20 @@ function goToWizardStep(stepName) {
         }
     }
 
-    if (stepName === 'recipients') {
-        renderAudienceCardsState();
-    }
-
+    if (stepName === 'recipients') renderAudienceCardsState();
     if (stepName === 'design') {
         syncSetupFields();
         syncStyleAndSettingsUI();
         renderEditorBlocks();
         renderEmailPreview();
     }
-
-    if (stepName === 'confirm') {
-        populateConfirmStep();
-    }
+    if (stepName === 'confirm') populateConfirmStep();
 
     safeCreateIcons();
 }
 
 function wizardNextStep() {
-    if (!validateCurrentStep()) {
-        return;
-    }
+    if (!validateCurrentStep()) return;
     if (currentWizardStepIndex < WIZARD_STEPS.length - 1) {
         goToWizardStep(WIZARD_STEPS[currentWizardStepIndex + 1]);
     }
@@ -1489,7 +1528,7 @@ function switchTab(tabId) {
     const activeNav = document.getElementById('nav-' + tabId);
     if (activeNav) activeNav.classList.add('active');
     
-    if(window.innerWidth < 768 && sidebar) { sidebar.classList.add('hidden'); }
+    if (window.innerWidth < 768 && sidebar) { sidebar.classList.add('hidden'); }
     if (tabId === 'dashboard' || tabId === 'campaigns') loadDashboardAndCampaigns();
     if (tabId === 'subscribers') loadSubscribers();
     if (tabId === 'analytics') renderAnalyticsView();
