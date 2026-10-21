@@ -32,6 +32,11 @@
             }
         }
     </script>
+    <style>
+        /* Critical layout overrides to guarantee view switching */
+        .hidden-view { display: none !important; }
+        body { font-family: 'Roboto Slab', serif; }
+    </style>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-kettleer-maroonDark text-gray-800 relative h-screen overflow-hidden">
@@ -342,7 +347,6 @@
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 font-sans mb-8">
-                                <!-- All Active Subscribers -->
                                 <div onclick="toggleAudienceSegment('all')" id="segment-card-all" class="segment-card cursor-pointer p-5 bg-white border-2 border-[#611724] rounded-xl shadow hover:border-black transition-all flex items-start justify-between">
                                     <div>
                                         <div class="flex items-center gap-2 mb-1">
@@ -354,7 +358,6 @@
                                     <span id="segment-count-all" class="bg-gray-100 text-[#611724] font-bold px-2 py-0.5 rounded text-xs shrink-0">...</span>
                                 </div>
 
-                                <!-- General Fan -->
                                 <div onclick="toggleAudienceSegment('General Fan')" id="segment-card-General Fan" class="segment-card cursor-pointer p-5 bg-white border-2 border-gray-200 rounded-xl shadow hover:border-[#611724] transition-all flex items-start justify-between">
                                     <div>
                                         <div class="flex items-center gap-2 mb-1">
@@ -366,7 +369,6 @@
                                     <span id="segment-count-General Fan" class="bg-gray-100 text-gray-600 font-bold px-2 py-0.5 rounded text-xs shrink-0">...</span>
                                 </div>
 
-                                <!-- All-Star Member -->
                                 <div onclick="toggleAudienceSegment('All-Star Member')" id="segment-card-All-Star Member" class="segment-card cursor-pointer p-5 bg-white border-2 border-gray-200 rounded-xl shadow hover:border-[#611724] transition-all flex items-start justify-between">
                                     <div>
                                         <div class="flex items-center gap-2 mb-1">
@@ -378,7 +380,6 @@
                                     <span id="segment-count-All-Star Member" class="bg-gray-100 text-gray-600 font-bold px-2 py-0.5 rounded text-xs shrink-0">...</span>
                                 </div>
 
-                                <!-- Supporter -->
                                 <div onclick="toggleAudienceSegment('Supporter')" id="segment-card-Supporter" class="segment-card cursor-pointer p-5 bg-white border-2 border-gray-200 rounded-xl shadow hover:border-[#611724] transition-all flex items-start justify-between">
                                     <div>
                                         <div class="flex items-center gap-2 mb-1">
@@ -390,7 +391,6 @@
                                     <span id="segment-count-Supporter" class="bg-gray-100 text-gray-600 font-bold px-2 py-0.5 rounded text-xs shrink-0">...</span>
                                 </div>
 
-                                <!-- Host Family -->
                                 <div onclick="toggleAudienceSegment('Host Family')" id="segment-card-Host Family" class="segment-card cursor-pointer p-5 bg-white border-2 border-gray-200 rounded-xl shadow hover:border-[#611724] transition-all flex items-start justify-between">
                                     <div>
                                         <div class="flex items-center gap-2 mb-1">
@@ -402,7 +402,6 @@
                                     <span id="segment-count-Host Family" class="bg-gray-100 text-gray-600 font-bold px-2 py-0.5 rounded text-xs shrink-0">...</span>
                                 </div>
 
-                                <!-- Alumni -->
                                 <div onclick="toggleAudienceSegment('Alumni')" id="segment-card-Alumni" class="segment-card cursor-pointer p-5 bg-white border-2 border-gray-200 rounded-xl shadow hover:border-[#611724] transition-all flex items-start justify-between">
                                     <div>
                                         <div class="flex items-center gap-2 mb-1">
@@ -507,8 +506,6 @@
                         
                         <!-- Left Panel: Canvas Preview -->
                         <div class="w-full md:flex-1 bg-[#E8E6D9] p-4 md:p-8 flex flex-col items-center order-2 md:order-1 overflow-y-auto h-auto md:h-full">
-                            
-                            <!-- Responsive Device Switcher Controls -->
                             <div class="flex items-center justify-between pb-3 mb-4 border-b border-black/10 w-full max-w-[650px] shrink-0">
                                 <span class="text-xs font-bold text-gray-600 uppercase tracking-wider flex items-center gap-1.5">
                                     <i data-lucide="eye" class="w-4 h-4"></i> Live Preview
@@ -522,8 +519,6 @@
                                     </button>
                                 </div>
                             </div>
-
-                            <!-- Live HTML Container injected via JS -->
                             <div id="email-preview-container" class="w-full transition-all duration-300"></div>
                         </div>
 
@@ -545,87 +540,60 @@
                                 
                                 <!-- BLOCKS PANE -->
                                 <div id="pane-blocks" class="block">
-                                    <div id="editor-blocks-list" class="space-y-4">
-                                        <!-- Blocks injected via JS -->
-                                    </div>
+                                    <div id="editor-blocks-list" class="space-y-4"></div>
 
                                     <!-- Mailchimp Full 13-Block Tray -->
                                     <div class="mt-8 border-t border-gray-300 pt-6">
                                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-3 text-center">Add Content Block</label>
                                         <div class="grid grid-cols-3 gap-2">
-                                            <!-- 1. Text -->
                                             <button type="button" onclick="addBlock('text')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
                                                 <i data-lucide="align-left" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
                                                 <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Text</span>
                                             </button>
-
-                                            <!-- 2. Boxed Text -->
                                             <button type="button" onclick="addBlock('boxed_text')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
                                                 <i data-lucide="box" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
                                                 <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Boxed Text</span>
                                             </button>
-
-                                            <!-- 3. Divider -->
                                             <button type="button" onclick="addBlock('divider')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
                                                 <i data-lucide="minus" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
                                                 <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Divider</span>
                                             </button>
-
-                                            <!-- 4. Image -->
                                             <button type="button" onclick="addBlock('image')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
                                                 <i data-lucide="image" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
                                                 <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Image</span>
                                             </button>
-
-                                            <!-- 5. Image Group -->
                                             <button type="button" onclick="addBlock('image_group')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
                                                 <i data-lucide="layout-grid" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
                                                 <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Image Group</span>
                                             </button>
-
-                                            <!-- 6. Image Card -->
                                             <button type="button" onclick="addBlock('image_card')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
                                                 <i data-lucide="panel-top" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
                                                 <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Image Card</span>
                                             </button>
-
-                                            <!-- 7. Image + Caption -->
                                             <button type="button" onclick="addBlock('image_caption')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
                                                 <i data-lucide="file-text" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
                                                 <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Image + Caption</span>
                                             </button>
-
-                                            <!-- 8. Social Share -->
                                             <button type="button" onclick="addBlock('social_share')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
                                                 <i data-lucide="share-2" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
                                                 <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Social Share</span>
                                             </button>
-
-                                            <!-- 9. Social Follow -->
                                             <button type="button" onclick="addBlock('social_follow')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
                                                 <i data-lucide="users" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
                                                 <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Social Follow</span>
                                             </button>
-
-                                            <!-- 10. Button -->
                                             <button type="button" onclick="addBlock('button')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
                                                 <i data-lucide="rectangle-horizontal" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
                                                 <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Button</span>
                                             </button>
-
-                                            <!-- 11. Footer -->
                                             <button type="button" onclick="addBlock('footer')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
                                                 <i data-lucide="panel-bottom" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
                                                 <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Footer</span>
                                             </button>
-
-                                            <!-- 12. Code -->
                                             <button type="button" onclick="addBlock('code')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
                                                 <i data-lucide="code" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
                                                 <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Code</span>
                                             </button>
-
-                                            <!-- 13. Video -->
                                             <button type="button" onclick="addBlock('video')" class="col-span-3 flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
                                                 <i data-lucide="play-circle" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
                                                 <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Video</span>
@@ -638,7 +606,6 @@
                                 <div id="pane-style" class="hidden-view space-y-5 font-sans">
                                     <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm space-y-4">
                                         <h4 class="font-display text-lg text-[#4f111c] uppercase tracking-wider border-b pb-2">Color Scheme</h4>
-                                        
                                         <div>
                                             <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Outer Canvas Background</label>
                                             <div class="flex items-center gap-3">
@@ -646,7 +613,6 @@
                                                 <input type="text" id="style-canvas-bg-text" oninput="updateStyle('canvasBg', this.value)" class="flex-1 bg-gray-50 border border-gray-300 rounded p-2 text-xs font-mono uppercase">
                                             </div>
                                         </div>
-
                                         <div>
                                             <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Email Card Background</label>
                                             <div class="flex items-center gap-3">
@@ -654,7 +620,6 @@
                                                 <input type="text" id="style-content-bg-text" oninput="updateStyle('contentBg', this.value)" class="flex-1 bg-gray-50 border border-gray-300 rounded p-2 text-xs font-mono uppercase">
                                             </div>
                                         </div>
-
                                         <div>
                                             <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Header Banner Background</label>
                                             <div class="flex items-center gap-3">
@@ -662,7 +627,6 @@
                                                 <input type="text" id="style-header-bg-text" oninput="updateStyle('headerBg', this.value)" class="flex-1 bg-gray-50 border border-gray-300 rounded p-2 text-xs font-mono uppercase">
                                             </div>
                                         </div>
-
                                         <div>
                                             <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Accent / Border Color</label>
                                             <div class="flex items-center gap-3">
@@ -671,10 +635,8 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm space-y-4">
                                         <h4 class="font-display text-lg text-[#4f111c] uppercase tracking-wider border-b pb-2">Typography</h4>
-                                        
                                         <div>
                                             <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Email Body Font</label>
                                             <select id="style-font-family" onchange="updateStyle('fontFamily', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-xs font-medium focus:border-[#4f111c] focus:outline-none">
@@ -685,10 +647,8 @@
                                             </select>
                                         </div>
                                     </div>
-
                                     <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm space-y-4">
                                         <h4 class="font-display text-lg text-[#4f111c] uppercase tracking-wider border-b pb-2">Buttons & Links</h4>
-                                        
                                         <div>
                                             <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Button Color</label>
                                             <div class="flex items-center gap-3">
@@ -696,7 +656,6 @@
                                                 <input type="text" id="style-button-bg-text" oninput="updateStyle('buttonBg', this.value)" class="flex-1 bg-gray-50 border border-gray-300 rounded p-2 text-xs font-mono uppercase">
                                             </div>
                                         </div>
-
                                         <div>
                                             <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Button Corner Rounding</label>
                                             <select id="style-button-radius" onchange="updateStyle('buttonRadius', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-xs font-medium focus:border-[#4f111c] focus:outline-none">
@@ -713,7 +672,6 @@
                                 <div id="pane-settings" class="hidden-view space-y-5 font-sans">
                                     <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm space-y-4">
                                         <h4 class="font-display text-lg text-[#4f111c] uppercase tracking-wider border-b pb-2">Inbox Preview</h4>
-                                        
                                         <div>
                                             <div class="flex justify-between items-center mb-1">
                                                 <label class="text-xs font-bold uppercase text-gray-700">Preheader Snippet</label>
@@ -726,7 +684,6 @@
 
                                     <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm space-y-4">
                                         <h4 class="font-display text-lg text-[#4f111c] uppercase tracking-wider border-b pb-2">Layout & Header</h4>
-                                        
                                         <div>
                                             <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Email Max Width</label>
                                             <select id="settings-max-width" onchange="updateSettings('maxWidth', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-xs font-medium focus:border-[#4f111c] focus:outline-none">
@@ -735,7 +692,6 @@
                                                 <option value="660px">Wide (660px)</option>
                                             </select>
                                         </div>
-
                                         <div class="flex items-center justify-between pt-2">
                                             <div>
                                                 <span class="text-xs font-bold uppercase text-gray-800">Lowell Park Banner</span>
@@ -746,7 +702,6 @@
                                                 <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#387843]"></div>
                                             </label>
                                         </div>
-
                                         <div class="flex items-center justify-between pt-2">
                                             <div>
                                                 <span class="text-xs font-bold uppercase text-gray-800">'View in Browser' Link</span>
@@ -761,7 +716,6 @@
 
                                     <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm space-y-4">
                                         <h4 class="font-display text-lg text-[#4f111c] uppercase tracking-wider border-b pb-2">Footer & Address</h4>
-                                        
                                         <div>
                                             <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Footer Copyright & Address</label>
                                             <textarea id="settings-footer-text" rows="2" oninput="updateSettings('footerText', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-xs focus:border-[#4f111c] focus:outline-none leading-relaxed"></textarea>
@@ -838,7 +792,6 @@
                         <i data-lucide="chevron-left" class="w-4 h-4"></i> <span id="wizard-prev-label">Back</span>
                     </button>
                     
-                    <!-- Steps Breadcrumbs -->
                     <div class="flex gap-2 md:gap-4 tracking-wide items-center overflow-x-auto whitespace-nowrap hide-scrollbar px-2">
                         <button onclick="goToWizardStep('recipients')" id="step-nav-recipients" class="wizard-step-link font-bold text-white text-xs md:text-sm">Recipients</button>
                         <i data-lucide="chevron-right" class="w-3 h-3 md:w-4 md:h-4 opacity-40"></i>
@@ -851,7 +804,6 @@
                         <button onclick="goToWizardStep('confirm')" id="step-nav-confirm" class="wizard-step-link opacity-60 hover:opacity-100 text-xs md:text-sm">Confirm</button>
                     </div>
 
-                    <!-- High contrast hover styling -->
                     <button onclick="wizardNextStep()" id="wizard-next-btn" class="flex items-center gap-1 uppercase tracking-wider font-bold shrink-0 bg-[#F4F1E1] text-[#4f111c] px-4 py-1.5 rounded border-2 border-[#4f111c] hover:bg-[#4f111c] hover:text-[#F4F1E1] transition-all shadow">
                         <span id="wizard-next-label">Next</span> <i data-lucide="chevron-right" class="w-4 h-4"></i>
                     </button>
