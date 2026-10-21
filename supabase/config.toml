@@ -1,0 +1,8 @@
+# Project ref: dzrrkdfdhkcwaydgifwi
+# Gateway check for the send-campaign Edge Function.
+# Deploy with: supabase functions deploy send-campaign
+# Do not pass --no-verify-jwt. That flag would leave the function open again.
+# The function also checks the signed-in user itself. Both checks stay on.
+
+[functions.send-campaign]
+verify_jwt = true
