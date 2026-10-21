@@ -1149,17 +1149,43 @@
             });
         }
 
-        async function sendTestEmail() {
+async function sendTestEmail() {
             const statusText = document.getElementById('editor-status-text');
             statusText.textContent = 'Sending test...';
 
             const subject = document.getElementById('editor-campaign-subject').value.trim() || 'Test Campaign';
             const heading = document.getElementById('editor-heading').value;
             const body = document.getElementById('editor-body').value;
-            const html_content = `<div style="font-family: sans-serif;"><h1>${heading}</h1><p>${body.replace(/\n/g, '<br>')}</p></div>`;
+            
+            // This is a rigid, inline-styled email template designed to survive Gmail/Apple Mail stripping
+            const html_content = `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #F4F1E1; padding: 20px;">
+                <!-- Header -->
+                <div style="background-color: #1A2B4C; padding: 40px 20px; text-align: center;">
+                    <h1 style="margin: 0; font-size: 36px; text-transform: uppercase; letter-spacing: 2px; color: #F4F1E1;">Cotuit Kettleers</h1>
+                </div>
+                
+                <!-- Main Content -->
+                <div style="background-color: #ffffff; padding: 40px 30px; border-bottom: 4px solid #611724; text-align: center;">
+                    <h2 style="color: #000000; font-size: 24px; margin-top: 0; margin-bottom: 20px;">${heading}</h2>
+                    <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0;">${body.replace(/\n/g, '<br>')}</p>
+                </div>
+                
+                <!-- Promo Block -->
+                <div style="padding: 30px; text-align: center; border: 2px solid #e8e4d1; margin-top: 20px; background-color: #ffffff;">
+                    <h3 style="color: #1A2B4C; font-size: 20px; text-transform: uppercase; margin-top: 0;">Stocking Stuffers Promo</h3>
+                    <p style="color: #333333; font-size: 16px; line-height: 1.5;">The Perfect Stocking Stuffers! Holiday Season Special: Use code <strong style="color: #000;">FANS20</strong> at checkout for 20% off all caps, tees, and collectibles.</p>
+                    <a href="#" style="display: inline-block; background-color: #2E5B82; color: #ffffff; padding: 14px 28px; text-decoration: none; font-weight: bold; border-radius: 4px; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px;">Shop Holiday Special</a>
+                </div>
+                
+                <!-- Footer -->
+                <div style="text-align: center; padding-top: 20px;">
+                    <p style="color: #888888; font-size: 12px;">© 2026 Cotuit Kettleers Baseball. Lowell Park, Cotuit, MA.</p>
+                </div>
+            </div>
+            `;
 
             try {
-                // We use your verified Resend email for the sandbox test
                 const { data, error } = await db.functions.invoke('send-campaign', {
                     body: { subject, html_content, test_email: 'aaron@uscilla.com' }
                 });
@@ -1167,7 +1193,7 @@
                 if (error) throw error;
                 
                 statusText.textContent = 'Test sent!';
-                alert('Success! Check your inbox at aaron@uscilla.com.');
+                alert('Success! Check your inbox.');
             } catch (error) {
                 console.error('Error sending email:', error);
                 statusText.textContent = 'Send failed';
