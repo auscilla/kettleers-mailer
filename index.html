@@ -138,7 +138,7 @@
                     </div>
                 </div>
 
-                <!-- Performance Metrics (Dynamic) -->
+                <!-- Performance Metrics -->
                 <h3 class="font-display text-3xl md:text-4xl mb-4 md:mb-6 text-black">Performance</h3>
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-8 md:mb-12">
                     <div>
@@ -163,7 +163,7 @@
                     </div>
                 </div>
 
-                <!-- Recent Campaigns (Dynamic) -->
+                <!-- Recent Campaigns -->
                 <h3 class="font-display text-2xl md:text-3xl mb-4 text-black border-b border-gray-300 pb-2">Recent Campaigns</h3>
                 <div id="dashboard-recent-campaigns" class="flex flex-col divide-y divide-gray-300">
                     <div class="py-6 text-center text-gray-500 font-sans italic">Loading recent campaigns...</div>
@@ -196,7 +196,6 @@
                                 <th class="pb-3 md:pb-4 font-bold text-right pr-2">Actions</th>
                             </tr>
                         </thead>
-                        <!-- Dynamic body injected by loadCampaigns() -->
                         <tbody id="campaigns-table-body" class="text-base md:text-lg divide-y divide-gray-200">
                             <tr>
                                 <td colspan="6" class="py-8 text-center text-gray-500 font-sans italic">Loading campaigns from database...</td>
@@ -214,7 +213,7 @@
                     <h2 class="font-display text-4xl md:text-5xl uppercase tracking-wider shadow-sm leading-tight">Templates</h2>
                     <p class="text-lg md:text-xl mt-1 md:mt-2 opacity-90 font-medium">Pre-Engineered Newsletter Frameworks</p>
                 </div>
-                <button onclick="openCampaignEditor('Template Builder')" class="w-full md:w-auto bg-[#F4F1E1] text-[#4f111c] font-display px-6 py-2 md:py-3 border-[3px] border-[#4f111c] rounded shadow-[4px_4px_0px_#4f111c] hover:translate-y-1 hover:shadow-[2px_2px_0px_#4f111c] transition-all uppercase tracking-wider text-lg md:text-xl flex items-center justify-center gap-2">
+                <button onclick="startNewCampaignWithTemplate('Custom Blank Template')" class="w-full md:w-auto bg-[#F4F1E1] text-[#4f111c] font-display px-6 py-2 md:py-3 border-[3px] border-[#4f111c] rounded shadow-[4px_4px_0px_#4f111c] hover:translate-y-1 hover:shadow-[2px_2px_0px_#4f111c] transition-all uppercase tracking-wider text-lg md:text-xl flex items-center justify-center gap-2">
                     <i data-lucide="plus" class="w-5 h-5"></i> New Template
                 </button>
             </header>
@@ -241,7 +240,7 @@
                         </div>
                     </div>
                     <div class="flex gap-3 pt-4 border-t border-gray-300">
-                        <button onclick="openCampaignEditor('Campaign Editor')" class="flex-1 bg-[#4f111c] text-[#F4F1E1] font-display text-sm uppercase py-2.5 rounded shadow hover:bg-black transition-colors">Use In Campaign</button>
+                        <button onclick="startNewCampaignWithTemplate('The Weekly Ballpark Bulletin')" class="flex-1 bg-[#4f111c] text-[#F4F1E1] font-display text-sm uppercase py-2.5 rounded shadow hover:bg-black transition-colors">Use In Campaign</button>
                         <button class="border-2 border-[#4f111c] text-[#4f111c] font-display text-sm uppercase px-4 py-2.5 rounded hover:bg-[#4f111c] hover:text-[#F4F1E1] transition-colors">Preview</button>
                     </div>
                 </div>
@@ -267,7 +266,7 @@
                         </div>
                     </div>
                     <div class="flex gap-3 pt-4 border-t border-gray-300">
-                        <button onclick="openCampaignEditor('Campaign Editor')" class="flex-1 bg-[#4f111c] text-[#F4F1E1] font-display text-sm uppercase py-2.5 rounded shadow hover:bg-black transition-colors">Use In Campaign</button>
+                        <button onclick="startNewCampaignWithTemplate('The Kettleers Gazette')" class="flex-1 bg-[#4f111c] text-[#F4F1E1] font-display text-sm uppercase py-2.5 rounded shadow hover:bg-black transition-colors">Use In Campaign</button>
                         <button class="border-2 border-[#4f111c] text-[#4f111c] font-display text-sm uppercase px-4 py-2.5 rounded hover:bg-[#4f111c] hover:text-[#F4F1E1] transition-colors">Preview</button>
                     </div>
                 </div>
@@ -334,7 +333,7 @@
             </header>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-                <div class="bg-[#F4F1E1] rounded-2xl p-6 shadow-xl border-4 border-[#e8e4d1] flex flex-col hover:border-[#611724] transition-colors cursor-pointer group" onclick="openCampaignEditor('Campaign Editor')">
+                <div class="bg-[#F4F1E1] rounded-2xl p-6 shadow-xl border-4 border-[#e8e4d1] flex flex-col hover:border-[#611724] transition-colors cursor-pointer group" onclick="startNewCampaignWithTemplate('Blank Canvas')">
                     <div class="flex-1 flex flex-col items-center justify-center py-8 text-gray-400 group-hover:text-[#611724] transition-colors">
                         <i data-lucide="file-plus-2" class="w-16 h-16 mb-4"></i>
                         <h3 class="font-display text-2xl uppercase">Blank Canvas</h3>
@@ -342,7 +341,7 @@
                     </div>
                 </div>
 
-                <div class="bg-[#F4F1E1] rounded-2xl p-6 shadow-xl border-4 border-[#e8e4d1] flex flex-col hover:border-[#611724] transition-colors cursor-pointer group" onclick="openCampaignEditor('Campaign Editor')">
+                <div class="bg-[#F4F1E1] rounded-2xl p-6 shadow-xl border-4 border-[#e8e4d1] flex flex-col hover:border-[#611724] transition-colors cursor-pointer group" onclick="startNewCampaignWithTemplate('The Weekly Ballpark Bulletin')">
                     <div class="flex justify-between items-start mb-4">
                         <span class="bg-kettleer-navy text-[#F4F1E1] text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded">In-Season</span>
                     </div>
@@ -355,7 +354,7 @@
                     <div class="text-center font-bold text-sm text-[#4f111c] uppercase tracking-wider border-t border-gray-300 pt-4 group-hover:underline">Use Template &rarr;</div>
                 </div>
 
-                <div class="bg-[#F4F1E1] rounded-2xl p-6 shadow-xl border-4 border-[#e8e4d1] flex flex-col hover:border-[#611724] transition-colors cursor-pointer group" onclick="openCampaignEditor('Campaign Editor')">
+                <div class="bg-[#F4F1E1] rounded-2xl p-6 shadow-xl border-4 border-[#e8e4d1] flex flex-col hover:border-[#611724] transition-colors cursor-pointer group" onclick="startNewCampaignWithTemplate('The Kettleers Gazette')">
                     <div class="flex justify-between items-start mb-4">
                         <span class="bg-[#8a2b3d] text-[#F4F1E1] text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded">Offseason</span>
                     </div>
@@ -373,59 +372,50 @@
         <!-- ================= 6. CAMPAIGN DESIGN STUDIO VIEW ================= -->
         <div id="view-campaign-editor" class="hidden-view w-full min-h-full bg-kettleer-maroonDark relative text-gray-800 flex flex-col md:overflow-hidden">
              
+            <!-- Header Bar -->
             <div class="bg-kettleer-maroonDark text-[#F4F1E1] py-3 md:py-4 px-4 md:px-8 flex flex-col md:flex-row justify-between items-start md:items-center shrink-0 border-b border-white/10 z-10 shadow-sm gap-4">
                 <div class="flex items-center gap-4 md:gap-6">
-                    <button onclick="document.getElementById('view-campaign-editor').classList.add('hidden-view'); document.getElementById('view-template-selector').classList.remove('hidden-view');" class="hover:text-white flex items-center gap-1 text-xs md:text-sm uppercase tracking-widest"><i data-lucide="chevron-left" class="w-4 h-4 md:w-5 md:h-5"></i> Back</button>
+                    <button onclick="switchTab('campaigns')" class="hover:text-white flex items-center gap-1 text-xs md:text-sm uppercase tracking-widest"><i data-lucide="chevron-left" class="w-4 h-4 md:w-5 md:h-5"></i> Back</button>
                     <span id="editor-title" class="font-display text-2xl md:text-4xl tracking-wider truncate">Campaign Editor</span>
                 </div>
                 <div class="text-xs md:text-sm flex flex-wrap gap-x-4 gap-y-2 items-center text-white/80 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
                     <a href="#" class="hover:text-white shrink-0">Help</a>
                     <a href="#" class="hover:text-white flex items-center gap-1 md:border-l border-white/20 md:pl-6 shrink-0">Preview & Test <i data-lucide="chevron-down" class="w-3 h-3 md:w-4 md:h-4"></i></a>
-                    <a href="#" class="hover:text-white md:border-l border-white/20 md:pl-6 shrink-0">Save Template</a>
-                    <a href="#" class="hover:text-white flex items-center gap-1 border-l border-white/20 pl-4 md:pl-6 shrink-0 text-[#F4F1E1] font-bold">Save & Exit <i data-lucide="chevron-down" class="w-3 h-3 md:w-4 md:h-4"></i></a>
+                    <button onclick="saveCampaign(false)" class="hover:text-white md:border-l border-white/20 md:pl-6 shrink-0">Save Draft</button>
+                    <button onclick="saveCampaign(true)" class="hover:text-white flex items-center gap-1 border-l border-white/20 pl-4 md:pl-6 shrink-0 text-[#F4F1E1] font-bold">Save & Exit <i data-lucide="check" class="w-3 h-3 md:w-4 md:h-4"></i></button>
                 </div>
             </div>
 
+            <!-- Split Editor -->
             <div class="flex flex-col md:flex-row flex-1 overflow-y-auto md:overflow-hidden">
-                <div class="w-full md:w-[500px] bg-[#F4F1E1] flex flex-col shrink-0 order-1 md:order-2 md:h-full">
+                <div class="w-full md:w-[500px] bg-[#F4F1E1] flex flex-col shrink-0 order-1 md:order-2 md:h-full overflow-y-auto">
+                    
                     <div class="pt-4 md:pt-6 pb-2 md:pb-4 text-center border-b border-gray-300 bg-[#E8E4D1]">
-                        <h3 class="font-display text-2xl md:text-3xl text-[#4f111c] mb-2 md:mb-4">Content Blocks</h3>
-                        <div class="grid grid-cols-3 gap-2 px-4 md:px-6 mb-4">
-                            <button class="bg-white border border-gray-300 rounded p-2 flex flex-col items-center justify-center hover:bg-gray-50 transition-colors shadow-sm text-[#4f111c]">
-                                <i data-lucide="type" class="w-5 h-5 mb-1 opacity-70"></i>
-                                <span class="text-[10px] font-bold uppercase tracking-wider">Text</span>
-                            </button>
-                            <button class="bg-white border border-gray-300 rounded p-2 flex flex-col items-center justify-center hover:bg-gray-50 transition-colors shadow-sm text-[#4f111c]">
-                                <i data-lucide="image" class="w-5 h-5 mb-1 opacity-70"></i>
-                                <span class="text-[10px] font-bold uppercase tracking-wider">Image</span>
-                            </button>
-                            <button class="bg-white border border-gray-300 rounded p-2 flex flex-col items-center justify-center hover:bg-gray-50 transition-colors shadow-sm text-[#4f111c]">
-                                <i data-lucide="mouse-pointer-click" class="w-5 h-5 mb-1 opacity-70"></i>
-                                <span class="text-[10px] font-bold uppercase tracking-wider">Button</span>
-                            </button>
-                            <button class="bg-white border border-gray-300 rounded p-2 flex flex-col items-center justify-center hover:bg-gray-50 transition-colors shadow-sm text-[#4f111c]">
-                                <i data-lucide="minus" class="w-5 h-5 mb-1 opacity-70"></i>
-                                <span class="text-[10px] font-bold uppercase tracking-wider">Divider</span>
-                            </button>
-                            <button class="bg-white border border-gray-300 rounded p-2 flex flex-col items-center justify-center hover:bg-gray-50 transition-colors shadow-sm text-[#4f111c]">
-                                <i data-lucide="split-square-horizontal" class="w-5 h-5 mb-1 opacity-70"></i>
-                                <span class="text-[10px] font-bold uppercase tracking-wider">Spacer</span>
-                            </button>
-                            <button class="bg-white border border-gray-300 rounded p-2 flex flex-col items-center justify-center hover:bg-gray-50 transition-colors shadow-sm text-[#4f111c]">
-                                <i data-lucide="columns" class="w-5 h-5 mb-1 opacity-70"></i>
-                                <span class="text-[10px] font-bold uppercase tracking-wider">Columns</span>
-                            </button>
+                        <h3 class="font-display text-2xl md:text-3xl text-[#4f111c] mb-2 md:mb-4">Campaign Settings</h3>
+                        
+                        <!-- Metadata Fields -->
+                        <div class="px-4 md:px-6 mb-4 text-left space-y-3 font-sans">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Campaign Name</label>
+                                <input type="text" id="editor-campaign-title" class="w-full bg-white border border-gray-300 rounded p-2 text-sm text-black font-semibold focus:outline-none focus:border-[#4f111c]" placeholder="e.g. Next Game: Kettleers vs. Harwich">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Subject Line</label>
+                                <input type="text" id="editor-campaign-subject" class="w-full bg-white border border-gray-300 rounded p-2 text-sm text-black focus:outline-none focus:border-[#4f111c]" placeholder="e.g. First pitch at 5:00 PM at Lowell Park">
+                            </div>
                         </div>
 
+                        <!-- Active Block Tabs -->
                         <div class="flex mx-4 md:mx-6 border-2 border-[#4f111c] rounded overflow-hidden mt-2">
-                            <button class="flex-1 bg-[#4f111c] text-[#F4F1E1] py-1 md:py-2 font-bold text-xs md:text-sm tracking-wide">Edit Block</button>
+                            <button class="flex-1 bg-[#4f111c] text-[#F4F1E1] py-1 md:py-2 font-bold text-xs md:text-sm tracking-wide">Headline & Body</button>
                             <button class="flex-1 bg-transparent text-[#4f111c] py-1 md:py-2 font-bold text-xs md:text-sm tracking-wide border-l border-r border-[#4f111c] hover:bg-black/5">Style</button>
                             <button class="flex-1 bg-transparent text-[#4f111c] py-1 md:py-2 font-bold text-xs md:text-sm tracking-wide hover:bg-black/5">Settings</button>
                         </div>
                     </div>
 
-                    <div class="md:flex-1 p-4 md:p-6 bg-[#F4F1E1]">
-                        <div class="bg-white border-2 border-[#4f111c] rounded shadow flex flex-col h-auto md:h-full md:min-h-[300px]">
+                    <!-- WYSIWYG Input Area -->
+                    <div class="p-4 md:p-6 bg-[#F4F1E1] flex-1 flex flex-col">
+                        <div class="bg-white border-2 border-[#4f111c] rounded shadow flex flex-col flex-1 min-h-[320px]">
                             <div class="border-b-2 border-gray-200 bg-gray-50 p-2 md:p-3 flex flex-wrap gap-2 md:gap-3 items-center">
                                 <div class="flex gap-1 md:gap-2 text-gray-700">
                                     <button class="p-1 hover:bg-gray-200 rounded font-bold">B</button>
@@ -433,29 +423,27 @@
                                     <button class="p-1 hover:bg-gray-200 rounded underline">U</button>
                                     <div class="w-px bg-gray-300 mx-1 md:mx-2 my-1"></div>
                                     <button class="p-1 hover:bg-gray-200 rounded"><i data-lucide="link" class="w-4 h-4 md:w-5 md:h-5"></i></button>
-                                    <div class="w-px bg-gray-300 mx-1 md:mx-2 my-1 hidden sm:block"></div>
-                                    <button class="p-1 hover:bg-gray-200 rounded hidden sm:block"><i data-lucide="list" class="w-4 h-4 md:w-5 md:h-5"></i></button>
-                                </div>
-                                <div class="ml-auto md:ml-0">
-                                    <select class="border border-gray-300 rounded p-1 text-xs md:text-sm bg-white">
-                                        <option>Font</option>
-                                    </select>
                                 </div>
                             </div>
                             
-                            <div class="p-4 md:p-6 flex-1 flex flex-col h-[200px] md:h-auto">
-                                <input type="text" id="editor-heading" class="w-full font-sans font-bold text-lg md:text-xl mb-3 md:mb-4 text-black outline-none border-b border-dashed border-gray-300 pb-2 focus:border-kettleer-maroon" value="Welcome to the Kettleers Newsletter!">
-                                <textarea id="editor-body" class="w-full flex-1 resize-none outline-none font-sans text-base md:text-lg text-gray-800 leading-relaxed">The first newsletter from Kettleers Nation!</textarea>
+                            <div class="p-4 md:p-6 flex-1 flex flex-col">
+                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Headline</label>
+                                <input type="text" id="editor-heading" class="w-full font-sans font-bold text-lg md:text-xl mb-4 text-black outline-none border-b border-dashed border-gray-300 pb-2 focus:border-kettleer-maroon" value="Welcome to the Kettleers Newsletter!">
+                                
+                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Body Text</label>
+                                <textarea id="editor-body" class="w-full flex-1 resize-none outline-none font-sans text-base md:text-lg text-gray-800 leading-relaxed min-h-[160px]">The first newsletter from Kettleers Nation!</textarea>
                             </div>
                         </div>
                     </div>
 
-                    <div class="hidden md:flex p-6 border-t border-gray-300 bg-[#E8E4D1] justify-between items-center">
-                        <button class="bg-[#4f111c] text-[#F4F1E1] font-bold tracking-wide px-6 py-2 rounded shadow hover:bg-red-900 transition-colors">Save & Close</button>
-                        <span class="text-sm text-gray-600 font-medium italic">autosaved</span>
+                    <!-- Bottom Action Controls -->
+                    <div class="p-4 md:p-6 border-t border-gray-300 bg-[#E8E4D1] flex justify-between items-center">
+                        <button onclick="saveCampaign(true)" id="editor-save-btn" class="bg-[#4f111c] text-[#F4F1E1] font-bold tracking-wide px-6 py-2 rounded shadow hover:bg-black transition-colors uppercase text-sm">Save & Close</button>
+                        <span id="editor-status-text" class="text-sm text-gray-600 font-medium italic">ready</span>
                     </div>
                 </div>
                 
+                <!-- Live Preview Canvas -->
                 <div class="w-full md:flex-1 bg-[#E8E6D9] p-4 md:p-8 flex justify-center border-t md:border-t-0 md:border-r border-black/10 order-2 md:order-1 md:overflow-y-auto h-auto md:h-full">
                     <div class="bg-white max-w-[650px] w-full shadow-2xl h-min pb-8 md:pb-12 mb-8 md:mb-0">
                         <div class="text-center md:text-right text-[10px] md:text-xs text-gray-500 py-2 md:py-3 px-4 md:px-6 border-b border-gray-100">
@@ -470,10 +458,6 @@
                         </div>
 
                         <div class="p-6 md:p-10 text-center border-b border-gray-200 relative group cursor-pointer ring-4 ring-inset ring-[#4f111c] bg-red-50/50">
-                            <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <div class="bg-[#4f111c] text-white p-1 rounded"><i data-lucide="move" class="w-3 h-3"></i></div>
-                                <div class="bg-[#4f111c] text-white p-1 rounded"><i data-lucide="trash-2" class="w-3 h-3"></i></div>
-                            </div>
                             <h1 id="live-heading" class="font-bold text-xl md:text-3xl text-black mb-3 md:mb-4 font-sans tracking-tight">Welcome to the Kettleers Newsletter!</h1>
                             <p id="live-body" class="font-sans text-base md:text-xl text-gray-800 leading-relaxed">
                                 The first newsletter from Kettleers Nation!
@@ -481,10 +465,6 @@
                         </div>
 
                         <div class="p-6 md:p-10 relative group cursor-pointer hover:ring-2 hover:ring-inset hover:ring-gray-300 transition-all">
-                            <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <div class="bg-gray-400 text-white p-1 rounded"><i data-lucide="move" class="w-3 h-3"></i></div>
-                                <div class="bg-gray-400 text-white p-1 rounded"><i data-lucide="trash-2" class="w-3 h-3"></i></div>
-                            </div>
                             <h2 class="font-display text-2xl md:text-3xl text-kettleer-navy mb-4 md:mb-6 text-center uppercase tracking-wider">Stocking Stuffers Promo</h2>
                             <div class="flex flex-col sm:flex-row gap-4 md:gap-6 items-center text-center sm:text-left">
                                 <div class="w-full sm:w-48 h-auto sm:h-32 bg-gray-50 flex items-center justify-center shrink-0 rounded-lg p-2">
@@ -497,11 +477,6 @@
                             <div class="text-center mt-6 md:mt-8">
                                 <button class="w-full sm:w-auto bg-[#2E5B82] text-white font-sans font-bold uppercase tracking-wider px-6 md:px-8 py-3 md:py-3 rounded shadow-md hover:bg-[#1f405c] transition-colors text-sm md:text-base pointer-events-none">Shop Holiday Special</button>
                             </div>
-                        </div>
-
-                        <div class="mx-10 mb-10 border-2 border-dashed border-gray-300 rounded-lg p-8 flex flex-col items-center justify-center text-gray-400">
-                            <i data-lucide="plus-circle" class="w-8 h-8 mb-2 opacity-50"></i>
-                            <span class="text-sm font-bold uppercase tracking-wider">Drag & Drop Content Here</span>
                         </div>
                     </div>
                 </div>
@@ -516,7 +491,7 @@
                      <span class="font-bold text-white text-sm md:text-base">Design</span> <i data-lucide="chevron-right" class="w-3 h-3 md:w-4 md:h-4 opacity-40"></i>
                      <span class="opacity-60">Confirm</span>
                  </div>
-                 <button class="hover:text-white flex items-center gap-1 uppercase tracking-wider font-bold shrink-0 ml-4 bg-white/10 px-3 py-1 rounded md:bg-transparent md:p-0">Next <i data-lucide="chevron-right" class="w-4 h-4 md:w-5 md:h-5"></i></button>
+                 <button onclick="saveCampaign(true)" class="hover:text-white flex items-center gap-1 uppercase tracking-wider font-bold shrink-0 ml-4 bg-white/10 px-3 py-1 rounded md:bg-transparent md:p-0">Next <i data-lucide="chevron-right" class="w-4 h-4 md:w-5 md:h-5"></i></button>
             </div>
         </div>
 
@@ -697,8 +672,9 @@
         const SUPABASE_KEY = 'sb_publishable_lxJd164SV3appxkm68UDwQ_UN3mXDPD';
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // State storage for campaigns to hydrate reports
         let loadedCampaigns = [];
+        let currentEditingCampaignId = null;
+        let currentEditingTemplate = 'Weekly Bulletin';
 
         // 1. Fetch real subscribers
         async function loadSubscribers() {
@@ -746,13 +722,11 @@
             const recentCampaignsEl = document.getElementById('dashboard-recent-campaigns');
             const campaignsTableBody = document.getElementById('campaigns-table-body');
 
-            // 1. Get live subscriber count
             const { count: subscriberCount } = await db.from('subscribers').select('*', { count: 'exact', head: true });
             if (fansCountEl && subscriberCount !== null) {
                 fansCountEl.textContent = subscriberCount.toLocaleString();
             }
 
-            // 2. Get live campaigns
             const { data: campaigns, error } = await db.from('campaigns').select('*').order('created_at', { ascending: false });
 
             if (error) {
@@ -762,7 +736,6 @@
 
             loadedCampaigns = campaigns || [];
 
-            // Compute averages for sent campaigns
             const sentCampaigns = loadedCampaigns.filter(c => c.status === 'Sent');
             if (sentCampaigns.length > 0) {
                 const totalOpen = sentCampaigns.reduce((sum, c) => sum + Number(c.open_rate || 0), 0);
@@ -774,7 +747,6 @@
                 if (avgClickEl) avgClickEl.textContent = '0.0%';
             }
 
-            // Hydrate Dashboard Recent Campaigns list
             if (recentCampaignsEl) {
                 if (sentCampaigns.length === 0) {
                     recentCampaignsEl.innerHTML = `<div class="py-6 text-center text-gray-500 font-sans italic">No dispatched campaigns yet.</div>`;
@@ -798,7 +770,6 @@
                 }
             }
 
-            // Hydrate Campaigns Tab Table
             if (campaignsTableBody) {
                 if (loadedCampaigns.length === 0) {
                     campaignsTableBody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-gray-500 font-sans italic">No campaigns found.</td></tr>`;
@@ -816,7 +787,7 @@
                         : `<span class="text-sm font-bold text-black">${c.open_rate}% Open / ${c.click_rate}% CTR</span>`;
                     
                     const actionBtn = isDraft
-                        ? `<button onclick="openCampaignEditor('Campaign Editor')" class="bg-[#4f111c] text-[#F4F1E1] text-xs font-bold px-3 py-1.5 rounded uppercase hover:bg-black transition-colors">Edit</button>`
+                        ? `<button onclick="editCampaign(${c.id})" class="bg-[#4f111c] text-[#F4F1E1] text-xs font-bold px-3 py-1.5 rounded uppercase hover:bg-black transition-colors">Edit</button>`
                         : `<button onclick="openReportView(${c.id})" class="border border-gray-400 text-gray-700 text-xs font-bold px-3 py-1.5 rounded uppercase hover:bg-white transition-colors">Report</button>`;
 
                     const dateDisplay = c.target_date || (c.created_at ? new Date(c.created_at).toLocaleDateString() : 'N/A');
@@ -828,7 +799,7 @@
                                 <div class="text-xs font-normal text-gray-500 font-sans">${escapeHtml(c.subject || '')}</div>
                             </td>
                             <td class="py-4">${statusBadge}</td>
-                            <td class="py-4 text-sm text-gray-700 font-sans">${escapeHtml(c.template_name || 'Bulletin')}</td>
+                            <td class="py-4 text-sm text-gray-700 font-sans">${escapeHtml(c.template_name || 'Weekly Bulletin')}</td>
                             <td class="py-4 text-sm text-gray-700 font-sans">${dateDisplay}</td>
                             <td class="py-4 text-center">${perfText}</td>
                             <td class="py-4 text-right pr-2">${actionBtn}</td>
@@ -838,7 +809,111 @@
             }
         }
 
-        // Handle Add Subscriber
+        // 3. Campaign Editor Save Action
+        async function saveCampaign(exitAfterSave = false) {
+            const title = document.getElementById('editor-campaign-title').value.trim() || 'Untitled Campaign';
+            const subject = document.getElementById('editor-campaign-subject').value.trim() || 'No Subject';
+            const heading = document.getElementById('editor-heading').value;
+            const body = document.getElementById('editor-body').value;
+            const statusText = document.getElementById('editor-status-text');
+            const saveBtn = document.getElementById('editor-save-btn');
+
+            statusText.textContent = 'Saving...';
+            saveBtn.disabled = true;
+
+            const payload = {
+                title: title,
+                subject: subject,
+                template_name: currentEditingTemplate,
+                status: 'Draft',
+                html_content: JSON.stringify({ heading, body })
+            };
+
+            let response;
+            if (currentEditingCampaignId) {
+                // Update existing campaign
+                response = await db.from('campaigns').update(payload).eq('id', currentEditingCampaignId);
+            } else {
+                // Insert new campaign
+                response = await db.from('campaigns').insert([payload]).select();
+                if (response.data && response.data.length > 0) {
+                    currentEditingCampaignId = response.data[0].id;
+                }
+            }
+
+            saveBtn.disabled = false;
+
+            if (response.error) {
+                console.error('Error saving campaign:', response.error);
+                statusText.textContent = 'Save failed';
+                return;
+            }
+
+            statusText.textContent = 'Saved to database';
+            await loadDashboardAndCampaigns();
+
+            if (exitAfterSave) {
+                switchTab('campaigns');
+            }
+        }
+
+        function editCampaign(campaignId) {
+            const c = loadedCampaigns.find(item => item.id === campaignId);
+            if (!c) return;
+
+            currentEditingCampaignId = c.id;
+            currentEditingTemplate = c.template_name || 'Weekly Bulletin';
+
+            document.getElementById('editor-campaign-title').value = c.title || '';
+            document.getElementById('editor-campaign-subject').value = c.subject || '';
+
+            // Parse saved heading/body if present, or use defaults
+            let headingText = c.title;
+            let bodyText = c.subject || 'The first newsletter from Kettleers Nation!';
+
+            if (c.html_content) {
+                try {
+                    const parsed = JSON.parse(c.html_content);
+                    if (parsed.heading) headingText = parsed.heading;
+                    if (parsed.body) bodyText = parsed.body;
+                } catch(e) {
+                    // Raw string fallback
+                    bodyText = c.html_content;
+                }
+            }
+
+            document.getElementById('editor-heading').value = headingText;
+            document.getElementById('editor-body').value = bodyText;
+
+            // Trigger preview sync
+            document.getElementById('live-heading').textContent = headingText;
+            document.getElementById('live-body').innerHTML = bodyText.replace(/\n/g, '<br>');
+
+            openCampaignEditor(c.title || 'Edit Campaign');
+        }
+
+        function startNewCampaignWithTemplate(templateName) {
+            currentEditingCampaignId = null;
+            currentEditingTemplate = templateName;
+
+            document.getElementById('editor-campaign-title').value = '';
+            document.getElementById('editor-campaign-subject').value = '';
+            
+            const defaultHeading = templateName === 'Blank Canvas' 
+                ? 'Your Headline Here' 
+                : `Welcome to ${templateName}!`;
+            
+            const defaultBody = 'Start typing your newsletter announcement here...';
+
+            document.getElementById('editor-heading').value = defaultHeading;
+            document.getElementById('editor-body').value = defaultBody;
+            document.getElementById('live-heading').textContent = defaultHeading;
+            document.getElementById('live-body').innerHTML = defaultBody;
+
+            openCampaignEditor(templateName);
+        }
+
+        // 4. Handle Add Subscriber
         async function handleAddSubscriber(e) {
             e.preventDefault();
             
@@ -940,13 +1015,10 @@
         function openCampaignEditor(title = "Campaign Editor") {
             switchTab('campaign-editor');
             document.getElementById('editor-title').textContent = title;
+            document.getElementById('editor-status-text').textContent = 'ready';
             
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            if(title === 'Template Builder') {
-                document.getElementById('nav-templates').classList.add('active');
-            } else {
-                document.getElementById('nav-campaigns').classList.add('active');
-            }
+            document.getElementById('nav-campaigns').classList.add('active');
         }
 
         function openReportView(campaignId = null) {
@@ -986,14 +1058,12 @@
         const liveBody = document.getElementById('live-body');
 
         if(editorHeading && liveHeading) {
-            liveHeading.textContent = editorHeading.value;
             editorHeading.addEventListener('input', (e) => {
                 liveHeading.textContent = e.target.value;
             });
         }
 
         if(editorBody && liveBody) {
-            liveBody.innerHTML = editorBody.value.replace(/\n/g, '<br>');
             editorBody.addEventListener('input', (e) => {
                 liveBody.innerHTML = e.target.value.replace(/\n/g, '<br>');
             });
