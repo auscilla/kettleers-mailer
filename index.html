@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cotuit Kettleers Email Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Rye&family=Roboto+Slab:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
@@ -293,7 +294,6 @@
                             Dispatched every Monday during the Cape League season. Built specifically to drive attendance to Lowell Park with game times, theme nights, starting pitching match-ups, and ballpark concessions.
                         </p>
                         
-                        <!-- Template Preview Badge List -->
                         <div class="bg-white/60 p-4 rounded-lg border border-gray-200 mb-6 space-y-2">
                             <div class="text-xs font-bold uppercase tracking-wider text-gray-500">Includes Modules:</div>
                             <div class="flex flex-wrap gap-2 text-xs font-semibold text-gray-700 font-sans">
@@ -323,7 +323,6 @@
                             Long-form human interest publication. Focuses on host family spotlights, player draft updates, MLB alumni features, Cotuit Athletic Association donor campaigns, and offseason store merchandise.
                         </p>
                         
-                        <!-- Template Preview Badge List -->
                         <div class="bg-white/60 p-4 rounded-lg border border-gray-200 mb-6 space-y-2">
                             <div class="text-xs font-bold uppercase tracking-wider text-gray-500">Includes Modules:</div>
                             <div class="flex flex-wrap gap-2 text-xs font-semibold text-gray-700 font-sans">
@@ -373,48 +372,20 @@
                                 <th class="pb-3 md:pb-4 font-bold text-right pr-2">Joined</th>
                             </tr>
                         </thead>
-                        <tbody class="text-base md:text-lg">
-                            <tr class="border-b border-gray-200">
-                                <td class="py-3 md:py-5 font-bold text-[#611724]">Bobby Witt</td>
-                                <td class="py-3 md:py-5 text-gray-800 text-sm md:text-lg">bobbywitt@example.com</td>
-                                <td class="py-3 md:py-5 text-gray-800 text-sm md:text-lg">All-Star Member</td>
-                                <td class="py-3 md:py-5 text-center"><span class="bg-kettleer-green text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded tracking-wider uppercase">Active</span></td>
-                                <td class="py-3 md:py-5 text-gray-800 text-right pr-2 text-sm md:text-lg">04-12-2021</td>
-                            </tr>
-                            <tr class="border-b border-gray-200">
-                                <td class="py-3 md:py-5 font-bold text-[#611724]">Jack Johnson</td>
-                                <td class="py-3 md:py-5 text-gray-800 text-sm md:text-lg">jack.johnson@example.com</td>
-                                <td class="py-3 md:py-5 text-gray-800 text-sm md:text-lg">Supporter</td>
-                                <td class="py-3 md:py-5 text-center"><span class="bg-kettleer-green text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded tracking-wider uppercase">Active</span></td>
-                                <td class="py-3 md:py-5 text-gray-800 text-right pr-2 text-sm md:text-lg">07-22-2022</td>
-                            </tr>
-                            <tr class="border-b border-gray-200">
-                                <td class="py-3 md:py-5 font-bold text-[#611724]">Sally Miller</td>
-                                <td class="py-3 md:py-5 text-gray-800 text-sm md:text-lg">sallym@example.com</td>
-                                <td class="py-3 md:py-5 text-gray-800 text-sm md:text-lg">Alumni</td>
-                                <td class="py-3 md:py-5 text-center"><span class="bg-kettleer-green text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded tracking-wider uppercase">Active</span></td>
-                                <td class="py-3 md:py-5 text-gray-800 text-right pr-2 text-sm md:text-lg">09-05-2022</td>
-                            </tr>
-                            <tr class="border-b border-gray-200">
-                                <td class="py-3 md:py-5 font-bold text-[#611724]">Frank Davis</td>
-                                <td class="py-3 md:py-5 text-gray-800 text-sm md:text-lg">fdavis@example.com</td>
-                                <td class="py-3 md:py-5 text-gray-800 text-sm md:text-lg">General Fan</td>
-                                <td class="py-3 md:py-5 text-center"><span class="bg-kettleer-green text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded tracking-wider uppercase">Active</span></td>
-                                <td class="py-3 md:py-5 text-gray-800 text-right pr-2 text-sm md:text-lg">11-18-2022</td>
+                        <!-- Dynamic body injected by loadSubscribers() -->
+                        <tbody id="subscribers-table-body" class="text-base md:text-lg">
+                            <tr>
+                                <td colspan="5" class="py-8 text-center text-gray-500 font-sans italic">Loading subscribers from database...</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 
                 <div class="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-gray-300 flex flex-col md:flex-row justify-between items-center text-sm md:text-lg text-gray-700 gap-4">
-                    <div>Showing 1-10 of 12,458</div>
+                    <div id="subscribers-count-display">Showing 0 subscribers</div>
                     <div class="flex gap-2 md:gap-4 cursor-pointer items-center">
                         <span class="hover:text-black">&lt; <span class="hidden md:inline">Prev</span></span>
                         <span class="font-bold text-black bg-gray-200 px-2 rounded">1</span>
-                        <span class="hover:text-black">2</span>
-                        <span class="hover:text-black">3</span>
-                        <span>...</span>
-                        <span class="hover:text-black hidden md:inline">1,246</span>
                         <span class="hover:text-black"><span class="hidden md:inline">Next</span> &gt;</span>
                     </div>
                 </div>
@@ -782,7 +753,68 @@
         // Initialize Icons
         lucide.createIcons();
 
-        // Mobile Menu Toggle
+        // -------------------------------------------------------------
+        // Supabase Database Connection
+        // -------------------------------------------------------------
+        const SUPABASE_URL = 'https://dzrrkdfdhkcwaydgifwi.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_lxJd164SV3appxkm68UDwQ_UN3mXDPD';
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Fetch real subscribers and render them to table
+        async function loadSubscribers() {
+            const tableBody = document.getElementById('subscribers-table-body');
+            const countDisplay = document.getElementById('subscribers-count-display');
+            if (!tableBody) return;
+
+            const { data, error } = await db.from('subscribers').select('*').order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Error fetching subscribers:', error);
+                tableBody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-red-700 font-sans">Error connecting to Supabase: ${error.message}</td></tr>`;
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-gray-500 font-sans italic">No subscribers found in database.</td></tr>`;
+                if (countDisplay) countDisplay.textContent = 'Showing 0 subscribers';
+                return;
+            }
+
+            tableBody.innerHTML = data.map(sub => {
+                const dateJoined = sub.created_at ? new Date(sub.created_at).toLocaleDateString() : 'N/A';
+                return `
+                    <tr class="border-b border-gray-200">
+                        <td class="py-3 md:py-5 font-bold text-[#611724]">${escapeHtml(sub.name)}</td>
+                        <td class="py-3 md:py-5 text-gray-800 text-sm md:text-lg">${escapeHtml(sub.email)}</td>
+                        <td class="py-3 md:py-5 text-gray-800 text-sm md:text-lg">${escapeHtml(sub.segment || 'General Fan')}</td>
+                        <td class="py-3 md:py-5 text-center"><span class="bg-kettleer-green text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded tracking-wider uppercase">${escapeHtml(sub.status || 'Active')}</span></td>
+                        <td class="py-3 md:py-5 text-gray-800 text-right pr-2 text-sm md:text-lg">${dateJoined}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            if (countDisplay) {
+                countDisplay.textContent = `Showing 1-${data.length} of ${data.length}`;
+            }
+        }
+
+        // Sanitizer helper for security
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // Trigger load
+        loadSubscribers();
+
+        // -------------------------------------------------------------
+        // Navigation & UI Routing
+        // -------------------------------------------------------------
         const btn = document.getElementById('mobile-menu-btn');
         const sidebar = document.getElementById('sidebar');
         
@@ -790,9 +822,7 @@
             sidebar.classList.toggle('hidden');
         });
 
-        // View Router
         function switchTab(tabId) {
-            // Hide all views
             const views = [
                 'view-dashboard', 'view-campaigns', 'view-templates', 'view-subscribers', 
                 'view-template-selector', 'view-campaign-editor', 'view-report',
@@ -800,40 +830,38 @@
             ];
             
             views.forEach(id => {
-                document.getElementById(id).classList.add('hidden-view');
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden-view');
             });
             
-            // Show selected view
-            document.getElementById('view-' + tabId).classList.remove('hidden-view');
+            const selectedView = document.getElementById('view-' + tabId);
+            if (selectedView) selectedView.classList.remove('hidden-view');
             
-            // Update active state in sidebar
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             const activeNav = document.getElementById('nav-' + tabId);
             if (activeNav) activeNav.classList.add('active');
             
-            // Auto-close menu on mobile after selection
             if(window.innerWidth < 768) {
                 sidebar.classList.add('hidden');
             }
 
-            // Re-render lucide icons for newly revealed DOM nodes
+            if (tabId === 'subscribers') {
+                loadSubscribers();
+            }
+
             lucide.createIcons();
         }
 
-        // Direct action to open Template Selector (Step 1 of Campaign Creation)
         function openTemplateSelector() {
             switchTab('template-selector');
-            // Force nav active state to stay on Campaigns
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById('nav-campaigns').classList.add('active');
         }
 
-        // Direct action to open Campaign Designer studio (Step 2 of Campaign Creation)
         function openCampaignEditor(title = "Campaign Editor") {
             switchTab('campaign-editor');
             document.getElementById('editor-title').textContent = title;
             
-            // Highlight Templates or Campaigns in sidebar based on context
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             if(title === 'Template Builder') {
                 document.getElementById('nav-templates').classList.add('active');
@@ -842,7 +870,6 @@
             }
         }
 
-        // Direct action to open Report View
         function openReportView() {
             switchTab('report');
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
