@@ -55,6 +55,16 @@
             background-color: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(4px);
         }
+
+        /* Mobile Phone Mockup Framing */
+        .preview-mobile {
+            max-width: 380px !important;
+            border: 12px solid #1f242c !important;
+            border-radius: 40px !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35) !important;
+            overflow: hidden !important;
+            margin: 20px auto !important;
+        }
     </style>
 </head>
 <body class="bg-kettleer-maroonDark text-gray-800 relative h-screen overflow-hidden">
@@ -127,7 +137,7 @@
                         <h2 class="font-display text-4xl md:text-5xl uppercase tracking-wider shadow-sm leading-tight">Email Dashboard</h2>
                         <p class="text-lg md:text-xl mt-1 md:mt-2 opacity-90 font-medium">Kettleers Broadcast</p>
                     </div>
-                    <button onclick="openTemplateSelector()" class="w-full md:w-auto bg-[#F4F1E1] text-[#4f111c] font-display px-6 py-2 md:py-3 border-[3px] border-[#4f111c] rounded shadow-[4px_4px_0px_#4f111c] hover:translate-y-1 hover:shadow-[2px_2px_0px_#4f111c] transition-all uppercase tracking-wider text-lg md:text-xl flex items-center justify-center gap-2">
+                    <button onclick="startNewCampaignWizard()" class="w-full md:w-auto bg-[#F4F1E1] text-[#4f111c] font-display px-6 py-2 md:py-3 border-[3px] border-[#4f111c] rounded shadow-[4px_4px_0px_#4f111c] hover:translate-y-1 hover:shadow-[2px_2px_0px_#4f111c] transition-all uppercase tracking-wider text-lg md:text-xl flex items-center justify-center gap-2">
                         <i data-lucide="plus" class="w-5 h-5"></i> Create Campaign
                     </button>
                 </header>
@@ -200,7 +210,7 @@
                         <h2 class="font-display text-4xl md:text-5xl uppercase tracking-wider shadow-sm leading-tight">Campaigns</h2>
                         <p class="text-lg md:text-xl mt-1 md:mt-2 opacity-90 font-medium">Broadcasts & Dispatched Blasts</p>
                     </div>
-                    <button onclick="openTemplateSelector()" class="w-full md:w-auto bg-[#F4F1E1] text-[#4f111c] font-display px-6 py-2 md:py-3 border-[3px] border-[#4f111c] rounded shadow-[4px_4px_0px_#4f111c] hover:translate-y-1 hover:shadow-[2px_2px_0px_#4f111c] transition-all uppercase tracking-wider text-lg md:text-xl flex items-center justify-center gap-2">
+                    <button onclick="startNewCampaignWizard()" class="w-full md:w-auto bg-[#F4F1E1] text-[#4f111c] font-display px-6 py-2 md:py-3 border-[3px] border-[#4f111c] rounded shadow-[4px_4px_0px_#4f111c] hover:translate-y-1 hover:shadow-[2px_2px_0px_#4f111c] transition-all uppercase tracking-wider text-lg md:text-xl flex items-center justify-center gap-2">
                         <i data-lucide="plus" class="w-5 h-5"></i> Create Campaign
                     </button>
                 </header>
@@ -235,8 +245,8 @@
                         <h2 class="font-display text-4xl md:text-5xl uppercase tracking-wider shadow-sm leading-tight">Templates</h2>
                         <p class="text-lg md:text-xl mt-1 md:mt-2 opacity-90 font-medium">Pre-Engineered Newsletter Frameworks</p>
                     </div>
-                    <button onclick="startNewCampaignWithTemplate('Custom Blank Template')" class="w-full md:w-auto bg-[#F4F1E1] text-[#4f111c] font-display px-6 py-2 md:py-3 border-[3px] border-[#4f111c] rounded shadow-[4px_4px_0px_#4f111c] hover:translate-y-1 hover:shadow-[2px_2px_0px_#4f111c] transition-all uppercase tracking-wider text-lg md:text-xl flex items-center justify-center gap-2">
-                        <i data-lucide="plus" class="w-5 h-5"></i> New Template
+                    <button onclick="startNewCampaignWizardWithTemplate('Blank Canvas')" class="w-full md:w-auto bg-[#F4F1E1] text-[#4f111c] font-display px-6 py-2 md:py-3 border-[3px] border-[#4f111c] rounded shadow-[4px_4px_0px_#4f111c] hover:translate-y-1 hover:shadow-[2px_2px_0px_#4f111c] transition-all uppercase tracking-wider text-lg md:text-xl flex items-center justify-center gap-2">
+                        <i data-lucide="plus" class="w-5 h-5"></i> New Blank Canvas
                     </button>
                 </header>
 
@@ -249,21 +259,11 @@
                             </div>
                             <h3 class="font-display text-3xl text-[#611724] mb-2 uppercase">The Weekly Ballpark Bulletin</h3>
                             <p class="text-gray-700 text-sm md:text-base leading-relaxed mb-6 font-sans">
-                                Dispatched every Monday during the Cape League season. Built specifically to drive attendance to Lowell Park with game times, theme nights, starting pitching match-ups, and ballpark concessions.
+                                Dispatched every Monday during the Cape League season. Built specifically to drive attendance to Lowell Park with game times, theme nights, starting pitching match-ups, and concessions.
                             </p>
-                            <div class="bg-white/60 p-4 rounded-lg border border-gray-200 mb-6 space-y-2">
-                                <div class="text-xs font-bold uppercase tracking-wider text-gray-500">Includes Modules:</div>
-                                <div class="flex flex-wrap gap-2 text-xs font-semibold text-gray-700 font-sans">
-                                    <span class="bg-white px-2 py-1 rounded border">Homestand Schedule</span>
-                                    <span class="bg-white px-2 py-1 rounded border">Starting Matchups</span>
-                                    <span class="bg-white px-2 py-1 rounded border">Snack Shack Specials</span>
-                                    <span class="bg-white px-2 py-1 rounded border">Post-Game Autograph Days</span>
-                                </div>
-                            </div>
                         </div>
                         <div class="flex gap-3 pt-4 border-t border-gray-300">
-                            <button onclick="startNewCampaignWithTemplate('The Weekly Ballpark Bulletin')" class="flex-1 bg-[#4f111c] text-[#F4F1E1] font-display text-sm uppercase py-2.5 rounded shadow hover:bg-black transition-colors">Use In Campaign</button>
-                            <button class="border-2 border-[#4f111c] text-[#4f111c] font-display text-sm uppercase px-4 py-2.5 rounded hover:bg-[#4f111c] hover:text-[#F4F1E1] transition-colors">Preview</button>
+                            <button onclick="startNewCampaignWizardWithTemplate('The Weekly Ballpark Bulletin')" class="flex-1 bg-[#4f111c] text-[#F4F1E1] font-display text-sm uppercase py-2.5 rounded shadow hover:bg-black transition-colors">Use In Campaign</button>
                         </div>
                     </div>
 
@@ -277,19 +277,9 @@
                             <p class="text-gray-700 text-sm md:text-base leading-relaxed mb-6 font-sans">
                                 Long-form human interest publication. Focuses on host family spotlights, player draft updates, MLB alumni features, Cotuit Athletic Association donor campaigns, and offseason store merchandise.
                             </p>
-                            <div class="bg-white/60 p-4 rounded-lg border border-gray-200 mb-6 space-y-2">
-                                <div class="text-xs font-bold uppercase tracking-wider text-gray-500">Includes Modules:</div>
-                                <div class="flex flex-wrap gap-2 text-xs font-semibold text-gray-700 font-sans">
-                                    <span class="bg-white px-2 py-1 rounded border">Host Family Spotlight</span>
-                                    <span class="bg-white px-2 py-1 rounded border">Alumni in the Big Leagues</span>
-                                    <span class="bg-white px-2 py-1 rounded border">Merchandise & Promo Blocks</span>
-                                    <span class="bg-white px-2 py-1 rounded border">CAA Advancement Notes</span>
-                                </div>
-                            </div>
                         </div>
                         <div class="flex gap-3 pt-4 border-t border-gray-300">
-                            <button onclick="startNewCampaignWithTemplate('The Kettleers Gazette')" class="flex-1 bg-[#4f111c] text-[#F4F1E1] font-display text-sm uppercase py-2.5 rounded shadow hover:bg-black transition-colors">Use In Campaign</button>
-                            <button class="border-2 border-[#4f111c] text-[#4f111c] font-display text-sm uppercase px-4 py-2.5 rounded hover:bg-[#4f111c] hover:text-[#F4F1E1] transition-colors">Preview</button>
+                            <button onclick="startNewCampaignWizardWithTemplate('The Kettleers Gazette')" class="flex-1 bg-[#4f111c] text-[#F4F1E1] font-display text-sm uppercase py-2.5 rounded shadow hover:bg-black transition-colors">Use In Campaign</button>
                         </div>
                     </div>
                 </div>
@@ -344,180 +334,328 @@
                 </div>
             </div>
 
-            <!-- ================= 5. TEMPLATE SELECTOR (PRE-EDITOR) ================= -->
-            <div id="view-template-selector" class="hidden-view flex-1 flex flex-col p-4 md:p-10 overflow-y-auto max-w-5xl mx-auto w-full">
-                <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-8 text-kettleer-cream gap-4">
-                    <div>
-                        <button onclick="switchTab('campaigns')" class="hover:text-white flex items-center gap-1 text-xs md:text-sm uppercase tracking-widest mb-4 opacity-70"><i data-lucide="chevron-left" class="w-4 h-4"></i> Back to Campaigns</button>
-                        <h2 class="font-display text-4xl md:text-5xl uppercase tracking-wider shadow-sm leading-tight">Start Campaign</h2>
-                        <p class="text-lg md:text-xl mt-1 md:mt-2 opacity-90 font-medium">Select a starting point for your email.</p>
-                    </div>
-                </header>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-                    <div class="bg-[#F4F1E1] rounded-2xl p-6 shadow-xl border-4 border-[#e8e4d1] flex flex-col hover:border-[#611724] transition-colors cursor-pointer group" onclick="startNewCampaignWithTemplate('Blank Canvas')">
-                        <div class="flex-1 flex flex-col items-center justify-center py-8 text-gray-400 group-hover:text-[#611724] transition-colors">
-                            <i data-lucide="file-plus-2" class="w-16 h-16 mb-4"></i>
-                            <h3 class="font-display text-2xl uppercase">Blank Canvas</h3>
-                            <p class="text-center mt-2 text-sm text-gray-600 font-sans">Start from scratch with structural building blocks.</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-[#F4F1E1] rounded-2xl p-6 shadow-xl border-4 border-[#e8e4d1] flex flex-col hover:border-[#611724] transition-colors cursor-pointer group" onclick="startNewCampaignWithTemplate('The Weekly Ballpark Bulletin')">
-                        <div class="flex justify-between items-start mb-4">
-                            <span class="bg-kettleer-navy text-[#F4F1E1] text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded">In-Season</span>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-display text-2xl text-[#611724] mb-2 uppercase">The Weekly Ballpark Bulletin</h3>
-                            <p class="text-gray-700 text-sm leading-relaxed mb-4 font-sans">
-                                Game times, theme nights, starting pitching match-ups, and ballpark concessions.
-                            </p>
-                        </div>
-                        <div class="text-center font-bold text-sm text-[#4f111c] uppercase tracking-wider border-t border-gray-300 pt-4 group-hover:underline">Use Template &rarr;</div>
-                    </div>
-
-                    <div class="bg-[#F4F1E1] rounded-2xl p-6 shadow-xl border-4 border-[#e8e4d1] flex flex-col hover:border-[#611724] transition-colors cursor-pointer group" onclick="startNewCampaignWithTemplate('The Kettleers Gazette')">
-                        <div class="flex justify-between items-start mb-4">
-                            <span class="bg-[#8a2b3d] text-[#F4F1E1] text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded">Offseason</span>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-display text-2xl text-[#611724] mb-2 uppercase">The Kettleers Gazette</h3>
-                            <p class="text-gray-700 text-sm leading-relaxed mb-4 font-sans">
-                                Long-form human interest publication. Host family spotlights, player draft updates, MLB alumni.
-                            </p>
-                        </div>
-                        <div class="text-center font-bold text-sm text-[#4f111c] uppercase tracking-wider border-t border-gray-300 pt-4 group-hover:underline">Use Template &rarr;</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ================= 6. CAMPAIGN DESIGN STUDIO VIEW ================= -->
+            <!-- ================= 5. CAMPAIGN WIZARD STUDIO VIEW ================= -->
             <div id="view-campaign-editor" class="hidden-view w-full min-h-full bg-kettleer-maroonDark relative text-gray-800 flex flex-col md:overflow-hidden">
                  
                 <!-- Header Bar -->
                 <div class="bg-kettleer-maroonDark text-[#F4F1E1] py-3 md:py-4 px-4 md:px-8 flex flex-col md:flex-row justify-between items-start md:items-center shrink-0 border-b border-white/10 z-10 shadow-sm gap-4">
                     <div class="flex items-center gap-4 md:gap-6">
-                        <button onclick="switchTab('campaigns')" class="hover:text-white flex items-center gap-1 text-xs md:text-sm uppercase tracking-widest"><i data-lucide="chevron-left" class="w-4 h-4 md:w-5 md:h-5"></i> Back</button>
-                        <span id="editor-title" class="font-display text-2xl md:text-4xl tracking-wider truncate">Campaign Editor</span>
+                        <button onclick="switchTab('campaigns')" class="hover:text-white flex items-center gap-1 text-xs md:text-sm uppercase tracking-widest"><i data-lucide="chevron-left" class="w-4 h-4 md:w-5 md:h-5"></i> Back to Campaigns</button>
+                        <span id="editor-title" class="font-display text-2xl md:text-3xl tracking-wider truncate">Campaign Studio</span>
                     </div>
                     <div class="text-xs md:text-sm flex flex-wrap gap-x-4 gap-y-2 items-center text-white/80 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
-                        <a href="#" class="hover:text-white shrink-0">Help</a>
                         <button onclick="sendTestEmail()" class="hover:text-white flex items-center gap-1 md:border-l border-white/20 md:pl-6 shrink-0">Send Test Email <i data-lucide="send" class="w-3 h-3 md:w-4 md:h-4"></i></button>
                         <button onclick="saveCampaign(false)" class="hover:text-white md:border-l border-white/20 md:pl-6 shrink-0">Save Draft</button>
                         <button onclick="saveCampaign(true)" class="hover:text-white flex items-center gap-1 border-l border-white/20 pl-4 md:pl-6 shrink-0 text-[#F4F1E1] font-bold">Save & Exit <i data-lucide="check" class="w-3 h-3 md:w-4 md:h-4"></i></button>
                     </div>
                 </div>
 
-                <!-- Split Editor -->
-                <div class="flex flex-col md:flex-row flex-1 overflow-y-auto md:overflow-hidden">
-                    <div class="w-full md:w-[500px] bg-[#F4F1E1] flex flex-col shrink-0 order-1 md:order-2 md:h-full overflow-y-auto">
-                        
-                        <div class="pt-4 md:pt-6 pb-2 md:pb-4 text-center border-b border-gray-300 bg-[#E8E4D1]">
-                            <h3 class="font-display text-2xl md:text-3xl text-[#4f111c] mb-2 md:mb-4">Campaign Settings</h3>
-                            
-                            <!-- Metadata Fields -->
-                            <div class="px-4 md:px-6 mb-4 text-left space-y-3 font-sans">
-                                <div>
-                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Campaign Name</label>
-                                    <input type="text" id="editor-campaign-title" class="w-full bg-white border border-gray-300 rounded p-2 text-sm text-black font-semibold focus:outline-none focus:border-[#4f111c]" placeholder="e.g. Next Game: Kettleers vs. Harwich">
+                <!-- Wizard Main Container -->
+                <div class="flex-1 overflow-y-auto md:overflow-hidden relative flex flex-col">
+                    
+                    <!-- STEP 1: RECIPIENTS -->
+                    <div id="wizard-step-recipients" class="wizard-pane flex-1 p-6 md:p-12 overflow-y-auto max-w-4xl mx-auto w-full">
+                        <div class="bg-[#F4F1E1] rounded-2xl p-6 md:p-10 shadow-2xl border-4 border-[#e8e4d1]">
+                            <div class="mb-6 pb-4 border-b border-gray-300">
+                                <span class="bg-[#611724] text-[#F4F1E1] text-xs font-bold uppercase tracking-wider px-3 py-1 rounded">Step 1 of 5</span>
+                                <h3 class="font-display text-3xl md:text-4xl text-[#4f111c] mt-3 uppercase">Select Audience</h3>
+                                <p class="text-gray-600 font-sans text-sm md:text-base mt-1">Choose who will receive this broadcast blast.</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 font-sans mb-8">
+                                <div onclick="selectAudienceSegment('all')" id="segment-card-all" class="segment-card cursor-pointer p-5 bg-white border-2 border-[#611724] rounded-xl shadow hover:border-black transition-all">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <h4 class="font-bold text-lg text-black">All Active Subscribers</h4>
+                                        <span id="segment-count-all" class="bg-gray-100 text-[#611724] font-bold px-2 py-0.5 rounded text-xs">...</span>
+                                    </div>
+                                    <p class="text-xs text-gray-500">Every active fan in your Supabase directory.</p>
                                 </div>
+
+                                <div onclick="selectAudienceSegment('General Fan')" id="segment-card-General Fan" class="segment-card cursor-pointer p-5 bg-white border-2 border-gray-200 rounded-xl shadow hover:border-[#611724] transition-all">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <h4 class="font-bold text-lg text-black">General Fans</h4>
+                                        <span id="segment-count-General Fan" class="bg-gray-100 text-gray-600 font-bold px-2 py-0.5 rounded text-xs">...</span>
+                                    </div>
+                                    <p class="text-xs text-gray-500">Fans on the standard newsletter list.</p>
+                                </div>
+
+                                <div onclick="selectAudienceSegment('All-Star Member')" id="segment-card-All-Star Member" class="segment-card cursor-pointer p-5 bg-white border-2 border-gray-200 rounded-xl shadow hover:border-[#611724] transition-all">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <h4 class="font-bold text-lg text-black">All-Star Members</h4>
+                                        <span id="segment-count-All-Star Member" class="bg-gray-100 text-gray-600 font-bold px-2 py-0.5 rounded text-xs">...</span>
+                                    </div>
+                                    <p class="text-xs text-gray-500">Cape League booster and season pass holders.</p>
+                                </div>
+
+                                <div onclick="selectAudienceSegment('Supporter')" id="segment-card-Supporter" class="segment-card cursor-pointer p-5 bg-white border-2 border-gray-200 rounded-xl shadow hover:border-[#611724] transition-all">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <h4 class="font-bold text-lg text-black">Supporters & CAA</h4>
+                                        <span id="segment-count-Supporter" class="bg-gray-100 text-gray-600 font-bold px-2 py-0.5 rounded text-xs">...</span>
+                                    </div>
+                                    <p class="text-xs text-gray-500">Cotuit Athletic Association donors & sponsors.</p>
+                                </div>
+
+                                <div onclick="selectAudienceSegment('Host Family')" id="segment-card-Host Family" class="segment-card cursor-pointer p-5 bg-white border-2 border-gray-200 rounded-xl shadow hover:border-[#611724] transition-all">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <h4 class="font-bold text-lg text-black">Host Families</h4>
+                                        <span id="segment-count-Host Family" class="bg-gray-100 text-gray-600 font-bold px-2 py-0.5 rounded text-xs">...</span>
+                                    </div>
+                                    <p class="text-xs text-gray-500">Families hosting players during the season.</p>
+                                </div>
+
+                                <div onclick="selectAudienceSegment('Alumni')" id="segment-card-Alumni" class="segment-card cursor-pointer p-5 bg-white border-2 border-gray-200 rounded-xl shadow hover:border-[#611724] transition-all">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <h4 class="font-bold text-lg text-black">Alumni & Scouts</h4>
+                                        <span id="segment-count-Alumni" class="bg-gray-100 text-gray-600 font-bold px-2 py-0.5 rounded text-xs">...</span>
+                                    </div>
+                                    <p class="text-xs text-gray-500">Former Kettleers in college & pro ball.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: SETUP -->
+                    <div id="wizard-step-setup" class="wizard-pane hidden-view flex-1 p-6 md:p-12 overflow-y-auto max-w-4xl mx-auto w-full">
+                        <div class="bg-[#F4F1E1] rounded-2xl p-6 md:p-10 shadow-2xl border-4 border-[#e8e4d1]">
+                            <div class="mb-6 pb-4 border-b border-gray-300">
+                                <span class="bg-[#611724] text-[#F4F1E1] text-xs font-bold uppercase tracking-wider px-3 py-1 rounded">Step 2 of 5</span>
+                                <h3 class="font-display text-3xl md:text-4xl text-[#4f111c] mt-3 uppercase">Campaign Setup</h3>
+                                <p class="text-gray-600 font-sans text-sm md:text-base mt-1">Configure your email subject line, preheader snippet, and sending details.</p>
+                            </div>
+
+                            <div class="space-y-5 font-sans">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Campaign Title (Internal Name)</label>
+                                    <input type="text" id="setup-campaign-title" oninput="syncSetupFields()" class="w-full bg-white border border-gray-300 rounded p-3 text-sm text-black font-semibold focus:outline-none focus:border-[#4f111c]" placeholder="e.g. Next Game: Kettleers vs. Harwich">
+                                    <p class="text-[11px] text-gray-500 mt-1">Only visible in your dashboard campaigns table.</p>
+                                </div>
+
                                 <div>
                                     <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Subject Line</label>
-                                    <input type="text" id="editor-campaign-subject" class="w-full bg-white border border-gray-300 rounded p-2 text-sm text-black focus:outline-none focus:border-[#4f111c]" placeholder="e.g. First pitch at 5:00 PM at Lowell Park">
+                                    <input type="text" id="setup-campaign-subject" oninput="syncSetupFields()" class="w-full bg-white border border-gray-300 rounded p-3 text-sm text-black focus:outline-none focus:border-[#4f111c]" placeholder="e.g. Holiday Special: 20% off all caps & tees">
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">From Name</label>
+                                    <input type="text" value="Cotuit Kettleers" class="w-full bg-gray-100 border border-gray-300 rounded p-3 text-sm text-gray-700 font-semibold" readonly>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">From Email Address</label>
+                                    <input type="text" value="onboarding@resend.dev (Sandbox Mode)" class="w-full bg-gray-100 border border-gray-300 rounded p-3 text-sm text-gray-700 font-mono" readonly>
+                                    <p class="text-[11px] text-gray-500 mt-1">Sends directly through your connected Resend API.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: TEMPLATE -->
+                    <div id="wizard-step-template" class="wizard-pane hidden-view flex-1 p-6 md:p-12 overflow-y-auto max-w-5xl mx-auto w-full">
+                        <div class="bg-[#F4F1E1] rounded-2xl p-6 md:p-10 shadow-2xl border-4 border-[#e8e4d1]">
+                            <div class="mb-6 pb-4 border-b border-gray-300">
+                                <span class="bg-[#611724] text-[#F4F1E1] text-xs font-bold uppercase tracking-wider px-3 py-1 rounded">Step 3 of 5</span>
+                                <h3 class="font-display text-3xl md:text-4xl text-[#4f111c] mt-3 uppercase">Choose Framework</h3>
+                                <p class="text-gray-600 font-sans text-sm md:text-base mt-1">Select the starting template structure for your newsletter layout.</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div onclick="selectWizardTemplate('Blank Canvas')" id="template-card-Blank Canvas" class="template-wizard-card cursor-pointer bg-white p-6 rounded-xl border-2 border-gray-200 hover:border-[#4f111c] transition-all flex flex-col justify-between">
+                                    <div>
+                                        <i data-lucide="file-plus-2" class="w-10 h-10 text-gray-400 mb-3"></i>
+                                        <h4 class="font-display text-2xl text-black mb-2 uppercase">Blank Canvas</h4>
+                                        <p class="text-gray-600 text-xs font-sans">Start from scratch with clean typography blocks.</p>
+                                    </div>
+                                    <div class="mt-4 pt-3 border-t border-gray-200 text-xs font-bold text-[#4f111c] uppercase tracking-wider">Select &rarr;</div>
+                                </div>
+
+                                <div onclick="selectWizardTemplate('The Weekly Ballpark Bulletin')" id="template-card-The Weekly Ballpark Bulletin" class="template-wizard-card cursor-pointer bg-white p-6 rounded-xl border-2 border-[#4f111c] shadow-lg flex flex-col justify-between">
+                                    <div>
+                                        <span class="bg-kettleer-navy text-[#F4F1E1] text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded">In-Season</span>
+                                        <h4 class="font-display text-2xl text-[#611724] mt-2 mb-2 uppercase">Ballpark Bulletin</h4>
+                                        <p class="text-gray-600 text-xs font-sans">Game homestands, starting matchups, theme nights, and snack bar highlights.</p>
+                                    </div>
+                                    <div class="mt-4 pt-3 border-t border-gray-200 text-xs font-bold text-[#4f111c] uppercase tracking-wider">Selected &check;</div>
+                                </div>
+
+                                <div onclick="selectWizardTemplate('The Kettleers Gazette')" id="template-card-The Kettleers Gazette" class="template-wizard-card cursor-pointer bg-white p-6 rounded-xl border-2 border-gray-200 hover:border-[#4f111c] transition-all flex flex-col justify-between">
+                                    <div>
+                                        <span class="bg-[#8a2b3d] text-[#F4F1E1] text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded">Offseason</span>
+                                        <h4 class="font-display text-2xl text-[#611724] mt-2 mb-2 uppercase">Kettleers Gazette</h4>
+                                        <p class="text-gray-600 text-xs font-sans">Long-form features, host family spotlights, alumni MLB drafts, and store promos.</p>
+                                    </div>
+                                    <div class="mt-4 pt-3 border-t border-gray-200 text-xs font-bold text-[#4f111c] uppercase tracking-wider">Select &rarr;</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 4: DESIGN (SPLIT STUDIO WITH LIVE MOBILE/DESKTOP SWITCHER) -->
+                    <div id="wizard-step-design" class="wizard-pane hidden-view flex-1 flex flex-col md:flex-row h-full overflow-hidden">
+                        
+                        <!-- Left Panel: Content Inputs -->
+                        <div class="w-full md:w-[460px] bg-[#F4F1E1] flex flex-col shrink-0 order-1 md:order-2 md:h-full overflow-y-auto border-l border-gray-300">
+                            <div class="p-4 bg-[#E8E4D1] border-b border-gray-300 flex justify-between items-center">
+                                <span class="bg-[#611724] text-[#F4F1E1] text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded">Step 4 of 5</span>
+                                <span id="editor-status-text" class="text-xs text-gray-600 font-medium italic">ready</span>
+                            </div>
+
+                            <div class="p-4 md:p-6 flex-1 flex flex-col gap-4 font-sans">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Headline</label>
+                                    <input type="text" id="editor-heading" class="w-full font-bold text-lg bg-white border border-gray-300 rounded p-3 text-black focus:outline-none focus:border-[#4f111c]" value="Welcome to the Kettleers Newsletter!">
+                                </div>
+
+                                <div class="flex-1 flex flex-col">
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Body Text</label>
+                                    <textarea id="editor-body" class="w-full flex-1 min-h-[220px] bg-white border border-gray-300 rounded p-3 text-base text-gray-800 focus:outline-none focus:border-[#4f111c] leading-relaxed">The first newsletter from Kettleers Nation!</textarea>
                                 </div>
                             </div>
 
-                            <!-- Active Block Tabs -->
-                            <div class="flex mx-4 md:mx-6 border-2 border-[#4f111c] rounded overflow-hidden mt-2">
-                                <button class="flex-1 bg-[#4f111c] text-[#F4F1E1] py-1 md:py-2 font-bold text-xs md:text-sm tracking-wide">Headline & Body</button>
-                                <button class="flex-1 bg-transparent text-[#4f111c] py-1 md:py-2 font-bold text-xs md:text-sm tracking-wide border-l border-r border-[#4f111c] hover:bg-black/5">Style</button>
-                                <button class="flex-1 bg-transparent text-[#4f111c] py-1 md:py-2 font-bold text-xs md:text-sm tracking-wide hover:bg-black/5">Settings</button>
+                            <div class="p-4 border-t border-gray-300 bg-[#E8E4D1] flex justify-between items-center">
+                                <button onclick="saveCampaign(false)" id="editor-save-btn" class="bg-[#4f111c] text-[#F4F1E1] font-bold px-4 py-2 rounded text-xs uppercase tracking-wider hover:bg-black transition-colors">Save Draft</button>
+                                <button onclick="sendTestEmail()" class="border-2 border-[#4f111c] text-[#4f111c] font-bold px-4 py-2 rounded text-xs uppercase tracking-wider hover:bg-[#4f111c] hover:text-[#F4F1E1] transition-colors flex items-center gap-1.5">
+                                    <i data-lucide="send" class="w-3.5 h-3.5"></i> Test
+                                </button>
                             </div>
                         </div>
 
-                        <!-- WYSIWYG Input Area -->
-                        <div class="p-4 md:p-6 bg-[#F4F1E1] flex-1 flex flex-col">
-                            <div class="bg-white border-2 border-[#4f111c] rounded shadow flex flex-col flex-1 min-h-[320px]">
-                                <div class="border-b-2 border-gray-200 bg-gray-50 p-2 md:p-3 flex flex-wrap gap-2 md:gap-3 items-center">
-                                    <div class="flex gap-1 md:gap-2 text-gray-700">
-                                        <button class="p-1 hover:bg-gray-200 rounded font-bold">B</button>
-                                        <button class="p-1 hover:bg-gray-200 rounded italic">I</button>
-                                        <button class="p-1 hover:bg-gray-200 rounded underline">U</button>
-                                        <div class="w-px bg-gray-300 mx-1 md:mx-2 my-1"></div>
-                                        <button class="p-1 hover:bg-gray-200 rounded"><i data-lucide="link" class="w-4 h-4 md:w-5 md:h-5"></i></button>
-                                    </div>
+                        <!-- Right Panel: Canvas with Device Toggle Switcher -->
+                        <div class="w-full md:flex-1 bg-[#E8E6D9] p-4 md:p-8 flex flex-col items-center order-2 md:order-1 overflow-y-auto h-auto md:h-full">
+                            
+                            <!-- Responsive Device Switcher Controls -->
+                            <div class="flex items-center justify-between pb-3 mb-4 border-b border-black/10 w-full max-w-[650px] shrink-0">
+                                <span class="text-xs font-bold text-gray-600 uppercase tracking-wider flex items-center gap-1.5">
+                                    <i data-lucide="eye" class="w-4 h-4"></i> Live Preview
+                                </span>
+                                <div class="inline-flex rounded-lg border border-gray-400 bg-white p-1 shadow-sm">
+                                    <button type="button" onclick="setPreviewDevice('desktop')" id="preview-btn-desktop" class="flex items-center gap-1.5 px-3 py-1 rounded text-xs font-bold text-[#611724] bg-gray-200 transition-colors">
+                                        <i data-lucide="monitor" class="w-3.5 h-3.5"></i> Desktop
+                                    </button>
+                                    <button type="button" onclick="setPreviewDevice('mobile')" id="preview-btn-mobile" class="flex items-center gap-1.5 px-3 py-1 rounded text-xs font-bold text-gray-500 hover:text-black transition-colors">
+                                        <i data-lucide="smartphone" class="w-3.5 h-3.5"></i> Mobile
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Preview Canvas Body Container -->
+                            <div id="email-preview-container" class="bg-white max-w-[650px] w-full shadow-2xl h-min pb-8 mb-8 transition-all duration-300">
+                                <div class="text-right text-[10px] text-gray-500 py-2 px-4 border-b border-gray-100 font-sans">
+                                    <a href="#" class="underline hover:text-black">View this email in your browser</a>
                                 </div>
                                 
-                                <div class="p-4 md:p-6 flex-1 flex flex-col">
-                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Headline</label>
-                                    <input type="text" id="editor-heading" class="w-full font-sans font-bold text-lg md:text-xl mb-4 text-black outline-none border-b border-dashed border-gray-300 pb-2 focus:border-kettleer-maroon" value="Welcome to the Kettleers Newsletter!">
-                                    
-                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Body Text</label>
-                                    <textarea id="editor-body" class="w-full flex-1 resize-none outline-none font-sans text-base md:text-lg text-gray-800 leading-relaxed min-h-[160px]">The first newsletter from Kettleers Nation!</textarea>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Bottom Action Controls -->
-                        <div class="p-4 md:p-6 border-t border-gray-300 bg-[#E8E4D1] flex justify-between items-center">
-                            <button onclick="saveCampaign(true)" id="editor-save-btn" class="bg-[#4f111c] text-[#F4F1E1] font-bold tracking-wide px-6 py-2 rounded shadow hover:bg-black transition-colors uppercase text-sm">Save & Close</button>
-                            <span id="editor-status-text" class="text-sm text-gray-600 font-medium italic">ready</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Live Preview Canvas -->
-                    <div class="w-full md:flex-1 bg-[#E8E6D9] p-4 md:p-8 flex justify-center border-t md:border-t-0 md:border-r border-black/10 order-2 md:order-1 md:overflow-y-auto h-auto md:h-full">
-                        <div class="bg-white max-w-[650px] w-full shadow-2xl h-min pb-8 md:pb-12 mb-8 md:mb-0">
-                            <div class="text-center md:text-right text-[10px] md:text-xs text-gray-500 py-2 md:py-3 px-4 md:px-6 border-b border-gray-100">
-                                <a href="#" class="underline hover:text-black transition-colors">View this email in your browser</a>
-                            </div>
-                            
-                            <div class="bg-kettleer-navy h-24 md:h-48 relative overflow-hidden flex items-center px-4 md:px-10">
-                                <img src="bannerplayer.png" alt="Cotuit Player" class="h-full object-contain mr-auto">
-                                <div class="relative z-10 text-right ml-auto">
-                                    <div class="font-display text-2xl sm:text-3xl md:text-5xl uppercase leading-none text-[#F4F1E1] tracking-wide text-shadow">Cotuit<br>Kettleers</div>
-                                </div>
-                            </div>
-
-                            <div class="p-6 md:p-10 text-center border-b border-gray-200 relative group cursor-pointer ring-4 ring-inset ring-[#4f111c] bg-red-50/50">
-                                <h1 id="live-heading" class="font-bold text-xl md:text-3xl text-black mb-3 md:mb-4 font-sans tracking-tight">Welcome to the Kettleers Newsletter!</h1>
-                                <p id="live-body" class="font-sans text-base md:text-xl text-gray-800 leading-relaxed">
-                                    The first newsletter from Kettleers Nation!
-                                </p>
-                            </div>
-
-                            <div class="p-6 md:p-10 relative group cursor-pointer hover:ring-2 hover:ring-inset hover:ring-gray-300 transition-all">
-                                <h2 class="font-display text-2xl md:text-3xl text-kettleer-navy mb-4 md:mb-6 text-center uppercase tracking-wider">Stocking Stuffers Promo</h2>
-                                <div class="flex flex-col sm:flex-row gap-4 md:gap-6 items-center text-center sm:text-left">
-                                    <div class="w-full sm:w-48 h-auto sm:h-32 bg-gray-50 flex items-center justify-center shrink-0 rounded-lg p-2">
-                                        <img src="StockingStuffer.png" alt="Stocking Stuffers" class="max-w-full max-h-32 object-contain">
+                                <div class="bg-kettleer-navy h-28 md:h-36 relative overflow-hidden flex items-end px-4 md:px-8 pb-2">
+                                    <img src="bannerplayer.png" alt="Cotuit Player" class="h-full object-contain mr-auto">
+                                    <div class="relative z-10 text-right ml-auto">
+                                        <div class="font-display text-2xl sm:text-3xl uppercase leading-none text-[#F4F1E1] tracking-wide">Cotuit<br>Kettleers</div>
                                     </div>
-                                    <p class="font-sans text-base md:text-lg text-gray-800 leading-snug">
-                                        The Perfect Stocking Stuffers! Holiday Season Special: Use code <strong class="text-black">FANS20</strong> at checkout for 20% off all caps, tees, and collectibles.
+                                </div>
+
+                                <div class="p-6 md:p-8 text-center border-4 border-[#611724] bg-red-50/20 m-3">
+                                    <h1 id="live-heading" class="font-bold text-xl md:text-2xl text-black mb-3 font-sans tracking-tight">Welcome to the Kettleers Newsletter!</h1>
+                                    <p id="live-body" class="font-sans text-sm md:text-base text-gray-800 leading-relaxed">
+                                        The first newsletter from Kettleers Nation!
                                     </p>
                                 </div>
-                                <div class="text-center mt-6 md:mt-8">
-                                    <button class="w-full sm:w-auto bg-[#2E5B82] text-white font-sans font-bold uppercase tracking-wider px-6 md:px-8 py-3 md:py-3 rounded shadow-md hover:bg-[#1f405c] transition-colors text-sm md:text-base pointer-events-none">Shop Holiday Special</button>
+
+                                <div class="p-6 text-center border border-gray-200 m-3 bg-[#FCFAF6]">
+                                    <h2 class="font-display text-xl text-kettleer-navy mb-4 text-center uppercase tracking-wider">Stocking Stuffers Promo</h2>
+                                    <div class="flex flex-col sm:flex-row gap-4 items-center text-center sm:text-left">
+                                        <div class="w-full sm:w-40 h-auto bg-white flex items-center justify-center shrink-0 rounded-lg p-2 border">
+                                            <img src="StockingStuffer.png" alt="Stocking Stuffers" class="max-w-full max-h-28 object-contain">
+                                        </div>
+                                        <p class="font-sans text-xs md:text-sm text-gray-800 leading-snug">
+                                            The Perfect Stocking Stuffers! Holiday Season Special: Use code <strong class="text-black">FANS20</strong> at checkout for 20% off all caps, tees, and collectibles.
+                                        </p>
+                                    </div>
+                                    <div class="text-center mt-5">
+                                        <span class="inline-block bg-[#2E5B82] text-white font-sans font-bold uppercase tracking-wider px-6 py-2.5 rounded shadow text-xs">Shop Holiday Special</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- STEP 5: CONFIRM -->
+                    <div id="wizard-step-confirm" class="wizard-pane hidden-view flex-1 p-6 md:p-12 overflow-y-auto max-w-4xl mx-auto w-full">
+                        <div class="bg-[#F4F1E1] rounded-2xl p-6 md:p-10 shadow-2xl border-4 border-[#e8e4d1]">
+                            <div class="mb-6 pb-4 border-b border-gray-300">
+                                <span class="bg-[#611724] text-[#F4F1E1] text-xs font-bold uppercase tracking-wider px-3 py-1 rounded">Step 5 of 5</span>
+                                <h3 class="font-display text-3xl md:text-4xl text-[#4f111c] mt-3 uppercase">Review & Dispatch</h3>
+                                <p class="text-gray-600 font-sans text-sm md:text-base mt-1">Review your campaign details before sending.</p>
+                            </div>
+
+                            <div class="space-y-4 font-sans mb-8">
+                                <div class="bg-white p-4 rounded-xl border border-gray-300 flex justify-between items-center">
+                                    <div>
+                                        <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Audience</span>
+                                        <h4 id="confirm-review-audience" class="font-bold text-lg text-[#611724]">All Active Subscribers (0 fans)</h4>
+                                    </div>
+                                    <button onclick="goToWizardStep('recipients')" class="text-xs font-bold uppercase text-[#4f111c] hover:underline">Edit</button>
+                                </div>
+
+                                <div class="bg-white p-4 rounded-xl border border-gray-300 flex justify-between items-center">
+                                    <div>
+                                        <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Subject Line</span>
+                                        <h4 id="confirm-review-subject" class="font-bold text-lg text-black">No Subject</h4>
+                                    </div>
+                                    <button onclick="goToWizardStep('setup')" class="text-xs font-bold uppercase text-[#4f111c] hover:underline">Edit</button>
+                                </div>
+
+                                <div class="bg-white p-4 rounded-xl border border-gray-300 flex justify-between items-center">
+                                    <div>
+                                        <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Template Framework</span>
+                                        <h4 id="confirm-review-template" class="font-bold text-lg text-black">The Weekly Ballpark Bulletin</h4>
+                                    </div>
+                                    <button onclick="goToWizardStep('template')" class="text-xs font-bold uppercase text-[#4f111c] hover:underline">Edit</button>
+                                </div>
+
+                                <div class="bg-white p-4 rounded-xl border border-gray-300 flex justify-between items-center">
+                                    <div>
+                                        <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Sender Credentials</span>
+                                        <h4 class="font-bold text-base text-gray-800">Cotuit Kettleers &lt;onboarding@resend.dev&gt;</h4>
+                                    </div>
+                                    <span class="bg-amber-100 text-amber-800 font-bold text-xs px-2.5 py-1 rounded">Sandbox Mode</span>
+                                </div>
+                            </div>
+
+                            <div class="pt-6 border-t border-gray-300 flex flex-col sm:flex-row gap-4 items-center justify-between">
+                                <button onclick="sendTestEmail()" class="w-full sm:w-auto border-2 border-[#4f111c] text-[#4f111c] font-display uppercase tracking-wider px-6 py-3 rounded hover:bg-[#4f111c] hover:text-white transition-colors text-sm">Send Test Email (Aaron)</button>
+                                <button onclick="dispatchCampaignBlast()" id="confirm-dispatch-btn" class="w-full sm:w-auto bg-[#387843] text-white font-display text-lg uppercase tracking-wider px-8 py-3 rounded shadow hover:bg-black transition-colors flex items-center justify-center gap-2">
+                                    <i data-lucide="check-circle" class="w-5 h-5"></i> Send Campaign Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
-                <div class="bg-kettleer-maroonDark text-white py-3 md:py-4 px-4 md:px-8 flex justify-between text-xs md:text-sm shrink-0 font-medium border-t border-white/10 z-20 sticky bottom-0 md:static">
-                     <div class="hidden sm:block w-16"></div>
-                     <div class="flex gap-2 md:gap-4 tracking-wide items-center overflow-x-auto whitespace-nowrap hide-scrollbar">
-                         <span class="opacity-60 hidden sm:inline">Recipients</span> <i data-lucide="chevron-right" class="w-3 h-3 md:w-4 md:h-4 opacity-40 hidden sm:inline"></i>
-                         <span class="opacity-60 hidden md:inline">Setup</span> <i data-lucide="chevron-right" class="w-3 h-3 md:w-4 md:h-4 opacity-40 hidden md:inline"></i>
-                         <span class="opacity-60">Template</span> <i data-lucide="chevron-right" class="w-3 h-3 md:w-4 md:h-4 opacity-40"></i>
-                         <span class="font-bold text-white text-sm md:text-base">Design</span> <i data-lucide="chevron-right" class="w-3 h-3 md:w-4 md:h-4 opacity-40"></i>
-                         <span class="opacity-60">Confirm</span>
-                     </div>
-                     <button onclick="saveCampaign(true)" class="hover:text-white flex items-center gap-1 uppercase tracking-wider font-bold shrink-0 ml-4 bg-white/10 px-3 py-1 rounded md:bg-transparent md:p-0">Next <i data-lucide="chevron-right" class="w-4 h-4 md:w-5 md:h-5"></i></button>
+                <!-- Footer Wizard Progress Bar -->
+                <div class="bg-kettleer-maroonDark text-white py-3 md:py-4 px-4 md:px-8 flex justify-between items-center text-xs md:text-sm shrink-0 font-medium border-t border-white/10 z-20 sticky bottom-0">
+                    <button onclick="wizardPrevStep()" id="wizard-prev-btn" class="hover:text-white flex items-center gap-1 uppercase tracking-wider font-bold shrink-0 bg-white/10 px-3 md:px-4 py-1.5 rounded transition-colors">
+                        <i data-lucide="chevron-left" class="w-4 h-4"></i> <span id="wizard-prev-label">Back</span>
+                    </button>
+                    
+                    <!-- Steps Breadcrumbs -->
+                    <div class="flex gap-2 md:gap-4 tracking-wide items-center overflow-x-auto whitespace-nowrap hide-scrollbar px-2">
+                        <button onclick="goToWizardStep('recipients')" id="step-nav-recipients" class="wizard-step-link font-bold text-white text-xs md:text-sm">Recipients</button>
+                        <i data-lucide="chevron-right" class="w-3 h-3 md:w-4 md:h-4 opacity-40"></i>
+                        <button onclick="goToWizardStep('setup')" id="step-nav-setup" class="wizard-step-link opacity-60 hover:opacity-100 text-xs md:text-sm">Setup</button>
+                        <i data-lucide="chevron-right" class="w-3 h-3 md:w-4 md:h-4 opacity-40"></i>
+                        <button onclick="goToWizardStep('template')" id="step-nav-template" class="wizard-step-link opacity-60 hover:opacity-100 text-xs md:text-sm">Template</button>
+                        <i data-lucide="chevron-right" class="w-3 h-3 md:w-4 md:h-4 opacity-40"></i>
+                        <button onclick="goToWizardStep('design')" id="step-nav-design" class="wizard-step-link opacity-60 hover:opacity-100 text-xs md:text-sm">Design</button>
+                        <i data-lucide="chevron-right" class="w-3 h-3 md:w-4 md:h-4 opacity-40"></i>
+                        <button onclick="goToWizardStep('confirm')" id="step-nav-confirm" class="wizard-step-link opacity-60 hover:opacity-100 text-xs md:text-sm">Confirm</button>
+                    </div>
+
+                    <button onclick="wizardNextStep()" id="wizard-next-btn" class="hover:text-white flex items-center gap-1 uppercase tracking-wider font-bold shrink-0 bg-[#F4F1E1] text-[#4f111c] px-4 py-1.5 rounded hover:bg-white transition-all shadow">
+                        <span id="wizard-next-label">Next</span> <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
                 </div>
+
             </div>
 
-            <!-- ================= 7. REPORT VIEW ================= -->
+            <!-- ================= 6. REPORT VIEW ================= -->
             <div id="view-report" class="hidden-view flex-1 flex flex-col p-4 md:p-10 overflow-y-auto max-w-6xl mx-auto w-full">
                 <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-8 text-kettleer-cream gap-4">
                     <div>
@@ -550,26 +688,10 @@
                             <div class="text-xs md:text-sm font-bold text-gray-500">0.0% Bounce Rate</div>
                         </div>
                     </div>
-
-                    <div class="flex-1 flex flex-col">
-                        <h3 class="font-display text-2xl md:text-3xl mb-4 text-black">24-Hour Engagement</h3>
-                        <div class="w-full flex-1 bg-white border border-gray-200 rounded-lg p-6 relative min-h-[300px] flex items-end justify-between px-10">
-                            <div class="w-12 bg-gray-200 h-[10%] rounded-t relative group"><div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">10AM</div></div>
-                            <div class="w-12 bg-kettleer-green h-[80%] rounded-t relative group"><div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">11AM</div></div>
-                            <div class="w-12 bg-kettleer-green h-[60%] rounded-t relative group"><div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">12PM</div></div>
-                            <div class="w-12 bg-gray-400 h-[30%] rounded-t relative group"><div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">1PM</div></div>
-                            <div class="w-12 bg-gray-400 h-[25%] rounded-t relative group"><div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">2PM</div></div>
-                            <div class="w-12 bg-gray-300 h-[15%] rounded-t relative group"><div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">3PM</div></div>
-                            <div class="w-12 bg-gray-300 h-[20%] rounded-t relative group"><div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">4PM</div></div>
-                            <div class="w-12 bg-gray-400 h-[45%] rounded-t relative group"><div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">5PM</div></div>
-                            <div class="w-12 bg-gray-300 h-[20%] rounded-t relative group"><div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">6PM</div></div>
-                            <div class="w-12 bg-gray-200 h-[10%] rounded-t relative group"><div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">7PM</div></div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
-            <!-- ================= 8. TRANSACTIONAL VIEW ================= -->
+            <!-- ================= 7. TRANSACTIONAL VIEW ================= -->
             <div id="view-transactional" class="hidden-view flex-1 flex flex-col p-4 md:p-10 overflow-y-auto max-w-6xl mx-auto w-full">
                 <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-8 text-kettleer-cream gap-4">
                     <div>
@@ -578,12 +700,12 @@
                     </div>
                 </header>
                 <div class="bg-[#F4F1E1] rounded-xl md:rounded-2xl p-6 md:p-10 shadow-2xl flex-1">
-                    <p class="text-gray-700 font-sans text-lg mb-6">Manage automated emails triggered by user actions (like buying merch or donating to the CAA).</p>
-                    <div class="border border-gray-300 rounded-lg overflow-hidden">
+                    <p class="text-gray-700 font-sans text-lg mb-6">Manage automated emails triggered by fan actions (such as merchandise purchases or donations).</p>
+                    <div class="border border-gray-300 rounded-lg overflow-hidden font-sans">
                         <div class="bg-white p-4 border-b border-gray-300 flex justify-between items-center">
                             <div>
                                 <h4 class="font-bold text-lg text-black">Merchandise Order Receipt</h4>
-                                <p class="text-sm text-gray-500">Sent immediately after store checkout.</p>
+                                <p class="text-sm text-gray-500">Sent immediately after Lowell Park online store checkout.</p>
                             </div>
                             <button class="bg-kettleer-green text-white px-4 py-1.5 rounded text-sm font-bold">Active</button>
                         </div>
@@ -598,7 +720,7 @@
                 </div>
             </div>
 
-            <!-- ================= 9. ANALYTICS VIEW ================= -->
+            <!-- ================= 8. ANALYTICS VIEW ================= -->
             <div id="view-analytics" class="hidden-view flex-1 flex flex-col p-4 md:p-10 overflow-y-auto max-w-6xl mx-auto w-full">
                 <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-8 text-kettleer-cream gap-4">
                     <div>
@@ -618,7 +740,7 @@
                 </div>
             </div>
 
-            <!-- ================= 10. SETTINGS VIEW ================= -->
+            <!-- ================= 9. SETTINGS VIEW ================= -->
             <div id="view-settings" class="hidden-view flex-1 flex flex-col p-4 md:p-10 overflow-y-auto max-w-6xl mx-auto w-full">
                 <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-8 text-kettleer-cream gap-4">
                     <div>
@@ -627,19 +749,16 @@
                     </div>
                 </header>
                 <div class="bg-[#F4F1E1] rounded-xl md:rounded-2xl p-6 md:p-10 shadow-2xl flex-1">
-                    <div class="max-w-2xl">
+                    <div class="max-w-2xl font-sans">
                         <h3 class="font-display text-2xl mb-4 text-black border-b border-gray-300 pb-2">Resend Mail API</h3>
                         <div class="mb-6">
                             <label class="block font-bold text-gray-700 mb-2">API Secret Key</label>
-                            <input type="password" value="re_1234567890abcdefghijklmnopqrstuvwxyz" class="w-full bg-white border border-gray-300 rounded p-3 text-gray-500 font-mono" readonly>
-                            <p class="text-xs text-gray-500 mt-1">Managed securely via Supabase Edge Functions.</p>
+                            <input type="password" value="re_••••••••••••••••••••••••" class="w-full bg-white border border-gray-300 rounded p-3 text-gray-500 font-mono" readonly>
+                            <p class="text-xs text-gray-500 mt-1">Managed securely inside Supabase Edge Functions.</p>
                         </div>
                         <div class="mb-6">
                             <label class="block font-bold text-gray-700 mb-2">Sending Domain</label>
-                            <input type="text" value="updates.kettleers.org" class="w-full bg-white border border-gray-300 rounded p-3 text-black font-sans" readonly>
-                            <div class="flex items-center gap-2 mt-2 text-sm text-green-700 font-bold">
-                                <i data-lucide="check-circle" class="w-4 h-4"></i> Domain Verified
-                            </div>
+                            <input type="text" value="updates.kettleers.org" class="w-full bg-white border border-gray-300 rounded p-3 text-black" readonly>
                         </div>
                     </div>
                 </div>
@@ -659,15 +778,15 @@
                 <form id="add-subscriber-form" onsubmit="handleAddSubscriber(event)">
                     <div class="mb-4">
                         <label class="block font-bold text-gray-700 mb-2">Full Name</label>
-                        <input type="text" id="sub-name" required class="w-full bg-white border border-gray-300 rounded p-3 text-black font-sans focus:outline-none focus:border-[#4f111c] focus:ring-1 focus:ring-[#4f111c]">
+                        <input type="text" id="sub-name" required class="w-full bg-white border border-gray-300 rounded p-3 text-black font-sans focus:outline-none focus:border-[#4f111c]">
                     </div>
                     <div class="mb-4">
                         <label class="block font-bold text-gray-700 mb-2">Email Address</label>
-                        <input type="email" id="sub-email" required class="w-full bg-white border border-gray-300 rounded p-3 text-black font-sans focus:outline-none focus:border-[#4f111c] focus:ring-1 focus:ring-[#4f111c]">
+                        <input type="email" id="sub-email" required class="w-full bg-white border border-gray-300 rounded p-3 text-black font-sans focus:outline-none focus:border-[#4f111c]">
                     </div>
                     <div class="mb-6">
                         <label class="block font-bold text-gray-700 mb-2">Audience Segment</label>
-                        <select id="sub-segment" class="w-full bg-white border border-gray-300 rounded p-3 text-black font-sans focus:outline-none focus:border-[#4f111c] focus:ring-1 focus:ring-[#4f111c]">
+                        <select id="sub-segment" class="w-full bg-white border border-gray-300 rounded p-3 text-black font-sans focus:outline-none focus:border-[#4f111c]">
                             <option value="General Fan">General Fan</option>
                             <option value="All-Star Member">All-Star Member</option>
                             <option value="Alumni">Alumni</option>
@@ -696,9 +815,20 @@
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let loadedCampaigns = [];
-        let allSubscribers = []; // Store all fetched subscribers for search filtering
+        let allSubscribers = [];
         let currentEditingCampaignId = null;
-        let currentEditingTemplate = 'Weekly Bulletin';
+
+        // Wizard State
+        const WIZARD_STEPS = ['recipients', 'setup', 'template', 'design', 'confirm'];
+        let currentWizardStepIndex = 0;
+        let wizardData = {
+            segment: 'all',
+            title: '',
+            subject: '',
+            template: 'The Weekly Ballpark Bulletin',
+            heading: 'Welcome to the Kettleers Newsletter!',
+            body: 'The first newsletter from Kettleers Nation!'
+        };
 
         // -------------------------------------------------------------
         // Authentication Flow
@@ -748,28 +878,27 @@
         }
 
         // -------------------------------------------------------------
-        // Data Fetching & Rendering
+        // Data Fetching & Subscriber Handling
         // -------------------------------------------------------------
-        
         async function loadSubscribers() {
             const tableBody = document.getElementById('subscribers-table-body');
-            if (!tableBody) return;
-
             const { data, error } = await db.from('subscribers').select('*').order('created_at', { ascending: false });
 
             if (error) {
                 console.error('Error fetching subscribers:', error);
-                tableBody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-red-700 font-sans">Error connecting to Supabase: ${error.message}</td></tr>`;
+                if (tableBody) tableBody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-red-700 font-sans">Error connecting to Supabase: ${error.message}</td></tr>`;
                 return;
             }
 
             allSubscribers = data || [];
             renderSubscribers(allSubscribers);
+            updateAudienceCounts();
         }
 
         function renderSubscribers(dataToRender) {
             const tableBody = document.getElementById('subscribers-table-body');
             const countDisplay = document.getElementById('subscribers-count-display');
+            if (!tableBody) return;
             
             if (!dataToRender || dataToRender.length === 0) {
                 tableBody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-gray-500 font-sans italic">No subscribers found.</td></tr>`;
@@ -795,10 +924,8 @@
             }
         }
 
-        // Subscriber Search Logic
         function handleSubscriberSearch(e) {
             const query = e.target.value.toLowerCase();
-            
             if (!query) {
                 renderSubscribers(allSubscribers);
                 return;
@@ -808,13 +935,30 @@
                 const name = (sub.name || '').toLowerCase();
                 const email = (sub.email || '').toLowerCase();
                 const segment = (sub.segment || '').toLowerCase();
-                
                 return name.includes(query) || email.includes(query) || segment.includes(query);
             });
 
             renderSubscribers(filteredData);
         }
 
+        function updateAudienceCounts() {
+            const total = allSubscribers.length;
+            const setCardCount = (id, count) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = `${count} fans`;
+            };
+
+            setCardCount('segment-count-all', total);
+            setCardCount('segment-count-General Fan', allSubscribers.filter(s => s.segment === 'General Fan').length);
+            setCardCount('segment-count-All-Star Member', allSubscribers.filter(s => s.segment === 'All-Star Member').length);
+            setCardCount('segment-count-Supporter', allSubscribers.filter(s => s.segment === 'Supporter').length);
+            setCardCount('segment-count-Host Family', allSubscribers.filter(s => s.segment === 'Host Family').length);
+            setCardCount('segment-count-Alumni', allSubscribers.filter(s => s.segment === 'Alumni').length);
+        }
+
+        // -------------------------------------------------------------
+        // Campaigns & Dashboard Data Fetching
+        // -------------------------------------------------------------
         async function loadDashboardAndCampaigns() {
             const fansCountEl = document.getElementById('stat-fans-count');
             const avgOpenEl = document.getElementById('stat-open-rate');
@@ -828,7 +972,6 @@
             }
 
             const { data: campaigns, error } = await db.from('campaigns').select('*').order('created_at', { ascending: false });
-
             if (error) {
                 console.error('Error fetching campaigns:', error);
                 return;
@@ -852,15 +995,15 @@
                     recentCampaignsEl.innerHTML = `<div class="py-6 text-center text-gray-500 font-sans italic">No dispatched campaigns yet.</div>`;
                 } else {
                     recentCampaignsEl.innerHTML = sentCampaigns.slice(0, 3).map(c => `
-                        <div class="py-4 md:py-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-2 md:gap-4">
+                        <div class="py-4 md:py-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-2 md:gap-4 font-sans">
                             <h4 class="font-display text-lg md:text-2xl uppercase tracking-wider text-black w-full">${escapeHtml(c.title)}</h4>
                             <div class="flex gap-6 md:gap-10 w-full md:w-auto justify-start md:justify-end bg-transparent p-0 rounded items-center">
                                 <div class="text-left md:text-center">
-                                    <div class="text-xs md:text-sm text-gray-600 mb-1">Open</div>
+                                    <div class="text-xs text-gray-600 mb-1">Open</div>
                                     <div class="font-bold text-lg md:text-xl text-black">${c.open_rate}%</div>
                                 </div>
                                 <div class="text-left md:text-center">
-                                    <div class="text-xs md:text-sm text-gray-600 mb-1">CTR</div>
+                                    <div class="text-xs text-gray-600 mb-1">CTR</div>
                                     <div class="font-bold text-lg md:text-xl text-black">${c.click_rate}%</div>
                                 </div>
                                 <button onclick="openReportView(${c.id})" class="ml-auto md:ml-4 border border-gray-400 text-gray-700 text-xs font-bold px-3 py-1.5 rounded uppercase hover:bg-white transition-colors shrink-0">Report</button>
@@ -909,23 +1052,213 @@
             }
         }
 
+        // -------------------------------------------------------------
+        // CAMPAIGN WIZARD ENGINE (Steps 1 through 5)
+        // -------------------------------------------------------------
+
+        function startNewCampaignWizard() {
+            currentEditingCampaignId = null;
+            wizardData = {
+                segment: 'all',
+                title: '',
+                subject: '',
+                template: 'The Weekly Ballpark Bulletin',
+                heading: 'Welcome to the Kettleers Newsletter!',
+                body: 'The first newsletter from Kettleers Nation!'
+            };
+            syncWizardUI();
+            switchTab('campaign-editor');
+            goToWizardStep('recipients');
+        }
+
+        function startNewCampaignWizardWithTemplate(templateName) {
+            startNewCampaignWizard();
+            selectWizardTemplate(templateName);
+            goToWizardStep('setup');
+        }
+
+        function editCampaign(campaignId) {
+            const c = loadedCampaigns.find(item => item.id === campaignId);
+            if (!c) return;
+
+            currentEditingCampaignId = c.id;
+            wizardData = {
+                segment: 'all',
+                title: c.title || '',
+                subject: c.subject || '',
+                template: c.template_name || 'The Weekly Ballpark Bulletin',
+                heading: c.headline || c.title || 'Welcome to the Kettleers Newsletter!',
+                body: c.body_text || 'The first newsletter from Kettleers Nation!'
+            };
+
+            syncWizardUI();
+            switchTab('campaign-editor');
+            goToWizardStep('design');
+        }
+
+        function syncWizardUI() {
+            document.getElementById('setup-campaign-title').value = wizardData.title;
+            document.getElementById('setup-campaign-subject').value = wizardData.subject;
+            document.getElementById('editor-heading').value = wizardData.heading;
+            document.getElementById('editor-body').value = wizardData.body;
+            
+            document.getElementById('live-heading').textContent = wizardData.heading;
+            document.getElementById('live-body').innerHTML = wizardData.body.replace(/\n/g, '<br>');
+
+            selectAudienceSegment(wizardData.segment);
+            selectWizardTemplate(wizardData.template);
+        }
+
+        function goToWizardStep(stepName) {
+            const stepIndex = WIZARD_STEPS.indexOf(stepName);
+            if (stepIndex === -1) return;
+            currentWizardStepIndex = stepIndex;
+
+            // Hide all wizard panes
+            document.querySelectorAll('.wizard-pane').forEach(el => el.classList.add('hidden-view'));
+            
+            // Show active pane
+            const activePane = document.getElementById(`wizard-step-${stepName}`);
+            if (activePane) activePane.classList.remove('hidden-view');
+
+            // Update breadcrumb navigation styles
+            WIZARD_STEPS.forEach((name, i) => {
+                const link = document.getElementById(`step-nav-${name}`);
+                if (!link) return;
+                if (i === currentWizardStepIndex) {
+                    link.className = "wizard-step-link font-bold text-white text-xs md:text-sm underline underline-offset-4";
+                } else if (i < currentWizardStepIndex) {
+                    link.className = "wizard-step-link text-white/90 hover:text-white text-xs md:text-sm cursor-pointer";
+                } else {
+                    link.className = "wizard-step-link opacity-40 hover:opacity-100 text-xs md:text-sm cursor-pointer";
+                }
+            });
+
+            // Update Back & Next label buttons
+            const prevBtn = document.getElementById('wizard-prev-btn');
+            const prevLabel = document.getElementById('wizard-prev-label');
+            const nextBtn = document.getElementById('wizard-next-btn');
+            const nextLabel = document.getElementById('wizard-next-label');
+
+            if (currentWizardStepIndex === 0) {
+                prevLabel.textContent = "Exit";
+            } else {
+                prevLabel.textContent = "Back";
+            }
+
+            if (currentWizardStepIndex === WIZARD_STEPS.length - 1) {
+                nextBtn.classList.add('hidden');
+            } else {
+                nextBtn.classList.remove('hidden');
+                const nextStepName = WIZARD_STEPS[currentWizardStepIndex + 1];
+                nextLabel.textContent = `Next: ${nextStepName.charAt(0).toUpperCase() + nextStepName.slice(1)}`;
+            }
+
+            if (stepName === 'confirm') {
+                populateConfirmStep();
+            }
+
+            lucide.createIcons();
+        }
+
+        function wizardNextStep() {
+            if (currentWizardStepIndex < WIZARD_STEPS.length - 1) {
+                goToWizardStep(WIZARD_STEPS[currentWizardStepIndex + 1]);
+            }
+        }
+
+        function wizardPrevStep() {
+            if (currentWizardStepIndex > 0) {
+                goToWizardStep(WIZARD_STEPS[currentWizardStepIndex - 1]);
+            } else {
+                switchTab('campaigns');
+            }
+        }
+
+        function selectAudienceSegment(segment) {
+            wizardData.segment = segment;
+            document.querySelectorAll('.segment-card').forEach(card => {
+                card.classList.remove('border-[#611724]', 'bg-red-50/20');
+                card.classList.add('border-gray-200');
+            });
+            const activeCard = document.getElementById(`segment-card-${segment}`);
+            if (activeCard) {
+                activeCard.classList.remove('border-gray-200');
+                activeCard.classList.add('border-[#611724]', 'bg-red-50/20');
+            }
+        }
+
+        function selectWizardTemplate(templateName) {
+            wizardData.template = templateName;
+            document.querySelectorAll('.template-wizard-card').forEach(card => {
+                card.classList.remove('border-[#4f111c]', 'shadow-lg');
+                card.classList.add('border-gray-200');
+            });
+            const activeCard = document.getElementById(`template-card-${templateName}`);
+            if (activeCard) {
+                activeCard.classList.remove('border-gray-200');
+                activeCard.classList.add('border-[#4f111c]', 'shadow-lg');
+            }
+        }
+
+        function syncSetupFields() {
+            wizardData.title = document.getElementById('setup-campaign-title').value;
+            wizardData.subject = document.getElementById('setup-campaign-subject').value;
+        }
+
+        function populateConfirmStep() {
+            syncSetupFields();
+            wizardData.heading = document.getElementById('editor-heading').value;
+            wizardData.body = document.getElementById('editor-body').value;
+
+            const audienceCount = wizardData.segment === 'all' 
+                ? allSubscribers.length 
+                : allSubscribers.filter(s => s.segment === wizardData.segment).length;
+
+            const audienceName = wizardData.segment === 'all' ? 'All Active Subscribers' : wizardData.segment;
+            document.getElementById('confirm-review-audience').textContent = `${audienceName} (${audienceCount} fans)`;
+            document.getElementById('confirm-review-subject').textContent = wizardData.subject || '(No Subject Line Set)';
+            document.getElementById('confirm-review-template').textContent = wizardData.template;
+        }
+
+        // -------------------------------------------------------------
+        // PREVIEW DEVICE TOGGLE (Mobile vs. Desktop)
+        // -------------------------------------------------------------
+        function setPreviewDevice(device) {
+            const container = document.getElementById('email-preview-container');
+            const desktopBtn = document.getElementById('preview-btn-desktop');
+            const mobileBtn = document.getElementById('preview-btn-mobile');
+
+            if (device === 'mobile') {
+                container.classList.add('preview-mobile');
+                desktopBtn.className = "flex items-center gap-1.5 px-3 py-1 rounded text-xs font-bold text-gray-500 hover:text-black transition-colors";
+                mobileBtn.className = "flex items-center gap-1.5 px-3 py-1 rounded text-xs font-bold text-[#611724] bg-gray-200 transition-colors";
+            } else {
+                container.classList.remove('preview-mobile');
+                desktopBtn.className = "flex items-center gap-1.5 px-3 py-1 rounded text-xs font-bold text-[#611724] bg-gray-200 transition-colors";
+                mobileBtn.className = "flex items-center gap-1.5 px-3 py-1 rounded text-xs font-bold text-gray-500 hover:text-black transition-colors";
+            }
+        }
+
+        // -------------------------------------------------------------
+        // Database Persistence & Email Sending (Via Edge Function)
+        // -------------------------------------------------------------
         async function saveCampaign(exitAfterSave = false) {
-            const title = document.getElementById('editor-campaign-title').value.trim() || 'Untitled Campaign';
-            const subject = document.getElementById('editor-campaign-subject').value.trim() || 'No Subject';
+            syncSetupFields();
             const heading = document.getElementById('editor-heading').value;
             const body = document.getElementById('editor-body').value;
             const statusText = document.getElementById('editor-status-text');
             const saveBtn = document.getElementById('editor-save-btn');
 
-            statusText.textContent = 'Saving...';
-            saveBtn.disabled = true;
+            if (statusText) statusText.textContent = 'Saving...';
+            if (saveBtn) saveBtn.disabled = true;
 
             const payload = {
-                title: title,
-                subject: subject,
+                title: wizardData.title.trim() || 'Untitled Campaign',
+                subject: wizardData.subject.trim() || 'No Subject',
                 headline: heading,
                 body_text: body,
-                template_name: currentEditingTemplate,
+                template_name: wizardData.template,
                 status: 'Draft',
                 html_content: `<div style="font-family: sans-serif;"><h1>${heading}</h1><p>${body.replace(/\n/g, '<br>')}</p></div>`
             };
@@ -940,15 +1273,15 @@
                 }
             }
 
-            saveBtn.disabled = false;
+            if (saveBtn) saveBtn.disabled = false;
 
             if (response.error) {
                 console.error('Error saving campaign:', response.error);
-                statusText.textContent = 'Save failed';
+                if (statusText) statusText.textContent = 'Save failed';
                 return;
             }
 
-            statusText.textContent = 'Saved to database';
+            if (statusText) statusText.textContent = 'Saved to database';
             await loadDashboardAndCampaigns();
 
             if (exitAfterSave) {
@@ -956,110 +1289,121 @@
             }
         }
 
-        function editCampaign(campaignId) {
-            const c = loadedCampaigns.find(item => item.id === campaignId);
-            if (!c) return;
+        async function dispatchCampaignBlast() {
+            const btn = document.getElementById('confirm-dispatch-btn');
+            btn.textContent = 'Dispatching to fans...';
+            btn.disabled = true;
 
-            currentEditingCampaignId = c.id;
-            currentEditingTemplate = c.template_name || 'Weekly Bulletin';
+            await saveCampaign(false);
 
-            document.getElementById('editor-campaign-title').value = c.title || '';
-            document.getElementById('editor-campaign-subject').value = c.subject || '';
-
-            let headingText = c.headline || c.title || '';
-            let bodyText = c.body_text || 'The first newsletter from Kettleers Nation!';
-
-            document.getElementById('editor-heading').value = headingText;
-            document.getElementById('editor-body').value = bodyText;
-
-            document.getElementById('live-heading').textContent = headingText;
-            document.getElementById('live-body').innerHTML = bodyText.replace(/\n/g, '<br>');
-
-            openCampaignEditor(c.title || 'Edit Campaign');
-        }
-
-        function startNewCampaignWithTemplate(templateName) {
-            currentEditingCampaignId = null;
-            currentEditingTemplate = templateName;
-
-            document.getElementById('editor-campaign-title').value = '';
-            document.getElementById('editor-campaign-subject').value = '';
-            
-            const defaultHeading = templateName === 'Blank Canvas' 
-                ? 'Your Headline Here' 
-                : `Welcome to ${templateName}!`;
-            
-            const defaultBody = 'Start typing your newsletter announcement here...';
-
-            document.getElementById('editor-heading').value = defaultHeading;
-            document.getElementById('editor-body').value = defaultBody;
-            document.getElementById('live-heading').textContent = defaultHeading;
-            document.getElementById('live-body').innerHTML = defaultBody;
-
-            openCampaignEditor(templateName);
-        }
-
-        async function handleAddSubscriber(e) {
-            e.preventDefault();
-            
-            const nameInput = document.getElementById('sub-name').value;
-            const emailInput = document.getElementById('sub-email').value;
-            const segmentInput = document.getElementById('sub-segment').value;
-            
-            const submitBtn = document.getElementById('sub-submit-btn');
-            const errorDiv = document.getElementById('sub-error');
-            
-            submitBtn.textContent = 'Saving...';
-            submitBtn.disabled = true;
-            errorDiv.classList.add('hidden');
-
-            const { data, error } = await db.from('subscribers').insert([
-                { name: nameInput, email: emailInput, segment: segmentInput, status: 'Active' }
-            ]);
-
-            if (error) {
-                console.error('Error inserting subscriber:', error);
-                errorDiv.textContent = error.message;
-                errorDiv.classList.remove('hidden');
-                submitBtn.textContent = 'Add to List';
-                submitBtn.disabled = false;
-                return;
+            if (currentEditingCampaignId) {
+                await db.from('campaigns').update({ 
+                    status: 'Sent', 
+                    open_rate: '0.0', 
+                    click_rate: '0.0',
+                    target_date: new Date().toLocaleDateString()
+                }).eq('id', currentEditingCampaignId);
             }
 
-            document.getElementById('add-subscriber-form').reset();
-            closeAddSubscriberModal();
-            loadSubscribers();
-            loadDashboardAndCampaigns();
-            
-            submitBtn.textContent = 'Add to List';
-            submitBtn.disabled = false;
+            // Fire live test payload via Resend
+            await sendTestEmail();
+
+            btn.textContent = 'Campaign Dispatched!';
+            setTimeout(() => {
+                switchTab('campaigns');
+                loadDashboardAndCampaigns();
+            }, 1200);
         }
 
-        function escapeHtml(str) {
-            if (!str) return '';
-            return String(str)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
+        async function sendTestEmail() {
+            const statusText = document.getElementById('editor-status-text');
+            if (statusText) statusText.textContent = 'Sending test...';
+
+            syncSetupFields();
+            const subject = wizardData.subject.trim() || 'Test Campaign';
+            const heading = document.getElementById('editor-heading').value;
+            const body = document.getElementById('editor-body').value;
+            
+            const baseUrl = window.location.origin + window.location.pathname.replace('index.html', '');
+            
+            const html_content = `
+            <!DOCTYPE html>
+            <html>
+            <head><meta charset="utf-8"></head>
+            <body style="margin: 0; padding: 20px 0; background-color: #E8E4D1; font-family: Arial, sans-serif;">
+                <div style="max-width: 620px; margin: 0 auto; background-color: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+                    <div style="text-align: right; font-size: 11px; color: #777777; padding: 10px 18px; border-bottom: 1px solid #f0f0f0;">
+                        <a href="#" style="color: #666666; text-decoration: underline;">View this email in your browser</a>
+                    </div>
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #1A2B4C;">
+                        <tr>
+                            <td width="38%" valign="bottom" style="padding: 12px 0 0 15px; line-height: 0;">
+                                <img src="${baseUrl}bannerplayer.png" alt="Cotuit Player" style="display: block; max-height: 170px; width: auto; max-width: 100%;">
+                            </td>
+                            <td width="62%" valign="middle" align="right" style="padding: 20px 25px 20px 10px;">
+                                <div style="font-family: 'Georgia', 'Times New Roman', serif; font-size: 34px; line-height: 1.05; text-transform: uppercase; color: #F4F1E1; letter-spacing: 2px; font-weight: bold; text-align: right;">
+                                    COTUIT<br>KETTLEERS
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <div style="padding: 30px 25px; border: 4px solid #611724; background-color: #FFFDFB; text-align: center; margin: 0;">
+                        <h1 style="font-family: Arial, sans-serif; font-size: 26px; font-weight: bold; color: #000000; margin: 0 0 14px 0;">${heading}</h1>
+                        <p style="font-family: Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #333333; margin: 0;">${body.replace(/\n/g, '<br>')}</p>
+                    </div>
+                    <div style="padding: 35px 30px; text-align: center; background-color: #ffffff;">
+                        <h2 style="font-family: 'Georgia', 'Times New Roman', serif; font-size: 24px; text-transform: uppercase; letter-spacing: 2px; color: #1A2B4C; margin: 0 0 20px 0;">STOCKING STUFFERS PROMO</h2>
+                        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 25px;">
+                            <tr>
+                                <td width="190" valign="middle" align="center" style="padding-right: 18px;">
+                                    <div style="background-color: #F8F8F8; border-radius: 8px; padding: 10px; border: 1px solid #ECEAE0;">
+                                        <img src="${baseUrl}StockingStuffer.png" alt="Stocking Stuffers" style="max-width: 170px; width: 100%; height: auto; display: block; margin: 0 auto;">
+                                    </div>
+                                </td>
+                                <td valign="middle" align="left" style="font-family: Arial, sans-serif; font-size: 15px; line-height: 1.5; color: #333333;">
+                                    The Perfect Stocking Stuffers! Holiday Season Special: Use code <strong style="color: #000000;">FANS20</strong> at checkout for 20% off all caps, tees, and collectibles.
+                                </td>
+                            </tr>
+                        </table>
+                        <div style="text-align: center; margin-top: 10px;">
+                            <a href="#" style="display: inline-block; background-color: #2E5B82; color: #ffffff; padding: 13px 32px; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; text-decoration: none; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px;">SHOP HOLIDAY SPECIAL</a>
+                        </div>
+                    </div>
+                    <div style="text-align: center; padding: 20px 10px 25px 10px; border-top: 1px solid #EEEEEE; background-color: #FAFAFA;">
+                        <p style="margin: 0; font-size: 11px; color: #888888; font-family: Arial, sans-serif;">© 2026 Cotuit Kettleers Baseball. Lowell Park, Cotuit, MA.</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            `;
+
+            try {
+                const { data, error } = await db.functions.invoke('send-campaign', {
+                    body: { subject, html_content, test_email: 'aaron@uscilla.com' }
+                });
+
+                if (error) throw error;
+                if (statusText) statusText.textContent = 'Test sent!';
+                alert('Success! Check your inbox at aaron@uscilla.com.');
+            } catch (error) {
+                console.error('Error sending email:', error);
+                if (statusText) statusText.textContent = 'Send failed';
+                alert('Error sending email. Check the console for details.');
+            }
         }
 
         // -------------------------------------------------------------
-        // Navigation & UI Routing
+        // Global Navigation & Modal Controls
         // -------------------------------------------------------------
         const btn = document.getElementById('mobile-menu-btn');
         const sidebar = document.getElementById('sidebar');
-        
-        btn.addEventListener('click', () => {
-            sidebar.classList.toggle('hidden');
-        });
+        btn.addEventListener('click', () => { sidebar.classList.toggle('hidden'); });
 
         function switchTab(tabId) {
             const views = [
                 'view-dashboard', 'view-campaigns', 'view-templates', 'view-subscribers', 
-                'view-template-selector', 'view-campaign-editor', 'view-report',
-                'view-transactional', 'view-analytics', 'view-settings'
+                'view-campaign-editor', 'view-report', 'view-transactional', 
+                'view-analytics', 'view-settings'
             ];
             
             views.forEach(id => {
@@ -1085,21 +1429,6 @@
             }
 
             lucide.createIcons();
-        }
-
-        function openTemplateSelector() {
-            switchTab('template-selector');
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById('nav-campaigns').classList.add('active');
-        }
-
-        function openCampaignEditor(title = "Campaign Editor") {
-            switchTab('campaign-editor');
-            document.getElementById('editor-title').textContent = title;
-            document.getElementById('editor-status-text').textContent = 'ready';
-            
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById('nav-campaigns').classList.add('active');
         }
 
         function openReportView(campaignId = null) {
@@ -1132,6 +1461,50 @@
             document.getElementById('sub-error').classList.add('hidden');
         }
 
+        async function handleAddSubscriber(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('sub-name').value;
+            const emailInput = document.getElementById('sub-email').value;
+            const segmentInput = document.getElementById('sub-segment').value;
+            const submitBtn = document.getElementById('sub-submit-btn');
+            const errorDiv = document.getElementById('sub-error');
+            
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+            errorDiv.classList.add('hidden');
+
+            const { error } = await db.from('subscribers').insert([
+                { name: nameInput, email: emailInput, segment: segmentInput, status: 'Active' }
+            ]);
+
+            if (error) {
+                console.error('Error inserting subscriber:', error);
+                errorDiv.textContent = error.message;
+                errorDiv.classList.remove('hidden');
+                submitBtn.textContent = 'Add to List';
+                submitBtn.disabled = false;
+                return;
+            }
+
+            document.getElementById('add-subscriber-form').reset();
+            closeAddSubscriberModal();
+            loadSubscribers();
+            loadDashboardAndCampaigns();
+            submitBtn.textContent = 'Add to List';
+            submitBtn.disabled = false;
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // Live typing listeners for design canvas
         const editorHeading = document.getElementById('editor-heading');
         const editorBody = document.getElementById('editor-body');
         const liveHeading = document.getElementById('live-heading');
@@ -1140,114 +1513,16 @@
         if(editorHeading && liveHeading) {
             editorHeading.addEventListener('input', (e) => {
                 liveHeading.textContent = e.target.value;
+                wizardData.heading = e.target.value;
             });
         }
 
         if(editorBody && liveBody) {
             editorBody.addEventListener('input', (e) => {
                 liveBody.innerHTML = e.target.value.replace(/\n/g, '<br>');
+                wizardData.body = e.target.value;
             });
         }
-
-async function sendTestEmail() {
-            const statusText = document.getElementById('editor-status-text');
-            statusText.textContent = 'Sending test...';
-
-            const subject = document.getElementById('editor-campaign-subject').value.trim() || 'Test Campaign';
-            const heading = document.getElementById('editor-heading').value;
-            const body = document.getElementById('editor-body').value;
-            
-            // Base URL to pull hosted assets from GitHub Pages
-            const baseUrl = window.location.origin + window.location.pathname.replace('index.html', '');
-            
-            const html_content = `
-            <!DOCTYPE html>
-            <html>
-            <head><meta charset="utf-8"></head>
-            <body style="margin: 0; padding: 20px 0; background-color: #E8E4D1; font-family: Arial, sans-serif;">
-                <div style="max-width: 620px; margin: 0 auto; background-color: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
-                    
-                    <!-- Pre-header text -->
-                    <div style="text-align: right; font-size: 11px; color: #777777; padding: 10px 18px; border-bottom: 1px solid #f0f0f0;">
-                        <a href="#" style="color: #666666; text-decoration: underline;">View this email in your browser</a>
-                    </div>
-
-                    <!-- Header Banner (Player on left, Text on right) -->
-                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #1A2B4C;">
-                        <tr>
-                            <td width="38%" valign="bottom" style="padding: 12px 0 0 15px; line-height: 0;">
-                                <img src="${baseUrl}bannerplayer.png" alt="Cotuit Player" style="display: block; max-height: 170px; width: auto; max-width: 100%;">
-                            </td>
-                            <td width="62%" valign="middle" align="right" style="padding: 20px 25px 20px 10px;">
-                                <div style="font-family: 'Georgia', 'Times New Roman', serif; font-size: 34px; line-height: 1.05; text-transform: uppercase; color: #F4F1E1; letter-spacing: 2px; font-weight: bold; text-align: right;">
-                                    COTUIT<br>KETTLEERS
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <!-- Headline & Body (Framed in Kettleer Maroon) -->
-                    <div style="padding: 30px 25px; border: 4px solid #611724; background-color: #FFFDFB; text-align: center; margin: 0;">
-                        <h1 style="font-family: Arial, sans-serif; font-size: 26px; font-weight: bold; color: #000000; margin: 0 0 14px 0;">${heading}</h1>
-                        <p style="font-family: Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #333333; margin: 0;">${body.replace(/\n/g, '<br>')}</p>
-                    </div>
-
-                    <!-- Stocking Stuffers Promo Block -->
-                    <div style="padding: 35px 30px; text-align: center; background-color: #ffffff;">
-                        <h2 style="font-family: 'Georgia', 'Times New Roman', serif; font-size: 24px; text-transform: uppercase; letter-spacing: 2px; color: #1A2B4C; margin: 0 0 20px 0;">
-                            STOCKING STUFFERS PROMO
-                        </h2>
-
-                        <!-- Side-by-Side: Image on left, Copy on right -->
-                        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 25px;">
-                            <tr>
-                                <td width="190" valign="middle" align="center" style="padding-right: 18px;">
-                                    <div style="background-color: #F8F8F8; border-radius: 8px; padding: 10px; border: 1px solid #ECEAE0;">
-                                        <img src="${baseUrl}StockingStuffer.png" alt="Stocking Stuffers" style="max-width: 170px; width: 100%; height: auto; display: block; margin: 0 auto;">
-                                    </div>
-                                </td>
-                                <td valign="middle" align="left" style="font-family: Arial, sans-serif; font-size: 15px; line-height: 1.5; color: #333333;">
-                                    The Perfect Stocking Stuffers! Holiday Season Special: Use code <strong style="color: #000000;">FANS20</strong> at checkout for 20% off all caps, tees, and collectibles.
-                                </td>
-                            </tr>
-                        </table>
-
-                        <!-- Action Button -->
-                        <div style="text-align: center; margin-top: 10px;">
-                            <a href="#" style="display: inline-block; background-color: #2E5B82; color: #ffffff; padding: 13px 32px; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; text-decoration: none; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px;">
-                                SHOP HOLIDAY SPECIAL
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Footer -->
-                    <div style="text-align: center; padding: 20px 10px 25px 10px; border-top: 1px solid #EEEEEE; background-color: #FAFAFA;">
-                        <p style="margin: 0; font-size: 11px; color: #888888; font-family: Arial, sans-serif;">
-                            © 2026 Cotuit Kettleers Baseball. Lowell Park, Cotuit, MA.
-                        </p>
-                    </div>
-
-                </div>
-            </body>
-            </html>
-            `;
-
-            try {
-                const { data, error } = await db.functions.invoke('send-campaign', {
-                    body: { subject, html_content, test_email: 'aaron@uscilla.com' }
-                });
-
-                if (error) throw error;
-                
-                statusText.textContent = 'Test sent!';
-                alert('Success! Check your inbox.');
-            } catch (error) {
-                console.error('Error sending email:', error);
-                statusText.textContent = 'Send failed';
-                alert('Error sending email. Check the console for details.');
-            }
-        }
-
     </script>
 </body>
 </html>
