@@ -310,7 +310,7 @@
                         <label class="block font-display text-xl md:text-2xl text-black mb-2">Search Subscribers</label>
                         <div class="relative w-full">
                             <i data-lucide="search" class="absolute left-3 top-3.5 w-5 h-5 text-[#4f111c]"></i>
-                            <input type="text" placeholder="Name or email..." class="w-full bg-transparent border-2 border-[#4f111c] rounded-md py-2 md:py-3 pl-10 pr-4 text-base md:text-xl focus:outline-none focus:bg-white transition-colors text-black placeholder-gray-500">
+                            <input type="text" id="sub-search-input" oninput="handleSubscriberSearch(event)" placeholder="Search by name, email, or segment..." class="w-full bg-transparent border-2 border-[#4f111c] rounded-md py-2 md:py-3 pl-10 pr-4 text-base md:text-xl focus:outline-none focus:bg-white transition-colors text-black placeholder-gray-500">
                         </div>
                     </div>
 
@@ -696,32 +696,28 @@
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let loadedCampaigns = [];
+        let allSubscribers = []; // Store all fetched subscribers for search filtering
         let currentEditingCampaignId = null;
         let currentEditingTemplate = 'Weekly Bulletin';
 
         // -------------------------------------------------------------
         // Authentication Flow
         // -------------------------------------------------------------
-        
-        // Listen for login/logout events to show/hide the app
         db.auth.onAuthStateChange((event, session) => {
             const authView = document.getElementById('auth-view');
             const appView = document.getElementById('app-view');
             
             if (session) {
-                // User is logged in
                 authView.classList.add('hidden');
                 appView.classList.remove('hidden-view');
                 loadSubscribers();
                 loadDashboardAndCampaigns();
             } else {
-                // User is logged out
                 authView.classList.remove('hidden');
                 appView.classList.add('hidden-view');
             }
         });
 
-        // Handle Login Submission
         async function handleLogin(e) {
             e.preventDefault();
             const email = document.getElementById('auth-email').value;
@@ -747,18 +743,16 @@
             }
         }
 
-        // Handle Logout
         async function handleLogout() {
             await db.auth.signOut();
         }
 
         // -------------------------------------------------------------
-        // Data Fetching
+        // Data Fetching & Rendering
         // -------------------------------------------------------------
         
         async function loadSubscribers() {
             const tableBody = document.getElementById('subscribers-table-body');
-            const countDisplay = document.getElementById('subscribers-count-display');
             if (!tableBody) return;
 
             const { data, error } = await db.from('subscribers').select('*').order('created_at', { ascending: false });
@@ -769,16 +763,24 @@
                 return;
             }
 
-            if (!data || data.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-gray-500 font-sans italic">No subscribers found in database.</td></tr>`;
+            allSubscribers = data || [];
+            renderSubscribers(allSubscribers);
+        }
+
+        function renderSubscribers(dataToRender) {
+            const tableBody = document.getElementById('subscribers-table-body');
+            const countDisplay = document.getElementById('subscribers-count-display');
+            
+            if (!dataToRender || dataToRender.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-gray-500 font-sans italic">No subscribers found.</td></tr>`;
                 if (countDisplay) countDisplay.textContent = 'Showing 0 subscribers';
                 return;
             }
 
-            tableBody.innerHTML = data.map(sub => {
+            tableBody.innerHTML = dataToRender.map(sub => {
                 const dateJoined = sub.created_at ? new Date(sub.created_at).toLocaleDateString() : 'N/A';
                 return `
-                    <tr class="border-b border-gray-200">
+                    <tr class="border-b border-gray-200 hover:bg-black/5 transition-colors">
                         <td class="py-3 md:py-5 font-bold text-[#611724]">${escapeHtml(sub.name)}</td>
                         <td class="py-3 md:py-5 text-gray-800 text-sm md:text-lg">${escapeHtml(sub.email)}</td>
                         <td class="py-3 md:py-5 text-gray-800 text-sm md:text-lg">${escapeHtml(sub.segment || 'General Fan')}</td>
@@ -789,8 +791,28 @@
             }).join('');
 
             if (countDisplay) {
-                countDisplay.textContent = `Showing 1-${data.length} of ${data.length}`;
+                countDisplay.textContent = `Showing 1-${dataToRender.length} of ${dataToRender.length}`;
             }
+        }
+
+        // Subscriber Search Logic
+        function handleSubscriberSearch(e) {
+            const query = e.target.value.toLowerCase();
+            
+            if (!query) {
+                renderSubscribers(allSubscribers);
+                return;
+            }
+
+            const filteredData = allSubscribers.filter(sub => {
+                const name = (sub.name || '').toLowerCase();
+                const email = (sub.email || '').toLowerCase();
+                const segment = (sub.segment || '').toLowerCase();
+                
+                return name.includes(query) || email.includes(query) || segment.includes(query);
+            });
+
+            renderSubscribers(filteredData);
         }
 
         async function loadDashboardAndCampaigns() {
