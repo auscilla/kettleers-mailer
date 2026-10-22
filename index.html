@@ -33,10 +33,11 @@
         }
     </script>
     <style>
+        /* Critical layout overrides to guarantee view switching */
         .hidden-view { display: none !important; }
         body { font-family: 'Roboto Slab', serif; }
     </style>
-    <link rel="stylesheet" href="styles.css?v=2">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-kettleer-maroonDark text-gray-800 relative h-screen overflow-hidden">
 
@@ -56,7 +57,7 @@
                     <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Password</label>
                     <input type="password" id="auth-password" required class="w-full bg-white border border-gray-300 rounded p-3 text-black font-sans focus:outline-none focus:border-[#4f111c]">
                 </div>
-                <div id="auth-error" class="hidden-view text-red-600 text-sm font-bold text-center mt-2"></div>
+                <div id="auth-error" class="hidden text-red-600 text-sm font-bold text-center mt-2"></div>
                 <button type="submit" id="auth-submit-btn" class="w-full bg-[#4f111c] text-[#F4F1E1] font-display text-xl uppercase py-3 rounded shadow hover:bg-black transition-colors mt-4 tracking-wider">Sign In</button>
             </form>
         </div>
@@ -66,7 +67,7 @@
     <div id="app-view" class="hidden-view flex flex-col md:flex-row h-full w-full">
         <!-- Mobile Header -->
         <div class="md:hidden bg-[#F4F1E1] p-4 flex justify-between items-center border-b-4 border-[#4f111c] z-30 shrink-0">
-            <img src="logo.png" alt="Cotuit Kettleers" class="h-12 object-contain cursor-pointer" onclick="switchTab('dashboard')">
+            <img src="logo.png" alt="Cotuit Kettleers" class="h-12 object-contain">
             <button id="mobile-menu-btn" class="text-[#4f111c] p-2 focus:outline-none">
                 <i data-lucide="menu" class="w-8 h-8"></i>
             </button>
@@ -75,7 +76,7 @@
         <!-- Sidebar -->
         <aside id="sidebar" class="hidden md:flex w-full md:w-[260px] bg-[#4f111c] flex-col absolute md:relative h-[calc(100vh-80px)] md:h-full shrink-0 z-20 shadow-xl overflow-y-auto md:overflow-hidden top-[80px] md:top-0 left-0 transition-transform duration-300">
             <div class="hidden md:flex p-8 bg-[#F4F1E1] text-center relative flex-col items-center justify-center border-b-4 border-[#e8e4d1]">
-                <img src="logo.png" alt="Cotuit Kettleers Baseball" class="w-48 mx-auto object-contain cursor-pointer" onclick="switchTab('dashboard')">
+                <img src="logo.png" alt="Cotuit Kettleers Baseball" class="w-48 mx-auto object-contain">
             </div>
 
             <nav class="flex-1 overflow-y-auto py-4 md:py-6 text-[#F4F1E1]">
@@ -84,7 +85,10 @@
                     <li><button onclick="switchTab('campaigns')" id="nav-campaigns" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="megaphone" class="w-5 h-5 opacity-80"></i> Campaigns</button></li>
                     <li><button onclick="switchTab('subscribers')" id="nav-subscribers" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="users" class="w-5 h-5 opacity-80"></i> Subscribers</button></li>
                     <li><button onclick="switchTab('templates')" id="nav-templates" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="layout-template" class="w-5 h-5 opacity-80"></i> Templates</button></li>
-                    <li><button onclick="switchTab('analytics')" id="nav-analytics" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors mt-6 border-t border-white/10 pt-4"><i data-lucide="bar-chart-2" class="w-5 h-5 opacity-80"></i> Analytics</button></li>
+                    
+                    <li class="pl-8 pr-6 py-2 mt-4 md:mt-6 text-xs font-bold uppercase tracking-wider text-[#F4F1E1]/50">Messages</li>
+                    <li><button onclick="switchTab('transactional')" id="nav-transactional" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="zap" class="w-5 h-5 opacity-80"></i> Transactional</button></li>
+                    <li><button onclick="switchTab('analytics')" id="nav-analytics" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="bar-chart-2" class="w-5 h-5 opacity-80"></i> Analytics</button></li>
                     <li><button onclick="switchTab('settings')" id="nav-settings" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="settings" class="w-5 h-5 opacity-80"></i> Settings</button></li>
                 </ul>
             </nav>
@@ -110,6 +114,8 @@
                 </header>
 
                 <div class="bg-[#F4F1E1] rounded-xl md:rounded-2xl p-6 md:p-10 shadow-2xl flex-1">
+                    
+                    <!-- Dashboard Date & Timeframe Filters -->
                     <div class="flex flex-col md:flex-row gap-4 md:gap-8 mb-8 md:mb-10 pb-6 md:pb-8 border-b border-gray-300">
                         <div class="flex flex-col w-full md:w-auto">
                             <label class="font-bold text-sm md:text-lg mb-1 md:mb-2 text-black">Time Frame:</label>
@@ -215,7 +221,7 @@
                         <p class="text-lg md:text-xl mt-1 md:mt-2 opacity-90 font-medium">Pre-Engineered Newsletter Frameworks</p>
                     </div>
                     <button onclick="startNewCampaignWizardWithTemplate('Blank Canvas')" class="w-full md:w-auto bg-[#F4F1E1] text-[#4f111c] font-display px-6 py-2 md:py-3 border-[3px] border-[#4f111c] rounded shadow-[4px_4px_0px_#4f111c] hover:translate-y-1 hover:shadow-[2px_2px_0px_#4f111c] transition-all uppercase tracking-wider text-lg md:text-xl flex items-center justify-center gap-2">
-                        <i data-lucide="plus" class="w-5 h-5"></i> New Template
+                        <i data-lucide="plus" class="w-5 h-5"></i> New Blank Canvas
                     </button>
                 </header>
 
@@ -232,7 +238,6 @@
                             </p>
                         </div>
                         <div class="flex gap-3 pt-4 border-t border-gray-300">
-                            <button onclick="openTemplatePreviewModal('The Weekly Ballpark Bulletin')" class="flex-1 bg-white text-[#4f111c] border-2 border-[#4f111c] font-display text-sm uppercase py-2.5 rounded shadow hover:bg-gray-50 transition-colors">See Template</button>
                             <button onclick="startNewCampaignWizardWithTemplate('The Weekly Ballpark Bulletin')" class="flex-1 bg-[#4f111c] text-[#F4F1E1] font-display text-sm uppercase py-2.5 rounded shadow hover:bg-black transition-colors">Use In Campaign</button>
                         </div>
                     </div>
@@ -249,7 +254,6 @@
                             </p>
                         </div>
                         <div class="flex gap-3 pt-4 border-t border-gray-300">
-                            <button onclick="openTemplatePreviewModal('The Kettleers Gazette')" class="flex-1 bg-white text-[#4f111c] border-2 border-[#4f111c] font-display text-sm uppercase py-2.5 rounded shadow hover:bg-gray-50 transition-colors">See Template</button>
                             <button onclick="startNewCampaignWizardWithTemplate('The Kettleers Gazette')" class="flex-1 bg-[#4f111c] text-[#F4F1E1] font-display text-sm uppercase py-2.5 rounded shadow hover:bg-black transition-colors">Use In Campaign</button>
                         </div>
                     </div>
@@ -324,7 +328,7 @@
                 <!-- Wizard Main Container -->
                 <div class="flex-1 overflow-y-auto md:overflow-hidden relative flex flex-col">
                     
-                    <!-- STEP 1: RECIPIENTS -->
+                    <!-- STEP 1: RECIPIENTS (MULTI-GROUP AUDIENCE SELECTION) -->
                     <div id="wizard-step-recipients" class="wizard-pane flex-1 p-6 md:p-12 overflow-y-auto max-w-4xl mx-auto w-full">
                         <div class="bg-[#F4F1E1] rounded-2xl p-6 md:p-10 shadow-2xl border-4 border-[#e8e4d1]">
                             <div class="mb-6 pb-4 border-b border-gray-300 flex flex-col md:flex-row justify-between items-start md:items-end gap-3">
@@ -338,7 +342,7 @@
                                 </div>
                             </div>
 
-                            <div id="audience-error" class="hidden-view mb-4 p-3 bg-red-100 border border-red-400 text-red-700 text-xs font-bold rounded flex items-center gap-2">
+                            <div id="audience-error" class="hidden mb-4 p-3 bg-red-100 border border-red-400 text-red-700 text-xs font-bold rounded flex items-center gap-2">
                                 <i data-lucide="alert-circle" class="w-4 h-4"></i> Please select at least one audience group to proceed.
                             </div>
 
@@ -412,7 +416,7 @@
                         </div>
                     </div>
 
-                    <!-- STEP 2: SETUP -->
+                    <!-- STEP 2: SETUP (MANDATORY TITLE & SUBJECT) -->
                     <div id="wizard-step-setup" class="wizard-pane hidden-view flex-1 p-6 md:p-12 overflow-y-auto max-w-4xl mx-auto w-full">
                         <div class="bg-[#F4F1E1] rounded-2xl p-6 md:p-10 shadow-2xl border-4 border-[#e8e4d1]">
                             <div class="mb-6 pb-4 border-b border-gray-300">
@@ -427,7 +431,7 @@
                                         Campaign Title (Internal Name) <span class="text-red-600 font-bold">*</span>
                                     </label>
                                     <input type="text" id="setup-campaign-title" oninput="syncSetupFields()" class="w-full bg-white border border-gray-300 rounded p-3 text-sm text-black font-semibold focus:outline-none focus:border-[#4f111c] transition-colors" placeholder="e.g. Next Game: Kettleers vs. Harwich">
-                                    <div id="setup-title-error" class="hidden-view text-xs text-red-600 font-bold mt-1.5 flex items-center gap-1">
+                                    <div id="setup-title-error" class="hidden text-xs text-red-600 font-bold mt-1.5 flex items-center gap-1">
                                         <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Campaign Title is required to continue.
                                     </div>
                                     <p class="text-[11px] text-gray-500 mt-1">Only visible in your dashboard campaigns table.</p>
@@ -438,7 +442,7 @@
                                         Subject Line <span class="text-red-600 font-bold">*</span>
                                     </label>
                                     <input type="text" id="setup-campaign-subject" oninput="syncSetupFields()" class="w-full bg-white border border-gray-300 rounded p-3 text-sm text-black focus:outline-none focus:border-[#4f111c] transition-colors" placeholder="e.g. Holiday Special: 20% off all caps & tees">
-                                    <div id="setup-subject-error" class="hidden-view text-xs text-red-600 font-bold mt-1.5 flex items-center gap-1">
+                                    <div id="setup-subject-error" class="hidden text-xs text-red-600 font-bold mt-1.5 flex items-center gap-1">
                                         <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Subject Line is required to continue.
                                     </div>
                                 </div>
@@ -497,8 +501,10 @@
                         </div>
                     </div>
 
-                    <!-- STEP 4: DESIGN -->
+                    <!-- STEP 4: DESIGN (MAILCHIMP BLOCKS & SPLIT STUDIO) -->
                     <div id="wizard-step-design" class="wizard-pane hidden-view flex-1 flex flex-col md:flex-row h-full overflow-hidden">
+                        
+                        <!-- Left Panel: Canvas Preview -->
                         <div class="w-full md:flex-1 bg-[#E8E6D9] p-4 md:p-8 flex flex-col items-center order-2 md:order-1 overflow-y-auto h-auto md:h-full">
                             <div class="flex items-center justify-between pb-3 mb-4 border-b border-black/10 w-full max-w-[650px] shrink-0">
                                 <span class="text-xs font-bold text-gray-600 uppercase tracking-wider flex items-center gap-1.5">
@@ -516,7 +522,10 @@
                             <div id="email-preview-container" class="w-full transition-all duration-300"></div>
                         </div>
 
+                        <!-- Right Panel: Block Editor Tools -->
                         <div class="w-full md:w-[480px] bg-[#F4F1E1] flex flex-col shrink-0 order-1 md:order-2 h-full overflow-y-auto border-l border-gray-300 shadow-[-10px_0_20px_rgba(0,0,0,0.1)] z-10 relative">
+                            
+                            <!-- Editor Tabs -->
                             <div class="pt-6 pb-4 text-center border-b border-gray-300 bg-[#E8E4D1] sticky top-0 z-20">
                                 <h3 class="font-display text-2xl text-[#4f111c] mb-3">Builder Tools</h3>
                                 <div class="flex mx-6 border-2 border-[#4f111c] rounded overflow-hidden">
@@ -526,48 +535,140 @@
                                 </div>
                             </div>
 
+                            <!-- Editor Panes -->
                             <div class="p-4 flex-1 overflow-y-auto font-sans relative">
+                                
+                                <!-- BLOCKS PANE -->
                                 <div id="pane-blocks" class="block">
                                     <div id="editor-blocks-list" class="space-y-4"></div>
+
+                                    <!-- Mailchimp Full 13-Block Tray -->
                                     <div class="mt-8 border-t border-gray-300 pt-6">
                                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-3 text-center">Add Content Block</label>
                                         <div class="grid grid-cols-3 gap-2">
-                                            <button type="button" onclick="addBlock('text')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group"><i data-lucide="align-left" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i><span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Text</span></button>
-                                            <button type="button" onclick="addBlock('boxed_text')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group"><i data-lucide="box" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i><span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Boxed Text</span></button>
-                                            <button type="button" onclick="addBlock('divider')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group"><i data-lucide="minus" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i><span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Divider</span></button>
-                                            <button type="button" onclick="addBlock('image')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group"><i data-lucide="image" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i><span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Image</span></button>
-                                            <button type="button" onclick="addBlock('image_group')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group"><i data-lucide="layout-grid" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i><span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Image Group</span></button>
-                                            <button type="button" onclick="addBlock('image_card')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group"><i data-lucide="panel-top" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i><span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Image Card</span></button>
-                                            <button type="button" onclick="addBlock('image_caption')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group"><i data-lucide="file-text" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i><span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Img + Caption</span></button>
-                                            <button type="button" onclick="addBlock('social_share')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group"><i data-lucide="share-2" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i><span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Social Share</span></button>
-                                            <button type="button" onclick="addBlock('social_follow')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group"><i data-lucide="users" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i><span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Social Follow</span></button>
-                                            <button type="button" onclick="addBlock('button')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group"><i data-lucide="rectangle-horizontal" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i><span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Button</span></button>
-                                            <button type="button" onclick="addBlock('footer')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group"><i data-lucide="panel-bottom" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i><span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Footer</span></button>
-                                            <button type="button" onclick="addBlock('code')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group"><i data-lucide="code" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i><span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Code</span></button>
-                                            <button type="button" onclick="addBlock('video')" class="col-span-3 flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group"><i data-lucide="play-circle" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i><span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Video</span></button>
+                                            <button type="button" onclick="addBlock('text')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
+                                                <i data-lucide="align-left" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
+                                                <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Text</span>
+                                            </button>
+                                            <button type="button" onclick="addBlock('boxed_text')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
+                                                <i data-lucide="box" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
+                                                <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Boxed Text</span>
+                                            </button>
+                                            <button type="button" onclick="addBlock('divider')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
+                                                <i data-lucide="minus" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
+                                                <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Divider</span>
+                                            </button>
+                                            <button type="button" onclick="addBlock('image')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
+                                                <i data-lucide="image" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
+                                                <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Image</span>
+                                            </button>
+                                            <button type="button" onclick="addBlock('image_group')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
+                                                <i data-lucide="layout-grid" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
+                                                <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Image Group</span>
+                                            </button>
+                                            <button type="button" onclick="addBlock('image_card')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
+                                                <i data-lucide="panel-top" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
+                                                <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Image Card</span>
+                                            </button>
+                                            <button type="button" onclick="addBlock('image_caption')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
+                                                <i data-lucide="file-text" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
+                                                <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Image + Caption</span>
+                                            </button>
+                                            <button type="button" onclick="addBlock('social_share')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
+                                                <i data-lucide="share-2" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
+                                                <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Social Share</span>
+                                            </button>
+                                            <button type="button" onclick="addBlock('social_follow')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
+                                                <i data-lucide="users" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
+                                                <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Social Follow</span>
+                                            </button>
+                                            <button type="button" onclick="addBlock('button')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
+                                                <i data-lucide="rectangle-horizontal" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
+                                                <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Button</span>
+                                            </button>
+                                            <button type="button" onclick="addBlock('footer')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
+                                                <i data-lucide="panel-bottom" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
+                                                <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Footer</span>
+                                            </button>
+                                            <button type="button" onclick="addBlock('code')" class="flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
+                                                <i data-lucide="code" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
+                                                <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Code</span>
+                                            </button>
+                                            <button type="button" onclick="addBlock('video')" class="col-span-3 flex flex-col items-center justify-center p-2.5 bg-white border border-gray-300 rounded-lg hover:border-[#4f111c] hover:shadow-sm transition-all group">
+                                                <i data-lucide="play-circle" class="w-6 h-6 text-gray-500 group-hover:text-[#4f111c] mb-1"></i>
+                                                <span class="text-[11px] font-bold text-gray-700 group-hover:text-[#4f111c] leading-tight">Video</span>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
 
+                                <!-- STYLE PANE (Live Controls) -->
                                 <div id="pane-style" class="hidden-view space-y-5 font-sans">
                                     <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm space-y-4">
                                         <h4 class="font-display text-lg text-[#4f111c] uppercase tracking-wider border-b pb-2">Color Scheme</h4>
-                                        <div><label class="block text-xs font-bold uppercase text-gray-700 mb-1">Outer Canvas Background</label><div class="flex items-center gap-3"><input type="color" id="style-canvas-bg" oninput="updateStyle('canvasBg', this.value)" class="w-10 h-10 rounded border border-gray-300 cursor-pointer p-0.5"><input type="text" id="style-canvas-bg-text" oninput="updateStyle('canvasBg', this.value)" class="flex-1 bg-gray-50 border border-gray-300 rounded p-2 text-xs font-mono uppercase"></div></div>
-                                        <div><label class="block text-xs font-bold uppercase text-gray-700 mb-1">Email Card Background</label><div class="flex items-center gap-3"><input type="color" id="style-content-bg" oninput="updateStyle('contentBg', this.value)" class="w-10 h-10 rounded border border-gray-300 cursor-pointer p-0.5"><input type="text" id="style-content-bg-text" oninput="updateStyle('contentBg', this.value)" class="flex-1 bg-gray-50 border border-gray-300 rounded p-2 text-xs font-mono uppercase"></div></div>
-                                        <div><label class="block text-xs font-bold uppercase text-gray-700 mb-1">Header Banner Background</label><div class="flex items-center gap-3"><input type="color" id="style-header-bg" oninput="updateStyle('headerBg', this.value)" class="w-10 h-10 rounded border border-gray-300 cursor-pointer p-0.5"><input type="text" id="style-header-bg-text" oninput="updateStyle('headerBg', this.value)" class="flex-1 bg-gray-50 border border-gray-300 rounded p-2 text-xs font-mono uppercase"></div></div>
-                                        <div><label class="block text-xs font-bold uppercase text-gray-700 mb-1">Accent / Border Color</label><div class="flex items-center gap-3"><input type="color" id="style-accent-color" oninput="updateStyle('accentColor', this.value)" class="w-10 h-10 rounded border border-gray-300 cursor-pointer p-0.5"><input type="text" id="style-accent-color-text" oninput="updateStyle('accentColor', this.value)" class="flex-1 bg-gray-50 border border-gray-300 rounded p-2 text-xs font-mono uppercase"></div></div>
+                                        <div>
+                                            <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Outer Canvas Background</label>
+                                            <div class="flex items-center gap-3">
+                                                <input type="color" id="style-canvas-bg" oninput="updateStyle('canvasBg', this.value)" class="w-10 h-10 rounded border border-gray-300 cursor-pointer p-0.5">
+                                                <input type="text" id="style-canvas-bg-text" oninput="updateStyle('canvasBg', this.value)" class="flex-1 bg-gray-50 border border-gray-300 rounded p-2 text-xs font-mono uppercase">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Email Card Background</label>
+                                            <div class="flex items-center gap-3">
+                                                <input type="color" id="style-content-bg" oninput="updateStyle('contentBg', this.value)" class="w-10 h-10 rounded border border-gray-300 cursor-pointer p-0.5">
+                                                <input type="text" id="style-content-bg-text" oninput="updateStyle('contentBg', this.value)" class="flex-1 bg-gray-50 border border-gray-300 rounded p-2 text-xs font-mono uppercase">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Header Banner Background</label>
+                                            <div class="flex items-center gap-3">
+                                                <input type="color" id="style-header-bg" oninput="updateStyle('headerBg', this.value)" class="w-10 h-10 rounded border border-gray-300 cursor-pointer p-0.5">
+                                                <input type="text" id="style-header-bg-text" oninput="updateStyle('headerBg', this.value)" class="flex-1 bg-gray-50 border border-gray-300 rounded p-2 text-xs font-mono uppercase">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Accent / Border Color</label>
+                                            <div class="flex items-center gap-3">
+                                                <input type="color" id="style-accent-color" oninput="updateStyle('accentColor', this.value)" class="w-10 h-10 rounded border border-gray-300 cursor-pointer p-0.5">
+                                                <input type="text" id="style-accent-color-text" oninput="updateStyle('accentColor', this.value)" class="flex-1 bg-gray-50 border border-gray-300 rounded p-2 text-xs font-mono uppercase">
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm space-y-4">
                                         <h4 class="font-display text-lg text-[#4f111c] uppercase tracking-wider border-b pb-2">Typography</h4>
-                                        <div><label class="block text-xs font-bold uppercase text-gray-700 mb-1">Email Body Font</label><select id="style-font-family" onchange="updateStyle('fontFamily', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-xs font-medium focus:border-[#4f111c] focus:outline-none"><option value="Arial, Helvetica, sans-serif">Arial / Clean Sans</option><option value="'Roboto Slab', Georgia, serif">Roboto Slab / Cape Cod Serif</option><option value="Georgia, 'Times New Roman', serif">Georgia / Classic Editorial</option><option value="'Trebuchet MS', sans-serif">Trebuchet MS / Dynamic</option></select></div>
+                                        <div>
+                                            <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Email Body Font</label>
+                                            <select id="style-font-family" onchange="updateStyle('fontFamily', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-xs font-medium focus:border-[#4f111c] focus:outline-none">
+                                                <option value="Arial, Helvetica, sans-serif">Arial / Clean Sans</option>
+                                                <option value="'Roboto Slab', Georgia, serif">Roboto Slab / Cape Cod Serif</option>
+                                                <option value="Georgia, 'Times New Roman', serif">Georgia / Classic Editorial</option>
+                                                <option value="'Trebuchet MS', sans-serif">Trebuchet MS / Dynamic</option>
+                                            </select>
+                                        </div>
                                     </div>
                                     <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm space-y-4">
                                         <h4 class="font-display text-lg text-[#4f111c] uppercase tracking-wider border-b pb-2">Buttons & Links</h4>
-                                        <div><label class="block text-xs font-bold uppercase text-gray-700 mb-1">Button Color</label><div class="flex items-center gap-3"><input type="color" id="style-button-bg" oninput="updateStyle('buttonBg', this.value)" class="w-10 h-10 rounded border border-gray-300 cursor-pointer p-0.5"><input type="text" id="style-button-bg-text" oninput="updateStyle('buttonBg', this.value)" class="flex-1 bg-gray-50 border border-gray-300 rounded p-2 text-xs font-mono uppercase"></div></div>
-                                        <div><label class="block text-xs font-bold uppercase text-gray-700 mb-1">Button Corner Rounding</label><select id="style-button-radius" onchange="updateStyle('buttonRadius', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-xs font-medium focus:border-[#4f111c] focus:outline-none"><option value="0px">Sharp Corners (0px)</option><option value="4px">Subtle Rounded (4px)</option><option value="8px">Soft Rounded (8px)</option><option value="9999px">Pill / Stadium (9999px)</option></select></div>
+                                        <div>
+                                            <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Button Color</label>
+                                            <div class="flex items-center gap-3">
+                                                <input type="color" id="style-button-bg" oninput="updateStyle('buttonBg', this.value)" class="w-10 h-10 rounded border border-gray-300 cursor-pointer p-0.5">
+                                                <input type="text" id="style-button-bg-text" oninput="updateStyle('buttonBg', this.value)" class="flex-1 bg-gray-50 border border-gray-300 rounded p-2 text-xs font-mono uppercase">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Button Corner Rounding</label>
+                                            <select id="style-button-radius" onchange="updateStyle('buttonRadius', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-xs font-medium focus:border-[#4f111c] focus:outline-none">
+                                                <option value="0px">Sharp Corners (0px)</option>
+                                                <option value="4px">Subtle Rounded (4px)</option>
+                                                <option value="8px">Soft Rounded (8px)</option>
+                                                <option value="9999px">Pill / Stadium (9999px)</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
 
+                                <!-- SETTINGS PANE (Live Controls) -->
                                 <div id="pane-settings" class="hidden-view space-y-5 font-sans">
                                     <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm space-y-4">
                                         <h4 class="font-display text-lg text-[#4f111c] uppercase tracking-wider border-b pb-2">Inbox Preview</h4>
@@ -580,6 +681,7 @@
                                             <p class="text-[10px] text-gray-500 mt-1">Snippet displayed next to the subject line in fan inboxes.</p>
                                         </div>
                                     </div>
+
                                     <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm space-y-4">
                                         <h4 class="font-display text-lg text-[#4f111c] uppercase tracking-wider border-b pb-2">Layout & Header</h4>
                                         <div>
@@ -591,20 +693,27 @@
                                             </select>
                                         </div>
                                         <div class="flex items-center justify-between pt-2">
-                                            <div><span class="text-xs font-bold uppercase text-gray-800">Lowell Park Banner</span><p class="text-[10px] text-gray-500">Show Kettleers branded header</p></div>
+                                            <div>
+                                                <span class="text-xs font-bold uppercase text-gray-800">Lowell Park Banner</span>
+                                                <p class="text-[10px] text-gray-500">Show Kettleers branded header</p>
+                                            </div>
                                             <label class="relative inline-flex items-center cursor-pointer">
                                                 <input type="checkbox" id="settings-show-banner" onchange="updateSettings('showBanner', this.checked)" class="sr-only peer" checked>
                                                 <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#387843]"></div>
                                             </label>
                                         </div>
                                         <div class="flex items-center justify-between pt-2">
-                                            <div><span class="text-xs font-bold uppercase text-gray-800">'View in Browser' Link</span><p class="text-[10px] text-gray-500">Display pre-header link at top</p></div>
+                                            <div>
+                                                <span class="text-xs font-bold uppercase text-gray-800">'View in Browser' Link</span>
+                                                <p class="text-[10px] text-gray-500">Display pre-header link at top</p>
+                                            </div>
                                             <label class="relative inline-flex items-center cursor-pointer">
                                                 <input type="checkbox" id="settings-show-browser-link" onchange="updateSettings('showBrowserLink', this.checked)" class="sr-only peer" checked>
                                                 <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#387843]"></div>
                                             </label>
                                         </div>
                                     </div>
+
                                     <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm space-y-4">
                                         <h4 class="font-display text-lg text-[#4f111c] uppercase tracking-wider border-b pb-2">Footer & Address</h4>
                                         <div>
@@ -613,6 +722,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
 
                             <div class="p-4 border-t border-gray-300 bg-[#E8E4D1] flex justify-between items-center sticky bottom-0">
@@ -676,7 +786,7 @@
 
                 </div>
 
-                <!-- Footer Wizard Progress Bar -->
+                <!-- Footer Wizard Progress Bar with High-Contrast Next Button -->
                 <div class="bg-kettleer-maroonDark text-white py-3 md:py-4 px-4 md:px-8 flex justify-between items-center text-xs md:text-sm shrink-0 font-medium border-t border-white/10 z-20 sticky bottom-0">
                     <button onclick="wizardPrevStep()" id="wizard-prev-btn" class="hover:text-white flex items-center gap-1 uppercase tracking-wider font-bold shrink-0 bg-white/10 px-3 md:px-4 py-1.5 rounded transition-colors">
                         <i data-lucide="chevron-left" class="w-4 h-4"></i> <span id="wizard-prev-label">Back</span>
@@ -730,8 +840,37 @@
                         </div>
                         <div>
                             <div class="text-sm md:text-lg text-black mb-1 font-bold">Bounced</div>
-                            <div id="report-bounces" class="font-display text-4xl md:text-5xl text-gray-500 mb-1">0</div>
-                            <div id="report-bounce-rate" class="text-xs md:text-sm font-bold text-gray-500">0.0% Bounce Rate</div>
+                            <div class="font-display text-4xl md:text-5xl text-gray-500 mb-1">0</div>
+                            <div class="text-xs md:text-sm font-bold text-gray-500">0.0% Bounce Rate</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= 7. TRANSACTIONAL VIEW ================= -->
+            <div id="view-transactional" class="hidden-view flex-1 flex flex-col p-4 md:p-10 overflow-y-auto max-w-6xl mx-auto w-full">
+                <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-8 text-kettleer-cream gap-4">
+                    <div>
+                        <h2 class="font-display text-4xl md:text-5xl uppercase tracking-wider shadow-sm leading-tight">Transactional</h2>
+                        <p class="text-lg md:text-xl mt-1 md:mt-2 opacity-90 font-medium">Automated Receipts & Event Triggers</p>
+                    </div>
+                </header>
+                <div class="bg-[#F4F1E1] rounded-xl md:rounded-2xl p-6 md:p-10 shadow-2xl flex-1">
+                    <p class="text-gray-700 font-sans text-lg mb-6">Manage automated emails triggered by fan actions (such as merchandise purchases or donations).</p>
+                    <div class="border border-gray-300 rounded-lg overflow-hidden font-sans">
+                        <div class="bg-white p-4 border-b border-gray-300 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-lg text-black">Merchandise Order Receipt</h4>
+                                <p class="text-sm text-gray-500">Sent immediately after Lowell Park online store checkout.</p>
+                            </div>
+                            <button class="bg-kettleer-green text-white px-4 py-1.5 rounded text-sm font-bold">Active</button>
+                        </div>
+                        <div class="bg-white p-4 border-b border-gray-300 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-lg text-black">CAA Donation Thank You</h4>
+                                <p class="text-sm text-gray-500">Sent to donors upon successful contribution.</p>
+                            </div>
+                            <button class="bg-kettleer-green text-white px-4 py-1.5 rounded text-sm font-bold">Active</button>
                         </div>
                     </div>
                 </div>
@@ -751,53 +890,26 @@
 
                 <div class="bg-[#F4F1E1] rounded-xl md:rounded-2xl p-6 md:p-10 shadow-2xl flex-1 flex flex-col space-y-8">
                     
-                    <div class="flex flex-col md:flex-row gap-4 md:gap-8 pb-6 border-b border-gray-300">
-                        <div class="flex flex-col w-full md:w-auto">
-                            <label class="font-bold text-sm mb-1 text-black">Time Frame:</label>
-                            <div class="relative w-full">
-                                <select id="analytics-timeframe" onchange="handleAnalyticsTimeframeChange()" class="appearance-none w-full bg-transparent border-2 border-[#4f111c] text-base py-1.5 pl-3 pr-10 rounded focus:outline-none text-black font-medium md:w-48 cursor-pointer">
-                                    <option value="30">Previous 30 days</option>
-                                    <option value="90">Previous 90 days</option>
-                                    <option value="year">This Year (2026)</option>
-                                    <option value="all">All Time</option>
-                                    <option value="custom">Custom Range</option>
-                                </select>
-                                <i data-lucide="chevron-down" class="absolute right-3 top-2.5 w-4 h-4 text-[#4f111c] pointer-events-none"></i>
-                            </div>
-                        </div>
-                        
-                        <div class="flex gap-4 w-full md:w-auto">
-                            <div class="flex flex-col flex-1 md:flex-none">
-                                <label class="font-bold text-sm mb-1 text-black">Start date</label>
-                                <div class="relative w-full">
-                                    <input type="date" id="analytics-start-date" onchange="handleAnalyticsCustomDateChange()" class="w-full bg-transparent border-2 border-[#4f111c] text-base py-1.5 px-3 rounded focus:outline-none text-black font-medium cursor-pointer">
-                                </div>
-                            </div>
-                            <div class="flex flex-col flex-1 md:flex-none">
-                                <label class="font-bold text-sm mb-1 text-black">End date</label>
-                                <div class="relative w-full">
-                                    <input type="date" id="analytics-end-date" onchange="handleAnalyticsCustomDateChange()" class="w-full bg-transparent border-2 border-[#4f111c] text-base py-1.5 px-3 rounded focus:outline-none text-black font-medium cursor-pointer">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+                    <!-- Top Metric Cards -->
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 border-b border-gray-300 pb-6">
                         <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm">
                             <span class="text-xs uppercase font-bold text-gray-500 block mb-1">Delivered Volume</span>
                             <div id="analytics-total-deliveries" class="font-display text-3xl md:text-4xl text-[#611724]">0</div>
                             <div class="text-[11px] text-gray-500 font-sans mt-1">Confirmed Resend deliveries</div>
                         </div>
+
                         <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm">
                             <span class="text-xs uppercase font-bold text-gray-500 block mb-1">Avg Open Rate</span>
                             <div id="analytics-avg-open" class="font-display text-3xl md:text-4xl text-[#611724]">0.0%</div>
                             <div class="text-[11px] text-emerald-700 font-bold font-sans mt-1">Target: &gt; 35.0%</div>
                         </div>
+
                         <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm">
                             <span class="text-xs uppercase font-bold text-gray-500 block mb-1">Avg Click Rate (CTR)</span>
                             <div id="analytics-avg-click" class="font-display text-3xl md:text-4xl text-[#611724]">0.0%</div>
                             <div class="text-[11px] text-emerald-700 font-bold font-sans mt-1">Target: &gt; 4.0%</div>
                         </div>
+
                         <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm">
                             <span class="text-xs uppercase font-bold text-gray-500 block mb-1">Bounce Health</span>
                             <div id="analytics-bounce-rate" class="font-display text-3xl md:text-4xl text-gray-800">0.0%</div>
@@ -805,17 +917,54 @@
                         </div>
                     </div>
 
+                    <!-- Split Multi-Graph Widgets -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div class="bg-white p-5 rounded-xl border border-gray-300 shadow-sm flex flex-col justify-between">
                             <div class="border-b pb-3 mb-4 flex justify-between items-center">
                                 <h4 class="font-display text-lg text-black uppercase tracking-wider">Email Engagement Funnel</h4>
-                                <span class="text-xs font-bold text-gray-500">Filtered Sends</span>
+                                <span class="text-xs font-bold text-gray-500">Live Sends</span>
                             </div>
+                            
                             <div class="space-y-4 font-sans text-xs flex-1 flex flex-col justify-around">
-                                <div><div class="flex justify-between font-bold mb-1"><span>Delivered</span><span id="funnel-delivered-val">0 (100%)</span></div><div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden"><div id="funnel-delivered-bar" class="bg-[#1A2B4C] h-3 rounded-full transition-all duration-500" style="width: 100%"></div></div></div>
-                                <div><div class="flex justify-between font-bold mb-1"><span>Opened</span><span id="funnel-opened-val">0 (0%)</span></div><div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden"><div id="funnel-opened-bar" class="bg-[#611724] h-3 rounded-full transition-all duration-500" style="width: 0%"></div></div></div>
-                                <div><div class="flex justify-between font-bold mb-1"><span>Clicked</span><span id="funnel-clicked-val">0 (0%)</span></div><div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden"><div id="funnel-clicked-bar" class="bg-[#387843] h-3 rounded-full transition-all duration-500" style="width: 0%"></div></div></div>
-                                <div><div class="flex justify-between font-bold mb-1 text-gray-500"><span>Bounced</span><span id="funnel-bounced-val">0 (0%)</span></div><div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden"><div id="funnel-bounced-bar" class="bg-red-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div></div></div>
+                                <div>
+                                    <div class="flex justify-between font-bold mb-1">
+                                        <span>Delivered</span>
+                                        <span id="funnel-delivered-val">0 (100%)</span>
+                                    </div>
+                                    <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                                        <div id="funnel-delivered-bar" class="bg-[#1A2B4C] h-3 rounded-full transition-all duration-500" style="width: 100%"></div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between font-bold mb-1">
+                                        <span>Opened</span>
+                                        <span id="funnel-opened-val">0 (0%)</span>
+                                    </div>
+                                    <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                                        <div id="funnel-opened-bar" class="bg-[#611724] h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between font-bold mb-1">
+                                        <span>Clicked</span>
+                                        <span id="funnel-clicked-val">0 (0%)</span>
+                                    </div>
+                                    <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                                        <div id="funnel-clicked-bar" class="bg-[#387843] h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between font-bold mb-1 text-gray-500">
+                                        <span>Bounced</span>
+                                        <span id="funnel-bounced-val">0 (0%)</span>
+                                    </div>
+                                    <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                                        <div id="funnel-bounced-bar" class="bg-red-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -824,6 +973,7 @@
                                 <h4 class="font-display text-lg text-black uppercase tracking-wider">Audience By Segment</h4>
                                 <span id="analytics-total-subscribers" class="text-xs font-bold text-gray-500">0 Total Fans</span>
                             </div>
+
                             <div id="analytics-segment-bars" class="space-y-3 font-sans text-xs flex-1 flex flex-col justify-around">
                                 <div class="text-center text-gray-400 py-6">Loading subscriber segments...</div>
                             </div>
@@ -838,6 +988,7 @@
                                 <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-[#387843] rounded-sm inline-block"></span> Click Rate %</span>
                             </div>
                         </div>
+
                         <div id="analytics-campaigns-chart" class="space-y-4 pt-2">
                             <div class="text-center text-gray-400 py-8 font-sans italic">No campaign blasts dispatched yet.</div>
                         </div>
@@ -874,7 +1025,7 @@
     </div>
 
     <!-- ================= MODALS ================= -->
-    <div id="modal-add-subscriber" class="hidden-view fixed inset-0 z-50 flex items-center justify-center modal-overlay p-4">
+    <div id="modal-add-subscriber" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-overlay p-4">
         <div class="bg-[#F4F1E1] rounded-xl shadow-2xl w-full max-w-md overflow-hidden border-4 border-[#e8e4d1]">
             <div class="bg-[#4f111c] text-[#F4F1E1] px-6 py-4 flex justify-between items-center">
                 <h3 class="font-display text-2xl uppercase tracking-wider">Add Subscriber</h3>
@@ -900,7 +1051,7 @@
                             <option value="Host Family">Host Family</option>
                         </select>
                     </div>
-                    <div id="sub-error" class="hidden-view mb-4 text-red-600 text-sm font-bold"></div>
+                    <div id="sub-error" class="hidden mb-4 text-red-600 text-sm font-bold"></div>
                     <div class="flex justify-end gap-3 pt-4 border-t border-gray-300">
                         <button type="button" onclick="closeAddSubscriberModal()" class="px-4 py-2 font-bold text-gray-600 hover:text-black uppercase tracking-wider text-sm">Cancel</button>
                         <button type="submit" id="sub-submit-btn" class="bg-[#4f111c] text-[#F4F1E1] font-bold px-6 py-2 rounded uppercase tracking-wider text-sm shadow hover:bg-black transition-colors">Add to List</button>
@@ -910,72 +1061,6 @@
         </div>
     </div>
 
-    <!-- Edit Subscriber Modal -->
-    <div id="modal-edit-subscriber" class="hidden-view fixed inset-0 z-50 flex items-center justify-center modal-overlay p-4">
-        <div class="bg-[#F4F1E1] rounded-xl shadow-2xl w-full max-w-md overflow-hidden border-4 border-[#e8e4d1]">
-            <div class="bg-[#4f111c] text-[#F4F1E1] px-6 py-4 flex justify-between items-center">
-                <h3 class="font-display text-2xl uppercase tracking-wider">Edit Subscriber</h3>
-                <button onclick="closeEditSubscriberModal()" class="hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
-            </div>
-            <div class="p-6">
-                <form id="edit-subscriber-form" onsubmit="handleEditSubscriber(event)">
-                    <div class="mb-4">
-                        <label class="block font-bold text-gray-700 mb-2">Full Name</label>
-                        <input type="text" id="edit-sub-name" required class="w-full bg-white border border-gray-300 rounded p-3 text-black font-sans focus:outline-none focus:border-[#4f111c]">
-                    </div>
-                    <div class="mb-4">
-                        <label class="block font-bold text-gray-700 mb-2">Email Address</label>
-                        <input type="email" id="edit-sub-email" required class="w-full bg-white border border-gray-300 rounded p-3 text-black font-sans focus:outline-none focus:border-[#4f111c]">
-                    </div>
-                    <div class="mb-4 grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block font-bold text-gray-700 mb-2">Segment</label>
-                            <select id="edit-sub-segment" class="w-full bg-white border border-gray-300 rounded p-3 text-black font-sans focus:outline-none focus:border-[#4f111c]">
-                                <option value="General Fan">General Fan</option>
-                                <option value="All-Star Member">All-Star Member</option>
-                                <option value="Alumni">Alumni</option>
-                                <option value="Supporter">Supporter</option>
-                                <option value="Host Family">Host Family</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block font-bold text-gray-700 mb-2">Status</label>
-                            <select id="edit-sub-status" class="w-full bg-white border border-gray-300 rounded p-3 text-black font-sans focus:outline-none focus:border-[#4f111c]">
-                                <option value="Active">Active</option>
-                                <option value="Unsubscribed">Unsubscribed</option>
-                                <option value="Bounced">Bounced</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div id="edit-sub-error" class="hidden-view mb-4 text-red-600 text-sm font-bold"></div>
-                    <div class="flex justify-between items-center pt-4 border-t border-gray-300">
-                        <button type="button" onclick="handleDeleteSubscriber()" class="text-red-600 font-bold text-sm uppercase hover:underline">Delete Fan</button>
-                        <div class="flex gap-3">
-                            <button type="button" onclick="closeEditSubscriberModal()" class="px-4 py-2 font-bold text-gray-600 hover:text-black uppercase tracking-wider text-sm">Cancel</button>
-                            <button type="submit" id="edit-sub-submit-btn" class="bg-[#4f111c] text-[#F4F1E1] font-bold px-6 py-2 rounded uppercase tracking-wider text-sm shadow hover:bg-black transition-colors">Save Changes</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Template Preview Modal -->
-    <div id="modal-preview-template" class="hidden-view fixed inset-0 z-50 flex items-center justify-center modal-overlay p-4">
-        <div class="bg-gray-100 rounded-xl shadow-2xl w-full max-w-2xl h-[85vh] overflow-hidden flex flex-col border-4 border-gray-300">
-            <div class="bg-[#1A2B4C] text-[#F4F1E1] px-6 py-4 flex justify-between items-center shrink-0">
-                <h3 id="preview-template-title" class="font-display text-2xl uppercase tracking-wider">Template Preview</h3>
-                <button onclick="closeTemplatePreviewModal()" class="hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
-            </div>
-            <div class="flex-1 bg-gray-200 overflow-hidden relative">
-                <iframe id="preview-template-iframe" class="w-full h-full border-none"></iframe>
-            </div>
-            <div class="bg-white p-4 border-t border-gray-300 flex justify-end shrink-0">
-                <button onclick="closeTemplatePreviewModal()" class="px-6 py-2 font-bold text-gray-700 bg-gray-200 rounded hover:bg-gray-300 uppercase tracking-wider text-sm">Close Preview</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="app.js?v=3"></script>
+    <script src="app.js"></script>
 </body>
 </html>
