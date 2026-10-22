@@ -101,7 +101,7 @@ async function handleLogin(e) {
     if (!db) {
         if (errorDiv) {
             errorDiv.textContent = 'Database failed to initialize. Please refresh.';
-            errorDiv.classList.remove('hidden');
+            errorDiv.classList.remove('hidden-view');
         }
         return;
     }
@@ -113,7 +113,7 @@ async function handleLogin(e) {
         submitBtn.textContent = 'Authenticating...';
         submitBtn.disabled = true;
     }
-    if (errorDiv) errorDiv.classList.add('hidden');
+    if (errorDiv) errorDiv.classList.add('hidden-view');
 
     try {
         const { data, error } = await db.auth.signInWithPassword({ email, password });
@@ -121,7 +121,7 @@ async function handleLogin(e) {
         if (error) {
             if (errorDiv) {
                 errorDiv.textContent = error.message;
-                errorDiv.classList.remove('hidden');
+                errorDiv.classList.remove('hidden-view');
             }
             if (submitBtn) {
                 submitBtn.textContent = 'Sign In';
@@ -143,7 +143,7 @@ async function handleLogin(e) {
         console.error('Login exception:', err);
         if (errorDiv) {
             errorDiv.textContent = err.message || 'Authentication error';
-            errorDiv.classList.remove('hidden');
+            errorDiv.classList.remove('hidden-view');
         }
         if (submitBtn) {
             submitBtn.textContent = 'Sign In';
@@ -163,7 +163,7 @@ async function handleLogout() {
 function toggleAudienceSegment(clickedSegment) {
     if (!wizardData.segments) wizardData.segments = [];
     const err = document.getElementById('audience-error');
-    if (err) err.classList.add('hidden');
+    if (err) err.classList.add('hidden-view');
 
     if (clickedSegment === 'all') {
         if (wizardData.segments.includes('all')) {
@@ -240,7 +240,7 @@ function validateCurrentStep() {
     if (currentWizardStepIndex === 0) {
         if (!wizardData.segments || wizardData.segments.length === 0) {
             const err = document.getElementById('audience-error');
-            if (err) err.classList.remove('hidden');
+            if (err) err.classList.remove('hidden-view');
             return false;
         }
         return true;
@@ -260,11 +260,11 @@ function validateCurrentStep() {
                 titleInput.classList.add('border-red-500', 'bg-red-50/20');
                 titleInput.focus();
             }
-            if (titleErr) titleErr.classList.remove('hidden');
+            if (titleErr) titleErr.classList.remove('hidden-view');
             valid = false;
         } else {
             if (titleInput) titleInput.classList.remove('border-red-500', 'bg-red-50/20');
-            if (titleErr) titleErr.classList.add('hidden');
+            if (titleErr) titleErr.classList.add('hidden-view');
         }
 
         if (!wizardData.subject || !wizardData.subject.trim()) {
@@ -272,11 +272,11 @@ function validateCurrentStep() {
                 subjectInput.classList.add('border-red-500', 'bg-red-50/20');
                 if (valid) subjectInput.focus();
             }
-            if (subjectErr) subjectErr.classList.remove('hidden');
+            if (subjectErr) subjectErr.classList.remove('hidden-view');
             valid = false;
         } else {
             if (subjectInput) subjectInput.classList.remove('border-red-500', 'bg-red-50/20');
-            if (subjectErr) subjectErr.classList.add('hidden');
+            if (subjectErr) subjectErr.classList.add('hidden-view');
         }
 
         safeCreateIcons();
@@ -638,15 +638,15 @@ function openEditSubscriberModal(id) {
     document.getElementById('edit-sub-status').value = sub.status || 'Active';
     
     const modal = document.getElementById('modal-edit-subscriber');
-    if (modal) modal.classList.remove('hidden');
+    if (modal) modal.classList.remove('hidden-view');
 }
 
 function closeEditSubscriberModal() {
     const modal = document.getElementById('modal-edit-subscriber');
-    if (modal) modal.classList.add('hidden');
+    if (modal) modal.classList.add('hidden-view');
     currentEditingSubscriberId = null;
     const err = document.getElementById('edit-sub-error');
-    if(err) err.classList.add('hidden');
+    if(err) err.classList.add('hidden-view');
 }
 
 async function handleEditSubscriber(e) {
@@ -663,7 +663,7 @@ async function handleEditSubscriber(e) {
 
     submitBtn.textContent = 'Saving...';
     submitBtn.disabled = true;
-    errorDiv.classList.add('hidden');
+    errorDiv.classList.add('hidden-view');
 
     const { error } = await db.from('subscribers').update({
         name: nameInput, email: emailInput, segment: segmentInput, status: statusInput
@@ -671,7 +671,7 @@ async function handleEditSubscriber(e) {
 
     if (error) {
         errorDiv.textContent = error.message;
-        errorDiv.classList.remove('hidden');
+        errorDiv.classList.remove('hidden-view');
         submitBtn.textContent = 'Save Changes';
         submitBtn.disabled = false;
         return;
@@ -693,7 +693,7 @@ async function handleDeleteSubscriber() {
     
     if (error) {
         errorDiv.textContent = error.message;
-        errorDiv.classList.remove('hidden');
+        errorDiv.classList.remove('hidden-view');
         return;
     }
     
@@ -1240,7 +1240,7 @@ function generateEmailHtml(isLiveSend = false) {
                         <div style="padding: 20px; font-family: ${style.fontFamily}; text-align: center;">
                             <h3 style="margin: 0 0 10px 0; font-size: 20px; color: #111827;">${escapeHtml(b.heading || '')}</h3>
                             <p style="margin: 0 0 15px 0; font-size: 14px; line-height: 1.5; color: #4b5563;">${escapeHtml(b.body || '').replace(/\n/g, '<br>')}</p>
-                            ${b.cta_text ? `<a href="${b.cta_url \vert{}\vert{} '#'}" style="display: inline-block; background-color: ${style.buttonBg}; color: #ffffff; padding: 10px 24px; font-size: 13px; font-weight: bold; text-decoration: none; border-radius: ${style.buttonRadius}; text-transform: uppercase;">${escapeHtml(b.cta_text)}</a>` : ''}
+                            ${b.cta_text ? `<a href="${b.cta_url || '#'}" style="display: inline-block; background-color: ${style.buttonBg}; color: #ffffff; padding: 10px 24px; font-size: 13px; font-weight: bold; text-decoration: none; border-radius: ${style.buttonRadius}; text-transform: uppercase;">${escapeHtml(b.cta_text)}</a>` : ''}
                         </div>
                     </div>`;
 
@@ -1414,12 +1414,12 @@ function openTemplatePreviewModal(templateName) {
     if (iframe) iframe.srcdoc = html;
     
     const modal = document.getElementById('modal-preview-template');
-    if (modal) modal.classList.remove('hidden');
+    if (modal) modal.classList.remove('hidden-view');
 }
 
 function closeTemplatePreviewModal() {
     const modal = document.getElementById('modal-preview-template');
-    if (modal) modal.classList.add('hidden');
+    if (modal) modal.classList.add('hidden-view');
     const iframe = document.getElementById('preview-template-iframe');
     if (iframe) iframe.srcdoc = '';
 }
