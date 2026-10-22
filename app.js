@@ -15,9 +15,7 @@ const db = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE
 let loadedCampaigns = [];
 let allSubscribers = [];
 let currentEditingCampaignId = null;
-let currentEditingSubscriberId = null;
 
-// Block Engine & Styling Defaults
 const WIZARD_STEPS = ['recipients', 'setup', 'template', 'design', 'confirm'];
 let currentWizardStepIndex = 0;
 
@@ -52,7 +50,7 @@ let wizardData = {
 };
 
 // -------------------------------------------------------------
-// Authentication Flow
+// Authentication Flow (Fail-Safe View Toggle)
 // -------------------------------------------------------------
 function setViewAuthenticated(isAuthenticated) {
     const authView = document.getElementById('auth-view');
@@ -84,7 +82,6 @@ if (db) {
         if (session) {
             setViewAuthenticated(true);
             try { initDashboardFilters(); } catch (e) { console.warn(e); }
-            try { initAnalyticsFilters(); } catch (e) { console.warn(e); }
             try { loadSubscribers(); } catch (e) { console.warn(e); }
             try { loadDashboardAndCampaigns(); } catch (e) { console.warn(e); }
         } else {
@@ -101,7 +98,7 @@ async function handleLogin(e) {
     if (!db) {
         if (errorDiv) {
             errorDiv.textContent = 'Database failed to initialize. Please refresh.';
-            errorDiv.classList.remove('hidden-view');
+            errorDiv.classList.remove('hidden');
         }
         return;
     }
@@ -113,7 +110,7 @@ async function handleLogin(e) {
         submitBtn.textContent = 'Authenticating...';
         submitBtn.disabled = true;
     }
-    if (errorDiv) errorDiv.classList.add('hidden-view');
+    if (errorDiv) errorDiv.classList.add('hidden');
 
     try {
         const { data, error } = await db.auth.signInWithPassword({ email, password });
@@ -121,13 +118,14 @@ async function handleLogin(e) {
         if (error) {
             if (errorDiv) {
                 errorDiv.textContent = error.message;
-                errorDiv.classList.remove('hidden-view');
+                errorDiv.classList.remove('hidden');
             }
             if (submitBtn) {
                 submitBtn.textContent = 'Sign In';
                 submitBtn.disabled = false;
             }
         } else if (data && data.session) {
+            // Immediate forced UI swap on authentication success
             setViewAuthenticated(true);
             if (submitBtn) {
                 submitBtn.textContent = 'Sign In';
@@ -135,7 +133,6 @@ async function handleLogin(e) {
             }
             document.getElementById('login-form')?.reset();
             try { initDashboardFilters(); } catch (e) { console.warn(e); }
-            try { initAnalyticsFilters(); } catch (e) { console.warn(e); }
             try { loadSubscribers(); } catch (e) { console.warn(e); }
             try { loadDashboardAndCampaigns(); } catch (e) { console.warn(e); }
         }
@@ -143,7 +140,7 @@ async function handleLogin(e) {
         console.error('Login exception:', err);
         if (errorDiv) {
             errorDiv.textContent = err.message || 'Authentication error';
-            errorDiv.classList.remove('hidden-view');
+            errorDiv.classList.remove('hidden');
         }
         if (submitBtn) {
             submitBtn.textContent = 'Sign In';
@@ -163,7 +160,7 @@ async function handleLogout() {
 function toggleAudienceSegment(clickedSegment) {
     if (!wizardData.segments) wizardData.segments = [];
     const err = document.getElementById('audience-error');
-    if (err) err.classList.add('hidden-view');
+    if (err) err.classList.add('hidden');
 
     if (clickedSegment === 'all') {
         if (wizardData.segments.includes('all')) {
@@ -186,6 +183,7 @@ function toggleAudienceSegment(clickedSegment) {
             }
         }
     }
+
     renderAudienceCardsState();
 }
 
@@ -240,7 +238,7 @@ function validateCurrentStep() {
     if (currentWizardStepIndex === 0) {
         if (!wizardData.segments || wizardData.segments.length === 0) {
             const err = document.getElementById('audience-error');
-            if (err) err.classList.remove('hidden-view');
+            if (err) err.classList.remove('hidden');
             return false;
         }
         return true;
@@ -260,11 +258,11 @@ function validateCurrentStep() {
                 titleInput.classList.add('border-red-500', 'bg-red-50/20');
                 titleInput.focus();
             }
-            if (titleErr) titleErr.classList.remove('hidden-view');
+            if (titleErr) titleErr.classList.remove('hidden');
             valid = false;
         } else {
             if (titleInput) titleInput.classList.remove('border-red-500', 'bg-red-50/20');
-            if (titleErr) titleErr.classList.add('hidden-view');
+            if (titleErr) titleErr.classList.add('hidden');
         }
 
         if (!wizardData.subject || !wizardData.subject.trim()) {
@@ -272,29 +270,32 @@ function validateCurrentStep() {
                 subjectInput.classList.add('border-red-500', 'bg-red-50/20');
                 if (valid) subjectInput.focus();
             }
-            if (subjectErr) subjectErr.classList.remove('hidden-view');
+            if (subjectErr) subjectErr.classList.remove('hidden');
             valid = false;
         } else {
             if (subjectInput) subjectInput.classList.remove('border-red-500', 'bg-red-50/20');
-            if (subjectErr) subjectErr.classList.add('hidden-view');
+            if (subjectErr) subjectErr.classList.add('hidden');
         }
 
         safeCreateIcons();
         return valid;
     }
+
     return true;
 }
 
 // -------------------------------------------------------------
-// Time Frame & Date Filter Engines
+// Dashboard Time Frame & Date Filter Engine
 // -------------------------------------------------------------
 function initDashboardFilters() {
     const startInput = document.getElementById('dashboard-start-date');
     const endInput = document.getElementById('dashboard-end-date');
+    
     if (startInput && endInput && !startInput.value) {
         const today = new Date();
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(today.getDate() - 30);
+        
         endInput.value = today.toISOString().split('T')[0];
         startInput.value = thirtyDaysAgo.toISOString().split('T')[0];
     }
@@ -326,6 +327,7 @@ function handleTimeframeChange() {
         startInput.value = '2020-01-01';
         endInput.value = today.toISOString().split('T')[0];
     }
+
     applyDashboardFilters();
 }
 
@@ -386,106 +388,69 @@ function applyDashboardFilters() {
     }
 }
 
-// Analytics Filter specific handlers
-function initAnalyticsFilters() {
-    const startInput = document.getElementById('analytics-start-date');
-    const endInput = document.getElementById('analytics-end-date');
-    if (startInput && endInput && !startInput.value) {
-        const today = new Date();
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(today.getDate() - 30);
-        endInput.value = today.toISOString().split('T')[0];
-        startInput.value = thirtyDaysAgo.toISOString().split('T')[0];
-    }
-}
-
-function handleAnalyticsTimeframeChange() {
-    const select = document.getElementById('analytics-timeframe');
-    const startInput = document.getElementById('analytics-start-date');
-    const endInput = document.getElementById('analytics-end-date');
-    if (!select || !startInput || !endInput) return;
-
-    const val = select.value;
-    const today = new Date();
-
-    if (val === '30') {
-        const past = new Date();
-        past.setDate(today.getDate() - 30);
-        startInput.value = past.toISOString().split('T')[0];
-        endInput.value = today.toISOString().split('T')[0];
-    } else if (val === '90') {
-        const past = new Date();
-        past.setDate(today.getDate() - 90);
-        startInput.value = past.toISOString().split('T')[0];
-        endInput.value = today.toISOString().split('T')[0];
-    } else if (val === 'year') {
-        startInput.value = '2026-01-01';
-        endInput.value = '2026-12-31';
-    } else if (val === 'all') {
-        startInput.value = '2020-01-01';
-        endInput.value = today.toISOString().split('T')[0];
-    }
-    renderAnalyticsView();
-}
-
-function handleAnalyticsCustomDateChange() {
-    const select = document.getElementById('analytics-timeframe');
-    if (select) select.value = 'custom';
-    renderAnalyticsView();
-}
-
 // -------------------------------------------------------------
 // Live Analytics Screen Rendering
 // -------------------------------------------------------------
 function renderAnalyticsView() {
-    const startVal = document.getElementById('analytics-start-date')?.value;
-    const endVal = document.getElementById('analytics-end-date')?.value;
-    
-    const startDate = startVal ? new Date(startVal + 'T00:00:00') : new Date('2000-01-01');
-    const endDate = endVal ? new Date(endVal + 'T23:59:59') : new Date('2100-01-01');
+    const totalDeliveriesEl = document.getElementById('analytics-total-deliveries');
+    const avgOpenEl = document.getElementById('analytics-avg-open');
+    const avgClickEl = document.getElementById('analytics-avg-click');
+    const bounceRateEl = document.getElementById('analytics-bounce-rate');
+    const totalBouncesEl = document.getElementById('analytics-total-bounces');
+    const totalSubscribersEl = document.getElementById('analytics-total-subscribers');
+    const segmentBarsContainer = document.getElementById('analytics-segment-bars');
+    const campaignsChartContainer = document.getElementById('analytics-campaigns-chart');
 
-    let sent = loadedCampaigns.filter(c => c.status === 'Sent');
-    sent = sent.filter(c => {
-        const campDate = c.created_at ? new Date(c.created_at) : (c.target_date ? new Date(c.target_date) : new Date());
-        return campDate >= startDate && campDate <= endDate;
-    });
+    const sent = loadedCampaigns.filter(c => c.status === 'Sent');
 
     const deliveriesCount = sent.reduce((sum, c) => sum + (Number(c.deliveries) || 0), 0);
     const opensCount = sent.reduce((sum, c) => sum + (Number(c.opens) || 0), 0);
     const clicksCount = sent.reduce((sum, c) => sum + (Number(c.clicks) || 0), 0);
     const bouncesCount = sent.reduce((sum, c) => sum + (Number(c.bounces) || 0), 0);
 
-    const avgOpenRate = sent.length > 0 ? (sent.reduce((sum, c) => sum + Number(c.open_rate || 0), 0) / sent.length).toFixed(1) : '0.0';
-    const avgClickRate = sent.length > 0 ? (sent.reduce((sum, c) => sum + Number(c.click_rate || 0), 0) / sent.length).toFixed(1) : '0.0';
+    const avgOpenRate = sent.length > 0 
+        ? (sent.reduce((sum, c) => sum + Number(c.open_rate || 0), 0) / sent.length).toFixed(1)
+        : '0.0';
+
+    const avgClickRate = sent.length > 0 
+        ? (sent.reduce((sum, c) => sum + Number(c.click_rate || 0), 0) / sent.length).toFixed(1)
+        : '0.0';
 
     const totalAttempts = deliveriesCount + bouncesCount;
-    const bounceRate = totalAttempts > 0 ? ((bouncesCount / totalAttempts) * 100).toFixed(1) : '0.0';
+    const bounceRate = totalAttempts > 0 
+        ? ((bouncesCount / totalAttempts) * 100).toFixed(1)
+        : '0.0';
 
-    const updateText = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
-
-    updateText('analytics-total-deliveries', deliveriesCount.toLocaleString());
-    updateText('analytics-avg-open', `${avgOpenRate}%`);
-    updateText('analytics-avg-click', `${avgClickRate}%`);
-    updateText('analytics-bounce-rate', `${bounceRate}%`);
-    updateText('analytics-total-bounces', `${bouncesCount} total bounces`);
-    updateText('analytics-total-subscribers', `${allSubscribers.length.toLocaleString()} Total Fans`);
+    if (totalDeliveriesEl) totalDeliveriesEl.textContent = deliveriesCount.toLocaleString();
+    if (avgOpenEl) avgOpenEl.textContent = `${avgOpenRate}%`;
+    if (avgClickEl) avgClickEl.textContent = `${avgClickRate}%`;
+    if (bounceRateEl) bounceRateEl.textContent = `${bounceRate}%`;
+    if (totalBouncesEl) totalBouncesEl.textContent = `${bouncesCount} total bounces`;
+    if (totalSubscribersEl) totalSubscribersEl.textContent = `${allSubscribers.length.toLocaleString()} Total Fans`;
 
     // Funnel
-    updateText('funnel-delivered-val', `${deliveriesCount} (100%)`);
-    
+    const funnelDeliveredVal = document.getElementById('funnel-delivered-val');
+    const funnelOpenedVal = document.getElementById('funnel-opened-val');
+    const funnelOpenedBar = document.getElementById('funnel-opened-bar');
+    const funnelClickedVal = document.getElementById('funnel-clicked-val');
+    const funnelClickedBar = document.getElementById('funnel-clicked-bar');
+    const funnelBouncedVal = document.getElementById('funnel-bounced-val');
+    const funnelBouncedBar = document.getElementById('funnel-bounced-bar');
+
+    if (funnelDeliveredVal) funnelDeliveredVal.textContent = `${deliveriesCount} (100%)`;
+
     const openPct = deliveriesCount > 0 ? Math.min(100, Math.round((opensCount / deliveriesCount) * 100)) : (Number(avgOpenRate) || 0);
-    updateText('funnel-opened-val', `${opensCount} (${openPct}%)`);
-    const fob = document.getElementById('funnel-opened-bar'); if(fob) fob.style.width = `${openPct}%`;
+    if (funnelOpenedVal) funnelOpenedVal.textContent = `${opensCount} (${openPct}%)`;
+    if (funnelOpenedBar) funnelOpenedBar.style.width = `${openPct}%`;
 
     const clickPct = deliveriesCount > 0 ? Math.min(100, Math.round((clicksCount / deliveriesCount) * 100)) : (Number(avgClickRate) || 0);
-    updateText('funnel-clicked-val', `${clicksCount} (${clickPct}%)`);
-    const fcb = document.getElementById('funnel-clicked-bar'); if(fcb) fcb.style.width = `${clickPct}%`;
+    if (funnelClickedVal) funnelClickedVal.textContent = `${clicksCount} (${clickPct}%)`;
+    if (funnelClickedBar) funnelClickedBar.style.width = `${clickPct}%`;
 
-    updateText('funnel-bounced-val', `${bouncesCount} (${bounceRate}%)`);
-    const fbb = document.getElementById('funnel-bounced-bar'); if(fbb) fbb.style.width = `${Math.min(100, Number(bounceRate))}%`;
+    if (funnelBouncedVal) funnelBouncedVal.textContent = `${bouncesCount} (${bounceRate}%)`;
+    if (funnelBouncedBar) funnelBouncedBar.style.width = `${Math.min(100, Number(bounceRate))}%`;
 
     // Audience Bars
-    const segmentBarsContainer = document.getElementById('analytics-segment-bars');
     if (segmentBarsContainer) {
         const total = allSubscribers.length || 1;
         segmentBarsContainer.innerHTML = ALL_AUDIENCE_SEGMENTS.map(seg => {
@@ -506,10 +471,9 @@ function renderAnalyticsView() {
     }
 
     // History Chart
-    const campaignsChartContainer = document.getElementById('analytics-campaigns-chart');
     if (campaignsChartContainer) {
         if (sent.length === 0) {
-            campaignsChartContainer.innerHTML = `<div class="text-center text-gray-400 py-8 font-sans italic">No campaign blasts dispatched yet in this range.</div>`;
+            campaignsChartContainer.innerHTML = `<div class="text-center text-gray-400 py-8 font-sans italic">No campaign blasts dispatched yet. Send a broadcast to generate engagement graphs.</div>`;
         } else {
             campaignsChartContainer.innerHTML = sent.slice(0, 5).map(c => {
                 const openVal = Math.min(100, Number(c.open_rate || 0));
@@ -582,12 +546,12 @@ function renderSubscribers(dataToRender) {
     tableBody.innerHTML = dataToRender.map(sub => {
         const dateJoined = sub.created_at ? new Date(sub.created_at).toLocaleDateString() : 'N/A';
         return `
-            <tr onclick="openEditSubscriberModal('${sub.id}')" class="cursor-pointer border-b border-gray-200 hover:bg-black/5 transition-colors">
-                <td class="py-3 md:py-5 font-bold text-[#611724] pl-2">${escapeHtml(sub.name)}</td>
+            <tr class="border-b border-gray-200 hover:bg-black/5 transition-colors">
+                <td class="py-3 md:py-5 font-bold text-[#611724]">${escapeHtml(sub.name)}</td>
                 <td class="py-3 md:py-5 text-gray-800 text-sm md:text-lg">${escapeHtml(sub.email)}</td>
                 <td class="py-3 md:py-5 text-gray-800 text-sm md:text-lg">${escapeHtml(sub.segment || 'General Fan')}</td>
                 <td class="py-3 md:py-5 text-center"><span class="bg-kettleer-green text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded tracking-wider uppercase">${escapeHtml(sub.status || 'Active')}</span></td>
-                <td class="py-3 md:py-5 text-gray-800 text-right pr-4 text-sm md:text-lg">${dateJoined}</td>
+                <td class="py-3 md:py-5 text-gray-800 text-right pr-2 text-sm md:text-lg">${dateJoined}</td>
             </tr>
         `;
     }).join('');
@@ -625,81 +589,6 @@ function updateAudienceCounts() {
     ALL_AUDIENCE_SEGMENTS.forEach(seg => {
         setCardCount(`segment-count-${seg}`, allSubscribers.filter(s => s.segment === seg).length);
     });
-}
-
-function openEditSubscriberModal(id) {
-    const sub = allSubscribers.find(s => s.id === id || s.id == id);
-    if (!sub) return;
-    currentEditingSubscriberId = sub.id;
-    
-    document.getElementById('edit-sub-name').value = sub.name || '';
-    document.getElementById('edit-sub-email').value = sub.email || '';
-    document.getElementById('edit-sub-segment').value = sub.segment || 'General Fan';
-    document.getElementById('edit-sub-status').value = sub.status || 'Active';
-    
-    const modal = document.getElementById('modal-edit-subscriber');
-    if (modal) modal.classList.remove('hidden-view');
-}
-
-function closeEditSubscriberModal() {
-    const modal = document.getElementById('modal-edit-subscriber');
-    if (modal) modal.classList.add('hidden-view');
-    currentEditingSubscriberId = null;
-    const err = document.getElementById('edit-sub-error');
-    if(err) err.classList.add('hidden-view');
-}
-
-async function handleEditSubscriber(e) {
-    e.preventDefault();
-    if (!currentEditingSubscriberId) return;
-
-    const nameInput = document.getElementById('edit-sub-name').value;
-    const emailInput = document.getElementById('edit-sub-email').value;
-    const segmentInput = document.getElementById('edit-sub-segment').value;
-    const statusInput = document.getElementById('edit-sub-status').value;
-    
-    const submitBtn = document.getElementById('edit-sub-submit-btn');
-    const errorDiv = document.getElementById('edit-sub-error');
-
-    submitBtn.textContent = 'Saving...';
-    submitBtn.disabled = true;
-    errorDiv.classList.add('hidden-view');
-
-    const { error } = await db.from('subscribers').update({
-        name: nameInput, email: emailInput, segment: segmentInput, status: statusInput
-    }).eq('id', currentEditingSubscriberId);
-
-    if (error) {
-        errorDiv.textContent = error.message;
-        errorDiv.classList.remove('hidden-view');
-        submitBtn.textContent = 'Save Changes';
-        submitBtn.disabled = false;
-        return;
-    }
-
-    closeEditSubscriberModal();
-    loadSubscribers();
-    loadDashboardAndCampaigns();
-    submitBtn.textContent = 'Save Changes';
-    submitBtn.disabled = false;
-}
-
-async function handleDeleteSubscriber() {
-    if (!currentEditingSubscriberId) return;
-    if (!confirm("Are you sure you want to permanently delete this subscriber?")) return;
-    
-    const errorDiv = document.getElementById('edit-sub-error');
-    const { error } = await db.from('subscribers').delete().eq('id', currentEditingSubscriberId);
-    
-    if (error) {
-        errorDiv.textContent = error.message;
-        errorDiv.classList.remove('hidden-view');
-        return;
-    }
-    
-    closeEditSubscriberModal();
-    loadSubscribers();
-    loadDashboardAndCampaigns();
 }
 
 // -------------------------------------------------------------
@@ -750,10 +639,7 @@ async function loadDashboardAndCampaigns() {
                     ? `<span class="text-xs text-gray-400 italic font-sans">—</span>`
                     : `<span class="text-sm font-bold text-black">${c.open_rate}% Open / ${c.click_rate}% CTR</span>`;
                 
-                const actionBtn = isDraft 
-                    ? `<button onclick="editCampaign(${c.id})" class="bg-[#4f111c] text-[#F4F1E1] text-xs font-bold px-3 py-1.5 rounded uppercase hover:bg-black transition-colors">Edit</button>`
-                    : `<button onclick="openReportView(${c.id})" class="bg-[#387843] text-white text-xs font-bold px-3 py-1.5 rounded uppercase hover:bg-black transition-colors">Report</button>`;
-
+                const actionBtn = `<button onclick="editCampaign(${c.id})" class="bg-[#4f111c] text-[#F4F1E1] text-xs font-bold px-3 py-1.5 rounded uppercase hover:bg-black transition-colors">Edit</button>`;
                 const dateDisplay = c.target_date || (c.created_at ? new Date(c.created_at).toLocaleDateString() : 'N/A');
 
                 return `
@@ -1386,40 +1272,478 @@ function renderEmailPreview() {
 }
 
 // -------------------------------------------------------------
-// Template Previews
+// Campaigns & Wizard Navigation
 // -------------------------------------------------------------
-function openTemplatePreviewModal(templateName) {
-    const titleEl = document.getElementById('preview-template-title');
-    const iframe = document.getElementById('preview-template-iframe');
-    if (titleEl) titleEl.textContent = templateName;
+function startNewCampaignWizard() {
+    currentEditingCampaignId = null;
+    wizardData = {
+        segments: ['all'],
+        title: '',
+        subject: '',
+        template: 'Blank Canvas',
+        blocks: [],
+        style: { ...defaultStyle },
+        settings: { ...defaultSettings }
+    };
+    syncWizardUI();
+    switchTab('campaign-editor');
+    goToWizardStep('recipients');
+}
+
+function startNewCampaignWizardWithTemplate(templateName) {
+    startNewCampaignWizard();
+    selectWizardTemplate(templateName);
+    goToWizardStep('setup');
+}
+
+function editCampaign(campaignId) {
+    const c = loadedCampaigns.find(item => item.id === campaignId);
+    if (!c) return;
+
+    currentEditingCampaignId = c.id;
     
-    let dummyBlocks = [];
-    if (templateName === 'The Weekly Ballpark Bulletin') {
-        dummyBlocks = [
+    let loadedBlocks = [];
+    let loadedStyle = { ...defaultStyle };
+    let loadedSettings = { ...defaultSettings };
+
+    try {
+        if (c.body_text && c.body_text.trim().startsWith('{')) {
+            const parsed = JSON.parse(c.body_text);
+            loadedBlocks = parsed.blocks || [];
+            loadedStyle = { ...defaultStyle, ...(parsed.style || {}) };
+            loadedSettings = { ...defaultSettings, ...(parsed.settings || {}) };
+        } else if (c.body_text && c.body_text.trim().startsWith('[')) {
+            loadedBlocks = JSON.parse(c.body_text);
+        } else {
+            loadedBlocks = [{ type: 'text', heading: c.headline || c.title || 'Welcome', body: c.body_text || '' }];
+        }
+    } catch (e) {
+        loadedBlocks = [{ type: 'text', heading: c.headline || c.title || 'Welcome', body: c.body_text || '' }];
+    }
+
+    wizardData = {
+        segments: ['all'],
+        title: c.title || '',
+        subject: c.subject || '',
+        template: c.template_name || 'Blank Canvas',
+        blocks: loadedBlocks,
+        style: loadedStyle,
+        settings: loadedSettings
+    };
+
+    syncWizardUI();
+    switchTab('campaign-editor');
+    goToWizardStep('design');
+}
+
+function selectWizardTemplate(templateName) {
+    wizardData.template = templateName;
+    
+    if (templateName === 'Blank Canvas') {
+        wizardData.blocks = [];
+    } else if (templateName === 'The Weekly Ballpark Bulletin' || templateName === 'The Kettleers Gazette') {
+        wizardData.blocks = [
             { type: 'text', heading: 'Welcome to the Newsletter!', body: 'The first update from Kettleers Nation!' },
             { type: 'promo', heading: 'Stocking Stuffers Promo', body: 'The Perfect Stocking Stuffers! Use code FANS20 for 20% off all caps, tees, and collectibles.', cta: 'Shop Holiday Special', image: 'StockingStuffer.png' }
         ];
-    } else if (templateName === 'The Kettleers Gazette') {
-        dummyBlocks = [
-            { type: 'image_caption', image_url: 'bannerplayer.png', caption: 'Lowell Park action.' },
-            { type: 'text', heading: 'Offseason Update', body: 'Read about our alumni in the MLB draft.' }
-        ];
     }
-    
-    const savedBlocks = wizardData.blocks;
-    wizardData.blocks = dummyBlocks;
-    const html = generateEmailHtml(false);
-    wizardData.blocks = savedBlocks;
 
-    if (iframe) iframe.srcdoc = html;
-    
-    const modal = document.getElementById('modal-preview-template');
-    if (modal) modal.classList.remove('hidden-view');
+    document.querySelectorAll('.template-wizard-card').forEach(card => {
+        card.classList.remove('border-[#4f111c]', 'shadow-lg');
+        card.classList.add('border-gray-200');
+    });
+    const activeCard = document.getElementById(`template-card-${templateName}`);
+    if (activeCard) {
+        activeCard.classList.remove('border-gray-200');
+        activeCard.classList.add('border-[#4f111c]', 'shadow-lg');
+    }
+
+    renderEditorBlocks();
+    renderEmailPreview();
 }
 
-function closeTemplatePreviewModal() {
-    const modal = document.getElementById('modal-preview-template');
-    if (modal) modal.classList.add('hidden-view');
-    const iframe = document.getElementById('preview-template-iframe');
-    if (iframe) iframe.srcdoc = '';
+function syncSetupFields() {
+    const titleInput = document.getElementById('setup-campaign-title');
+    const subjectInput = document.getElementById('setup-campaign-subject');
+    const titleErr = document.getElementById('setup-title-error');
+    const subjectErr = document.getElementById('setup-subject-error');
+
+    if (titleInput) {
+        wizardData.title = titleInput.value;
+        if (titleInput.value.trim()) {
+            titleInput.classList.remove('border-red-500', 'bg-red-50/20');
+            if (titleErr) titleErr.classList.add('hidden');
+        }
+    }
+    if (subjectInput) {
+        wizardData.subject = subjectInput.value;
+        if (subjectInput.value.trim()) {
+            subjectInput.classList.remove('border-red-500', 'bg-red-50/20');
+            if (subjectErr) subjectErr.classList.add('hidden');
+        }
+    }
+}
+
+function syncWizardUI() {
+    const titleInput = document.getElementById('setup-campaign-title');
+    const subjectInput = document.getElementById('setup-campaign-subject');
+    if (titleInput) titleInput.value = wizardData.title || '';
+    if (subjectInput) subjectInput.value = wizardData.subject || '';
+    renderAudienceCardsState();
+    selectWizardTemplate(wizardData.template || 'Blank Canvas');
+    syncStyleAndSettingsUI();
+}
+
+function populateConfirmStep() {
+    syncSetupFields();
+    
+    const segments = wizardData.segments || ['all'];
+    let audienceName = 'All Active Subscribers';
+    let audienceCount = allSubscribers.length;
+
+    if (!segments.includes('all')) {
+        audienceName = segments.join(', ');
+        audienceCount = allSubscribers.filter(s => segments.includes(s.segment)).length;
+    }
+    
+    const audEl = document.getElementById('confirm-review-audience');
+    const subEl = document.getElementById('confirm-review-subject');
+    const tplEl = document.getElementById('confirm-review-template');
+
+    if (audEl) audEl.textContent = `${audienceName} (${audienceCount} fans)`;
+    if (subEl) subEl.textContent = wizardData.subject || '(No Subject Line Set)';
+    if (tplEl) tplEl.textContent = wizardData.template;
+}
+
+function goToWizardStep(stepName) {
+    const targetIndex = WIZARD_STEPS.indexOf(stepName);
+    if (targetIndex === -1) return;
+
+    if (targetIndex > 0 && !validateCurrentStep()) return;
+    if (targetIndex > 1) {
+        currentWizardStepIndex = 1;
+        if (!validateCurrentStep()) return;
+    }
+
+    currentWizardStepIndex = targetIndex;
+
+    document.querySelectorAll('.wizard-pane').forEach(el => el.classList.add('hidden-view'));
+    const activePane = document.getElementById(`wizard-step-${stepName}`);
+    if (activePane) activePane.classList.remove('hidden-view');
+
+    WIZARD_STEPS.forEach((name, i) => {
+        const link = document.getElementById(`step-nav-${name}`);
+        if (!link) return;
+        if (i === currentWizardStepIndex) {
+            link.className = "wizard-step-link font-bold text-white text-xs md:text-sm underline underline-offset-4";
+        } else if (i < currentWizardStepIndex) {
+            link.className = "wizard-step-link text-white/90 hover:text-white text-xs md:text-sm cursor-pointer";
+        } else {
+            link.className = "wizard-step-link opacity-40 hover:opacity-100 text-xs md:text-sm cursor-pointer";
+        }
+    });
+
+    const prevLabel = document.getElementById('wizard-prev-label');
+    const nextBtn = document.getElementById('wizard-next-btn');
+
+    if (prevLabel) prevLabel.textContent = currentWizardStepIndex === 0 ? "Exit" : "Back";
+    
+    if (nextBtn) {
+        if (currentWizardStepIndex === WIZARD_STEPS.length - 1) {
+            nextBtn.classList.add('hidden');
+        } else {
+            nextBtn.classList.remove('hidden');
+            const nextStepName = WIZARD_STEPS[currentWizardStepIndex + 1];
+            const nextLabel = document.getElementById('wizard-next-label');
+            if (nextLabel) nextLabel.textContent = `Next: ${nextStepName.charAt(0).toUpperCase() + nextStepName.slice(1)}`;
+        }
+    }
+
+    if (stepName === 'recipients') renderAudienceCardsState();
+    if (stepName === 'design') {
+        syncSetupFields();
+        syncStyleAndSettingsUI();
+        renderEditorBlocks();
+        renderEmailPreview();
+    }
+    if (stepName === 'confirm') populateConfirmStep();
+
+    safeCreateIcons();
+}
+
+function wizardNextStep() {
+    if (!validateCurrentStep()) return;
+    if (currentWizardStepIndex < WIZARD_STEPS.length - 1) {
+        goToWizardStep(WIZARD_STEPS[currentWizardStepIndex + 1]);
+    }
+}
+
+function wizardPrevStep() {
+    if (currentWizardStepIndex > 0) {
+        goToWizardStep(WIZARD_STEPS[currentWizardStepIndex - 1]);
+    } else {
+        switchTab('campaigns');
+    }
+}
+
+function setPreviewDevice(device) {
+    const container = document.getElementById('email-preview-container');
+    const desktopBtn = document.getElementById('preview-btn-desktop');
+    const mobileBtn = document.getElementById('preview-btn-mobile');
+
+    if (device === 'mobile') {
+        if (container) container.classList.add('preview-mobile');
+        if (desktopBtn) desktopBtn.className = "flex items-center gap-1.5 px-3 py-1 rounded text-xs font-bold text-gray-500 hover:text-black transition-colors";
+        if (mobileBtn) mobileBtn.className = "flex items-center gap-1.5 px-3 py-1 rounded text-xs font-bold text-[#611724] bg-gray-200 transition-colors";
+    } else {
+        if (container) container.classList.remove('preview-mobile');
+        if (desktopBtn) desktopBtn.className = "flex items-center gap-1.5 px-3 py-1 rounded text-xs font-bold text-[#611724] bg-gray-200 transition-colors";
+        if (mobileBtn) mobileBtn.className = "flex items-center gap-1.5 px-3 py-1 rounded text-xs font-bold text-gray-500 hover:text-black transition-colors";
+    }
+}
+
+// -------------------------------------------------------------
+// App Navigation & Modals
+// -------------------------------------------------------------
+const btn = document.getElementById('mobile-menu-btn');
+const sidebar = document.getElementById('sidebar');
+if (btn) btn.addEventListener('click', () => { sidebar.classList.toggle('hidden'); });
+
+function switchTab(tabId) {
+    const views = [
+        'view-dashboard', 'view-campaigns', 'view-templates', 'view-subscribers', 
+        'view-campaign-editor', 'view-report', 'view-transactional', 
+        'view-analytics', 'view-settings'
+    ];
+    
+    views.forEach(id => { 
+        const el = document.getElementById(id); 
+        if (el) el.classList.add('hidden-view'); 
+    });
+    
+    const selectedView = document.getElementById('view-' + tabId);
+    if (selectedView) selectedView.classList.remove('hidden-view');
+    
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    const activeNav = document.getElementById('nav-' + tabId);
+    if (activeNav) activeNav.classList.add('active');
+    
+    if (window.innerWidth < 768 && sidebar) { sidebar.classList.add('hidden'); }
+    if (tabId === 'dashboard' || tabId === 'campaigns') loadDashboardAndCampaigns();
+    if (tabId === 'subscribers') loadSubscribers();
+    if (tabId === 'analytics') renderAnalyticsView();
+    safeCreateIcons();
+}
+
+function openReportView(campaignId = null) {
+    switchTab('report');
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    const cNav = document.getElementById('nav-campaigns');
+    if (cNav) cNav.classList.add('active');
+
+    if (campaignId && loadedCampaigns.length > 0) {
+        const c = loadedCampaigns.find(item => item.id === campaignId);
+        if (c) {
+            const rTitle = document.getElementById('report-title');
+            const rMeta = document.getElementById('report-meta');
+            const rOpens = document.getElementById('report-opens');
+            const rOpenRate = document.getElementById('report-open-rate');
+            const rClicks = document.getElementById('report-clicks');
+            const rClickRate = document.getElementById('report-click-rate');
+
+            if (rTitle) rTitle.textContent = c.title;
+            if (rMeta) rMeta.textContent = `Dispatched • ${c.target_date || 'Recent'}`;
+            if (rOpens) rOpens.textContent = (Number(c.opens) || Math.round(12410 * (c.open_rate / 100))).toLocaleString();
+            if (rOpenRate) rOpenRate.textContent = `${c.open_rate}% Open Rate`;
+            if (rClicks) rClicks.textContent = (Number(c.clicks) || Math.round(12410 * (c.click_rate / 100))).toLocaleString();
+            if (rClickRate) rClickRate.textContent = `${c.click_rate}% Click Rate`;
+        }
+    }
+}
+
+function openAddSubscriberModal() {
+    const modal = document.getElementById('modal-add-subscriber');
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.getElementById('sub-name').focus();
+    }
+}
+
+function closeAddSubscriberModal() {
+    const modal = document.getElementById('modal-add-subscriber');
+    if (modal) {
+        modal.classList.add('hidden');
+        document.getElementById('add-subscriber-form').reset();
+        document.getElementById('sub-error').classList.add('hidden');
+    }
+}
+
+async function handleAddSubscriber(e) {
+    e.preventDefault();
+    const nameInput = document.getElementById('sub-name').value;
+    const emailInput = document.getElementById('sub-email').value;
+    const segmentInput = document.getElementById('sub-segment').value;
+    const submitBtn = document.getElementById('sub-submit-btn');
+    const errorDiv = document.getElementById('sub-error');
+    
+    submitBtn.textContent = 'Saving...';
+    submitBtn.disabled = true;
+    errorDiv.classList.add('hidden');
+
+    const { error } = await db.from('subscribers').insert([
+        { name: nameInput, email: emailInput, segment: segmentInput, status: 'Active' }
+    ]);
+
+    if (error) {
+        console.error('Error inserting subscriber:', error);
+        errorDiv.textContent = error.message;
+        errorDiv.classList.remove('hidden');
+        submitBtn.textContent = 'Add to List';
+        submitBtn.disabled = false;
+        return;
+    }
+
+    document.getElementById('add-subscriber-form').reset();
+    closeAddSubscriberModal();
+    loadSubscribers();
+    loadDashboardAndCampaigns();
+    submitBtn.textContent = 'Add to List';
+    submitBtn.disabled = false;
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+// -------------------------------------------------------------
+// Save & Send Data
+// -------------------------------------------------------------
+async function saveCampaign(exitAfterSave = false) {
+    syncSetupFields();
+    const statusText = document.getElementById('editor-status-text');
+    const saveBtn = document.getElementById('editor-save-btn');
+
+    if (statusText) statusText.textContent = 'Saving...';
+    if (saveBtn) saveBtn.disabled = true;
+
+    let firstHeadline = 'Kettleers Broadcast';
+    if (wizardData.blocks && wizardData.blocks.length > 0) {
+        const textBlock = wizardData.blocks.find(b => b.type === 'text') || wizardData.blocks[0];
+        firstHeadline = textBlock.heading || 'Kettleers Broadcast';
+    }
+
+    const payload = {
+        title: (wizardData.title || '').trim() || 'Untitled Campaign',
+        subject: (wizardData.subject || '').trim() || 'No Subject',
+        headline: firstHeadline,
+        body_text: JSON.stringify({
+            blocks: wizardData.blocks || [],
+            style: wizardData.style || defaultStyle,
+            settings: wizardData.settings || defaultSettings
+        }), 
+        template_name: wizardData.template || 'Blank Canvas',
+        status: 'Draft',
+        html_content: generateEmailHtml(true)
+    };
+
+    let response;
+    try {
+        if (currentEditingCampaignId) {
+            response = await db.from('campaigns').update(payload).eq('id', currentEditingCampaignId);
+        } else {
+            response = await db.from('campaigns').insert([payload]).select();
+            if (response.data && response.data.length > 0) { 
+                currentEditingCampaignId = response.data[0].id; 
+            }
+        }
+    } catch (err) {
+        console.error('Save failed exception:', err);
+        response = { error: err };
+    }
+
+    if (saveBtn) saveBtn.disabled = false;
+
+    if (response && response.error) {
+        console.error('Error saving campaign:', response.error);
+        if (statusText) statusText.textContent = 'Save failed';
+        alert('Save failed: ' + (response.error.message || 'Unknown database error'));
+        return;
+    }
+
+    if (statusText) statusText.textContent = 'Saved to database';
+    await loadDashboardAndCampaigns();
+    if (exitAfterSave) switchTab('campaigns');
+}
+
+async function dispatchCampaignBlast() {
+    const btn = document.getElementById('confirm-dispatch-btn');
+    btn.textContent = 'Dispatching to fans...';
+    btn.disabled = true;
+
+    await saveCampaign(false);
+
+    syncSetupFields();
+    const subject = (wizardData.subject || '').trim() || 'Kettleers Broadcast';
+    const html_content = generateEmailHtml(true);
+    const segments = wizardData.segments || ['all'];
+    const segmentParam = segments.includes('all') ? 'all' : segments.join(',');
+
+    try {
+        const { data, error } = await db.functions.invoke('send-campaign', {
+            body: { 
+                subject, 
+                html_content, 
+                is_test: false, 
+                segment: segmentParam,
+                segments: segments 
+            }
+        });
+
+        if (error) throw error;
+
+        if (currentEditingCampaignId) {
+            await db.from('campaigns').update({ 
+                status: 'Sent', 
+                open_rate: '0.0', 
+                click_rate: '0.0',
+                target_date: new Date().toLocaleDateString()
+            }).eq('id', currentEditingCampaignId);
+        }
+
+        btn.textContent = 'Campaign Dispatched!';
+        setTimeout(() => {
+            switchTab('campaigns');
+            loadDashboardAndCampaigns();
+        }, 1200);
+
+    } catch (error) {
+        console.error('Error dispatching live blast:', error);
+        btn.textContent = 'Send Campaign Now';
+        btn.disabled = false;
+        alert('Error sending campaign: ' + (error.message || 'Check console'));
+    }
+}
+
+async function sendTestEmail() {
+    const statusText = document.getElementById('editor-status-text');
+    if (statusText) statusText.textContent = 'Sending test...';
+
+    syncSetupFields();
+    const subject = (wizardData.subject || '').trim() || 'Test Campaign';
+    const html_content = generateEmailHtml(true);
+
+    try {
+        const { data, error } = await db.functions.invoke('send-campaign', {
+            body: { subject, html_content, is_test: true }
+        });
+
+        if (error) throw error;
+        if (statusText) statusText.textContent = 'Test sent!';
+        alert('Success! Test sent to aaron@uscilla.com.');
+    } catch (error) {
+        console.error('Error sending email:', error);
+        if (statusText) statusText.textContent = 'Send failed';
+        alert('Error sending email: ' + (error.message || 'Check console'));
+    }
 }
