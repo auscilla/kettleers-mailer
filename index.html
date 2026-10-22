@@ -56,7 +56,7 @@
                     <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Password</label>
                     <input type="password" id="auth-password" required class="w-full bg-white border border-gray-300 rounded p-3 text-black font-sans focus:outline-none focus:border-[#4f111c]">
                 </div>
-                <div id="auth-error" class="hidden text-red-600 text-sm font-bold text-center mt-2"></div>
+                <div id="auth-error" class="hidden-view text-red-600 text-sm font-bold text-center mt-2"></div>
                 <button type="submit" id="auth-submit-btn" class="w-full bg-[#4f111c] text-[#F4F1E1] font-display text-xl uppercase py-3 rounded shadow hover:bg-black transition-colors mt-4 tracking-wider">Sign In</button>
             </form>
         </div>
@@ -84,7 +84,7 @@
                     <li><button onclick="switchTab('campaigns')" id="nav-campaigns" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="megaphone" class="w-5 h-5 opacity-80"></i> Campaigns</button></li>
                     <li><button onclick="switchTab('subscribers')" id="nav-subscribers" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="users" class="w-5 h-5 opacity-80"></i> Subscribers</button></li>
                     <li><button onclick="switchTab('templates')" id="nav-templates" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="layout-template" class="w-5 h-5 opacity-80"></i> Templates</button></li>
-                    <li><button onclick="switchTab('analytics')" id="nav-analytics" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors mt-6"><i data-lucide="bar-chart-2" class="w-5 h-5 opacity-80"></i> Analytics</button></li>
+                    <li><button onclick="switchTab('analytics')" id="nav-analytics" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors mt-6 border-t border-white/10 pt-4"><i data-lucide="bar-chart-2" class="w-5 h-5 opacity-80"></i> Analytics</button></li>
                     <li><button onclick="switchTab('settings')" id="nav-settings" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="settings" class="w-5 h-5 opacity-80"></i> Settings</button></li>
                 </ul>
             </nav>
@@ -110,7 +110,6 @@
                 </header>
 
                 <div class="bg-[#F4F1E1] rounded-xl md:rounded-2xl p-6 md:p-10 shadow-2xl flex-1">
-                    
                     <div class="flex flex-col md:flex-row gap-4 md:gap-8 mb-8 md:mb-10 pb-6 md:pb-8 border-b border-gray-300">
                         <div class="flex flex-col w-full md:w-auto">
                             <label class="font-bold text-sm md:text-lg mb-1 md:mb-2 text-black">Time Frame:</label>
@@ -309,6 +308,7 @@
             <!-- ================= 5. CAMPAIGN WIZARD STUDIO VIEW ================= -->
             <div id="view-campaign-editor" class="hidden-view w-full min-h-full bg-kettleer-maroonDark relative text-gray-800 flex flex-col md:overflow-hidden">
                  
+                <!-- Header Bar -->
                 <div class="bg-kettleer-maroonDark text-[#F4F1E1] py-3 md:py-4 px-4 md:px-8 flex flex-col md:flex-row justify-between items-start md:items-center shrink-0 border-b border-white/10 z-10 shadow-sm gap-4">
                     <div class="flex items-center gap-4 md:gap-6">
                         <button onclick="switchTab('campaigns')" class="hover:text-white flex items-center gap-1 text-xs md:text-sm uppercase tracking-widest"><i data-lucide="chevron-left" class="w-4 h-4 md:w-5 md:h-5"></i> Back to Campaigns</button>
@@ -321,6 +321,7 @@
                     </div>
                 </div>
 
+                <!-- Wizard Main Container -->
                 <div class="flex-1 overflow-y-auto md:overflow-hidden relative flex flex-col">
                     
                     <!-- STEP 1: RECIPIENTS -->
@@ -872,6 +873,43 @@
         </main>
     </div>
 
+    <!-- ================= MODALS ================= -->
+    <div id="modal-add-subscriber" class="hidden-view fixed inset-0 z-50 flex items-center justify-center modal-overlay p-4">
+        <div class="bg-[#F4F1E1] rounded-xl shadow-2xl w-full max-w-md overflow-hidden border-4 border-[#e8e4d1]">
+            <div class="bg-[#4f111c] text-[#F4F1E1] px-6 py-4 flex justify-between items-center">
+                <h3 class="font-display text-2xl uppercase tracking-wider">Add Subscriber</h3>
+                <button onclick="closeAddSubscriberModal()" class="hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <div class="p-6">
+                <form id="add-subscriber-form" onsubmit="handleAddSubscriber(event)">
+                    <div class="mb-4">
+                        <label class="block font-bold text-gray-700 mb-2">Full Name</label>
+                        <input type="text" id="sub-name" required class="w-full bg-white border border-gray-300 rounded p-3 text-black font-sans focus:outline-none focus:border-[#4f111c]">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block font-bold text-gray-700 mb-2">Email Address</label>
+                        <input type="email" id="sub-email" required class="w-full bg-white border border-gray-300 rounded p-3 text-black font-sans focus:outline-none focus:border-[#4f111c]">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block font-bold text-gray-700 mb-2">Audience Segment</label>
+                        <select id="sub-segment" class="w-full bg-white border border-gray-300 rounded p-3 text-black font-sans focus:outline-none focus:border-[#4f111c]">
+                            <option value="General Fan">General Fan</option>
+                            <option value="All-Star Member">All-Star Member</option>
+                            <option value="Alumni">Alumni</option>
+                            <option value="Supporter">Supporter</option>
+                            <option value="Host Family">Host Family</option>
+                        </select>
+                    </div>
+                    <div id="sub-error" class="hidden-view mb-4 text-red-600 text-sm font-bold"></div>
+                    <div class="flex justify-end gap-3 pt-4 border-t border-gray-300">
+                        <button type="button" onclick="closeAddSubscriberModal()" class="px-4 py-2 font-bold text-gray-600 hover:text-black uppercase tracking-wider text-sm">Cancel</button>
+                        <button type="submit" id="sub-submit-btn" class="bg-[#4f111c] text-[#F4F1E1] font-bold px-6 py-2 rounded uppercase tracking-wider text-sm shadow hover:bg-black transition-colors">Add to List</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Edit Subscriber Modal -->
     <div id="modal-edit-subscriber" class="hidden-view fixed inset-0 z-50 flex items-center justify-center modal-overlay p-4">
         <div class="bg-[#F4F1E1] rounded-xl shadow-2xl w-full max-w-md overflow-hidden border-4 border-[#e8e4d1]">
@@ -938,6 +976,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=2"></script>
+    <script src="app.js?v=3"></script>
 </body>
 </html>
