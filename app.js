@@ -1843,3 +1843,23 @@ async function sendTestEmail() {
         alert('Error sending email: ' + (error.message || 'Check console'));
     }
 }
+function openTemplatePreview(templateName) {
+    const modal = document.getElementById('modal-template-preview');
+    const title = document.getElementById('preview-modal-title');
+    const img = document.getElementById('preview-modal-image');
+    
+    if (modal && title && img) {
+        title.textContent = templateName;
+        if (templateName === 'The Weekly Ballpark Bulletin') {
+            img.src = 'StockingStuffer.png';
+        } else {
+            img.src = 'bannerplayer.png';
+        }
+        modal.classList.remove('hidden');
+    }
+}
+
+function closeTemplatePreview() {
+    const modal = document.getElementById('modal-template-preview');
+    if (modal) modal.classList.add('hidden');
+}
