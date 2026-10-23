@@ -67,7 +67,7 @@
     <div id="app-view" class="hidden-view flex flex-col md:flex-row h-full w-full">
         <!-- Mobile Header -->
         <div class="md:hidden bg-[#F4F1E1] p-4 flex justify-between items-center border-b-4 border-[#4f111c] z-30 shrink-0">
-            <img src="logo.png" alt="Cotuit Kettleers" class="h-12 object-contain">
+            <img src="logo.png" alt="Cotuit Kettleers" class="h-12 object-contain cursor-pointer" onclick="switchTab('dashboard')">
             <button id="mobile-menu-btn" class="text-[#4f111c] p-2 focus:outline-none">
                 <i data-lucide="menu" class="w-8 h-8"></i>
             </button>
@@ -76,7 +76,7 @@
         <!-- Sidebar -->
         <aside id="sidebar" class="hidden md:flex w-full md:w-[260px] bg-[#4f111c] flex-col absolute md:relative h-[calc(100vh-80px)] md:h-full shrink-0 z-20 shadow-xl overflow-y-auto md:overflow-hidden top-[80px] md:top-0 left-0 transition-transform duration-300">
             <div class="hidden md:flex p-8 bg-[#F4F1E1] text-center relative flex-col items-center justify-center border-b-4 border-[#e8e4d1]">
-                <img src="logo.png" alt="Cotuit Kettleers Baseball" class="w-48 mx-auto object-contain">
+                <img src="logo.png" alt="Cotuit Kettleers Baseball" class="w-48 mx-auto object-contain cursor-pointer" onclick="switchTab('dashboard')">
             </div>
 
             <nav class="flex-1 overflow-y-auto py-4 md:py-6 text-[#F4F1E1]">
