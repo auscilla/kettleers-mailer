@@ -1060,7 +1060,55 @@
             </div>
         </div>
     </div>
-
+<!-- Edit Subscriber Modal -->
+    <div id="modal-edit-subscriber" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-overlay p-4">
+        <div class="bg-[#F4F1E1] rounded-xl shadow-2xl w-full max-w-md overflow-hidden border-4 border-[#e8e4d1]">
+            <div class="bg-[#4f111c] text-[#F4F1E1] px-6 py-4 flex justify-between items-center">
+                <h3 class="font-display text-2xl uppercase tracking-wider">Edit Subscriber</h3>
+                <button onclick="closeEditSubscriberModal()" class="hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <div class="p-6">
+                <form id="edit-subscriber-form" onsubmit="handleEditSubscriber(event)">
+                    <div class="mb-4">
+                        <label class="block font-bold text-gray-700 mb-2">Full Name</label>
+                        <input type="text" id="edit-sub-name" required class="w-full bg-white border border-gray-300 rounded p-3 text-black font-sans focus:outline-none focus:border-[#4f111c]">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block font-bold text-gray-700 mb-2">Email Address</label>
+                        <input type="email" id="edit-sub-email" required class="w-full bg-white border border-gray-300 rounded p-3 text-black font-sans focus:outline-none focus:border-[#4f111c]">
+                    </div>
+                    <div class="mb-4 grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block font-bold text-gray-700 mb-2">Segment</label>
+                            <select id="edit-sub-segment" class="w-full bg-white border border-gray-300 rounded p-3 text-black font-sans focus:outline-none focus:border-[#4f111c]">
+                                <option value="General Fan">General Fan</option>
+                                <option value="All-Star Member">All-Star Member</option>
+                                <option value="Alumni">Alumni</option>
+                                <option value="Supporter">Supporter</option>
+                                <option value="Host Family">Host Family</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-gray-700 mb-2">Status</label>
+                            <select id="edit-sub-status" class="w-full bg-white border border-gray-300 rounded p-3 text-black font-sans focus:outline-none focus:border-[#4f111c]">
+                                <option value="Active">Active</option>
+                                <option value="Unsubscribed">Unsubscribed</option>
+                                <option value="Bounced">Bounced</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="edit-sub-error" class="hidden mb-4 text-red-600 text-sm font-bold"></div>
+                    <div class="flex justify-between items-center pt-4 border-t border-gray-300">
+                        <button type="button" onclick="handleDeleteSubscriber()" class="text-red-600 font-bold text-sm uppercase hover:underline">Delete Fan</button>
+                        <div class="flex gap-3">
+                            <button type="button" onclick="closeEditSubscriberModal()" class="px-4 py-2 font-bold text-gray-600 hover:text-black uppercase tracking-wider text-sm">Cancel</button>
+                            <button type="submit" id="edit-sub-submit-btn" class="bg-[#4f111c] text-[#F4F1E1] font-bold px-6 py-2 rounded uppercase tracking-wider text-sm shadow hover:bg-black transition-colors">Save Changes</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <script src="app.js"></script>
 </body>
 </html>
