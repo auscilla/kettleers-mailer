@@ -15,6 +15,7 @@ const db = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE
 let loadedCampaigns = [];
 let allSubscribers = [];
 let currentEditingCampaignId = null;
+let currentEditingSubscriberId = null;
 
 const WIZARD_STEPS = ['recipients', 'setup', 'template', 'design', 'confirm'];
 let currentWizardStepIndex = 0;
@@ -546,7 +547,7 @@ function renderSubscribers(dataToRender) {
     tableBody.innerHTML = dataToRender.map(sub => {
         const dateJoined = sub.created_at ? new Date(sub.created_at).toLocaleDateString() : 'N/A';
         return `
-            <tr class="border-b border-gray-200 hover:bg-black/5 transition-colors">
+            <tr onclick="openEditSubscriberModal('${sub.id}')" class="cursor-pointer border-b border-gray-200 hover:bg-black/5 transition-colors">
                 <td class="py-3 md:py-5 font-bold text-[#611724]">${escapeHtml(sub.name)}</td>
                 <td class="py-3 md:py-5 text-gray-800 text-sm md:text-lg">${escapeHtml(sub.email)}</td>
                 <td class="py-3 md:py-5 text-gray-800 text-sm md:text-lg">${escapeHtml(sub.segment || 'General Fan')}</td>
@@ -1548,17 +1549,37 @@ function openReportView(campaignId = null) {
         if (c) {
             const rTitle = document.getElementById('report-title');
             const rMeta = document.getElementById('report-meta');
+            const rDeliveries = document.getElementById('report-deliveries');
             const rOpens = document.getElementById('report-opens');
             const rOpenRate = document.getElementById('report-open-rate');
             const rClicks = document.getElementById('report-clicks');
             const rClickRate = document.getElementById('report-click-rate');
+            const rBounces = document.getElementById('report-bounces');
+            const rBounceRate = document.getElementById('report-bounce-rate');
 
             if (rTitle) rTitle.textContent = c.title;
             if (rMeta) rMeta.textContent = `Dispatched • ${c.target_date || 'Recent'}`;
-            if (rOpens) rOpens.textContent = (Number(c.opens) || Math.round(12410 * (c.open_rate / 100))).toLocaleString();
-            if (rOpenRate) rOpenRate.textContent = `${c.open_rate}% Open Rate`;
-            if (rClicks) rClicks.textContent = (Number(c.clicks) || Math.round(12410 * (c.click_rate / 100))).toLocaleString();
-            if (rClickRate) rClickRate.textContent = `${c.click_rate}% Click Rate`;
+            
+            const deliveries = Number(c.deliveries) || 0;
+            const opens = Number(c.opens) || 0;
+            const clicks = Number(c.clicks) || 0;
+            const bounces = Number(c.bounces) || 0;
+            const totalAttempts = deliveries + bounces;
+            
+            const openRate = deliveries > 0 ? ((opens / deliveries) * 100).toFixed(1) : (Number(c.open_rate) || 0).toFixed(1);
+            const clickRate = deliveries > 0 ? ((clicks / deliveries) * 100).toFixed(1) : (Number(c.click_rate) || 0).toFixed(1);
+            const bounceRate = totalAttempts > 0 ? ((bounces / totalAttempts) * 100).toFixed(1) : '0.0';
+
+            if (rDeliveries) rDeliveries.textContent = deliveries.toLocaleString();
+            if (rOpens) rOpens.textContent = opens.toLocaleString();
+            if (rOpenRate) rOpenRate.textContent = `${openRate}% Open Rate`;
+            if (rClicks) rClicks.textContent = clicks.toLocaleString();
+            if (rClickRate) rClickRate.textContent = `${clickRate}% Click Rate`;
+            if (rBounces) {
+                rBounces.textContent = bounces.toLocaleString();
+                rBounces.className = "font-display text-4xl md:text-5xl text-gray-500 mb-1";
+            }
+            if (rBounceRate) rBounceRate.textContent = `${bounceRate}% Bounce Rate`;
         }
     }
 }
@@ -1612,7 +1633,80 @@ async function handleAddSubscriber(e) {
     submitBtn.textContent = 'Add to List';
     submitBtn.disabled = false;
 }
+function openEditSubscriberModal(id) {
+    const sub = allSubscribers.find(s => s.id === id || s.id == id);
+    if (!sub) return;
+    currentEditingSubscriberId = sub.id;
+    
+    document.getElementById('edit-sub-name').value = sub.name || '';
+    document.getElementById('edit-sub-email').value = sub.email || '';
+    document.getElementById('edit-sub-segment').value = sub.segment || 'General Fan';
+    document.getElementById('edit-sub-status').value = sub.status || 'Active';
+    
+    const modal = document.getElementById('modal-edit-subscriber');
+    if (modal) modal.classList.remove('hidden');
+}
 
+function closeEditSubscriberModal() {
+    const modal = document.getElementById('modal-edit-subscriber');
+    if (modal) modal.classList.add('hidden');
+    currentEditingSubscriberId = null;
+    const err = document.getElementById('edit-sub-error');
+    if(err) err.classList.add('hidden');
+}
+
+async function handleEditSubscriber(e) {
+    e.preventDefault();
+    if (!currentEditingSubscriberId) return;
+
+    const nameInput = document.getElementById('edit-sub-name').value;
+    const emailInput = document.getElementById('edit-sub-email').value;
+    const segmentInput = document.getElementById('edit-sub-segment').value;
+    const statusInput = document.getElementById('edit-sub-status').value;
+    
+    const submitBtn = document.getElementById('edit-sub-submit-btn');
+    const errorDiv = document.getElementById('edit-sub-error');
+
+    submitBtn.textContent = 'Saving...';
+    submitBtn.disabled = true;
+    errorDiv.classList.add('hidden');
+
+    const { error } = await db.from('subscribers').update({
+        name: nameInput, email: emailInput, segment: segmentInput, status: statusInput
+    }).eq('id', currentEditingSubscriberId);
+
+    if (error) {
+        errorDiv.textContent = error.message;
+        errorDiv.classList.remove('hidden');
+        submitBtn.textContent = 'Save Changes';
+        submitBtn.disabled = false;
+        return;
+    }
+
+    closeEditSubscriberModal();
+    loadSubscribers();
+    loadDashboardAndCampaigns();
+    submitBtn.textContent = 'Save Changes';
+    submitBtn.disabled = false;
+}
+
+async function handleDeleteSubscriber() {
+    if (!currentEditingSubscriberId) return;
+    if (!confirm("Are you sure you want to permanently delete this subscriber?")) return;
+    
+    const errorDiv = document.getElementById('edit-sub-error');
+    const { error } = await db.from('subscribers').delete().eq('id', currentEditingSubscriberId);
+    
+    if (error) {
+        errorDiv.textContent = error.message;
+        errorDiv.classList.remove('hidden');
+        return;
+    }
+    
+    closeEditSubscriberModal();
+    loadSubscribers();
+    loadDashboardAndCampaigns();
+}
 function escapeHtml(str) {
     if (!str) return '';
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
