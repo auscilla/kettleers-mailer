@@ -402,7 +402,36 @@ function renderAnalyticsView() {
     const segmentBarsContainer = document.getElementById('analytics-segment-bars');
     const campaignsChartContainer = document.getElementById('analytics-campaigns-chart');
 
-    const sent = loadedCampaigns.filter(c => c.status === 'Sent');
+    let sent = loadedCampaigns.filter(c => c.status === 'Sent');
+
+    const startDateInput = document.getElementById('analytics-start-date');
+    const endDateInput = document.getElementById('analytics-end-date');
+    
+    if (startDateInput && endDateInput) {
+        const startVal = startDateInput.value;
+        const endVal = endDateInput.value;
+        
+        if (startVal || endVal) {
+            sent = sent.filter(c => {
+                if (!c.target_date && !c.created_at) return false;
+                const campDate = new Date(c.target_date || c.created_at);
+                campDate.setHours(0,0,0,0);
+                let pass = true;
+                
+                if (startVal) {
+                    const sParts = startVal.split('-');
+                    const sDate = new Date(sParts[0], sParts[1]-1, sParts[2]);
+                    if (campDate < sDate) pass = false;
+                }
+                if (endVal) {
+                    const eParts = endVal.split('-');
+                    const eDate = new Date(eParts[0], eParts[1]-1, eParts[2]);
+                    if (campDate > eDate) pass = false;
+                }
+                return pass;
+            });
+        }
+    }
 
     const deliveriesCount = sent.reduce((sum, c) => sum + (Number(c.deliveries) || 0), 0);
     const opensCount = sent.reduce((sum, c) => sum + (Number(c.opens) || 0), 0);
@@ -1862,4 +1891,11 @@ function openTemplatePreview(templateName) {
 function closeTemplatePreview() {
     const modal = document.getElementById('modal-template-preview');
     if (modal) modal.classList.add('hidden');
+}
+function clearAnalyticsDateFilter() {
+    const startDateInput = document.getElementById('analytics-start-date');
+    const endDateInput = document.getElementById('analytics-end-date');
+    if (startDateInput) startDateInput.value = '';
+    if (endDateInput) endDateInput.value = '';
+    renderAnalyticsView();
 }
