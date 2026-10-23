@@ -1271,18 +1271,16 @@ function generateEmailHtml(isLiveSend = false) {
                     <img src="${baseUrl}bannerplayer.png" alt="Cotuit Player" style="display: block; max-height: 170px; width: auto; max-width: 100%;">
                 </td>
                 <td width="62%" valign="middle" align="right" style="padding: 20px 25px 20px 10px;">
-                    <div style="font-family: 'Georgia', 'Times New Roman', serif; font-size: 34px; line-height: 1.05; text-transform: uppercase; color: #F4F1E1; letter-spacing: 2px; font-weight: bold; text-align: right;">COTUIT<br>KETTLEERS</div>
-                </td>
-            </tr>
+                                <div style="font-family: 'Cloister Black', serif; font-size: 34px; line-height: 1.05; text-transform: uppercase; color: #F4F1E1; letter-spacing: 2px; font-weight: bold; text-align: right;">COTUIT<br>KETTLEERS</div>
+                            </td>
+                        </tr>
         </table>
     ` : '';
 
     return `
     <!DOCTYPE html>
     <html>
-    <head><meta charset="utf-8"></head>
-    <body style="margin: 0; padding: 0; background-color: ${style.canvasBg}; font-family: ${style.fontFamily};">
-        ${preheaderHtml}
+<head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;700&display=swap" rel="stylesheet"></head>        ${preheaderHtml}
         <div style="max-width: ${settings.maxWidth || '620px'}; margin: 0 auto; background-color: ${style.contentBg}; box-shadow: 0 4px 10px rgba(0,0,0,0.15); ${!isLiveSend ? 'width: 100%;' : ''}">
             ${browserLinkHtml}
             ${bannerHtml}
