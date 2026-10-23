@@ -1269,13 +1269,13 @@ function generateEmailHtml(isLiveSend = false) {
             <tr>
                 <td width="38%" valign="bottom" style="padding: 12px 0 0 15px; line-height: 0;">
                     <img src="${baseUrl}bannerplayer.png" alt="Cotuit Player" style="display: block; max-height: 170px; width: auto; max-width: 100%;">
-                        </td>
-                        <td width="62%" valign="middle" align="right" style="padding: 20px 25px 20px 10px;">
-                            <div style="font-family: 'Rye', serif; font-size: 34px; line-height: 1.05; text-transform: uppercase; color: #F4F1E1; letter-spacing: 2px; font-weight: bold; text-align: right;">COTUIT<br>KETTLEERS</div>
-                        </td>
-                    </tr>
-                </table>
-            `;
+                </td>
+                <td width="62%" valign="middle" align="right" style="padding: 20px 25px 20px 10px;">
+                    <div style="font-family: 'Rye', serif; font-size: 34px; line-height: 1.05; text-transform: uppercase; color: #F4F1E1; letter-spacing: 2px; font-weight: bold; text-align: right;">COTUIT<br>KETTLEERS</div>
+                </td>
+            </tr>
+        </table>
+    ` : '';
 
             return `
             <!DOCTYPE html>
