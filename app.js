@@ -1108,16 +1108,16 @@ function generateEmailHtml(isLiveSend = false) {
             switch (b.type) {
                 case 'text':
                     return `
-                    <div style="padding: 20px 25px; margin: 10px 15px; font-family: ${style.fontFamily};">
-                        <h2 style="margin: 0 0 10px 0; color: #111827; font-size: 22px;">${escapeHtml(b.heading || '')}</h2>
-                        <p style="margin: 0; line-height: 1.6; color: #374151; font-size: 15px;">${escapeHtml(b.body || '').replace(/\n/g, '<br>')}</p>
+                    <div style="padding: 20px 25px; margin: 10px 15px; font-family: 'Clean Sans', sans-serif;">
+                        <h2 style="margin: 0 0 10px 0; color: #111827; font-size: 22px; font-family: 'Zilla Slab', serif;">${escapeHtml(b.heading || '')}</h2>
+                        <p style="margin: 0; line-height: 1.6; color: #374151; font-size: 15px; font-family: 'Clean Sans', sans-serif;">${escapeHtml(b.body || '').replace(/\n/g, '<br>')}</p>
                     </div>`;
 
                 case 'boxed_text':
                     return `
-                    <div style="margin: 15px; padding: 22px 20px; background-color: ${b.bg_color || '#F4F1E1'}; border: 2px solid ${b.border_color || style.accentColor}; border-radius: 6px; font-family: ${style.fontFamily};">
-                        <h3 style="margin: 0 0 8px 0; color: ${b.border_color || style.accentColor}; font-size: 18px; font-weight: bold;">${escapeHtml(b.heading || '')}</h3>
-                        <p style="margin: 0; line-height: 1.5; color: #374151; font-size: 14px;">${escapeHtml(b.body || '').replace(/\n/g, '<br>')}</p>
+                    <div style="margin: 15px; padding: 22px 20px; background-color: ${b.bg_color || '#F4F1E1'}; border: 2px solid ${b.border_color || style.accentColor}; border-radius: 6px; font-family: 'Clean Sans', sans-serif;">
+                        <h3 style="margin: 0 0 8px 0; color: ${b.border_color || style.accentColor}; font-size: 18px; font-weight: bold; font-family: 'Zilla Slab', serif;">${escapeHtml(b.heading || '')}</h3>
+                        <p style="margin: 0; line-height: 1.5; color: #374151; font-size: 14px; font-family: 'Clean Sans', sans-serif;">${escapeHtml(b.body || '').replace(/\n/g, '<br>')}</p>
                     </div>`;
 
                 case 'divider':
