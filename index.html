@@ -86,8 +86,6 @@
                     <li><button onclick="switchTab('subscribers')" id="nav-subscribers" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="users" class="w-5 h-5 opacity-80"></i> Subscribers</button></li>
                     <li><button onclick="switchTab('templates')" id="nav-templates" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="layout-template" class="w-5 h-5 opacity-80"></i> Templates</button></li>
                     
-                    <li class="pl-8 pr-6 py-2 mt-4 md:mt-6 text-xs font-bold uppercase tracking-wider text-[#F4F1E1]/50">Messages</li>
-                    <li><button onclick="switchTab('transactional')" id="nav-transactional" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="zap" class="w-5 h-5 opacity-80"></i> Transactional</button></li>
                     <li><button onclick="switchTab('analytics')" id="nav-analytics" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="bar-chart-2" class="w-5 h-5 opacity-80"></i> Analytics</button></li>
                     <li><button onclick="switchTab('settings')" id="nav-settings" class="nav-item relative w-full text-left pl-8 pr-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors"><i data-lucide="settings" class="w-5 h-5 opacity-80"></i> Settings</button></li>
                 </ul>
@@ -888,6 +886,13 @@
                     <div class="flex items-center gap-2 bg-[#F4F1E1]/10 px-3 py-1.5 rounded border border-[#F4F1E1]/20 text-xs font-mono text-white">
                         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Resend Webhook Active
                     </div>
+                    <div class="mt-4 md:mt-0 flex flex-wrap items-center gap-2 bg-white text-black p-2 rounded shadow-sm border border-gray-300">
+            <span class="text-xs font-bold uppercase text-gray-500 tracking-wider">Date:</span>
+            <input type="date" id="analytics-start-date" onchange="renderAnalyticsView()" class="text-sm font-sans text-black bg-gray-100 border border-gray-200 rounded px-2 py-1 focus:outline-none cursor-pointer">
+            <span class="text-gray-500 font-bold text-sm">-</span>
+            <input type="date" id="analytics-end-date" onchange="renderAnalyticsView()" class="text-sm font-sans text-black bg-gray-100 border border-gray-200 rounded px-2 py-1 focus:outline-none cursor-pointer">
+            <button onclick="clearAnalyticsDateFilter()" class="text-gray-500 hover:text-[#4f111c] text-xs font-bold px-2 py-1 rounded uppercase transition-colors">Clear</button>
+        </div>
                 </header>
 
                 <div class="bg-[#F4F1E1] rounded-xl md:rounded-2xl p-6 md:p-10 shadow-2xl flex-1 flex flex-col space-y-8">
