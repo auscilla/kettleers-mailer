@@ -1152,15 +1152,15 @@ function generateEmailHtml(isLiveSend = false) {
                     </table>`;
 
                 case 'image_card':
-                    return `
-                    <div style="margin: 15px; background-color: ${b.bg_color || '#FFFDFB'}; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
-                        <img src="${baseUrl}${b.image_url || 'StockingStuffer.png'}" alt="Card" style="width: 100%; height: auto; display: block;">
-                        <div style="padding: 20px; font-family: ${style.fontFamily}; text-align: center;">
-                            <h3 style="margin: 0 0 10px 0; font-size: 20px; color: #111827;">${escapeHtml(b.heading || '')}</h3>
-                            <p style="margin: 0 0 15px 0; font-size: 14px; line-height: 1.5; color: #4b5563;">${escapeHtml(b.body || '').replace(/\n/g, '<br>')}</p>
-                            ${b.cta_text ? `<a href="${b.cta_url || '#'}" style="display: inline-block; background-color: ${style.buttonBg}; color: #ffffff; padding: 10px 24px; font-size: 13px; font-weight: bold; text-decoration: none; border-radius: ${style.buttonRadius}; text-transform: uppercase;">${escapeHtml(b.cta_text)}</a>` : ''}
-                        </div>
-                    </div>`;
+            return `
+            <div style="margin: 15px; background-color: ${b.bg_color || '#FFFDFB'}; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+                <img src="${baseUrl}${b.image_url || 'StockingStuffer.png'}" alt="Card" style="width: 100%; height: auto; display: block;">
+                <div style="padding: 20px; font-family: sans-serif; text-align: center;">
+                    <h3 style="margin: 0 0 10px 0; font-size: 20px; color: #111827; font-family: 'Zilla Slab', serif;">${escapeHtml(b.heading || '')}</h3>
+                    <p style="margin: 0 0 15px 0; font-size: 14px; line-height: 1.5; color: #4b5563;">${escapeHtml(b.body || '').replace(/\n/g, '<br>')}</p>
+                    ${b.cta_text ? `<a href="${b.cta_url || '#'}" style="display: inline-block; background-color: ${style.buttonBg}; color: #ffffff; padding: 10px 24px; font-size: 13px; font-weight: bold; text-decoration: none; border-radius: 4px;">${escapeHtml(b.cta_text)}</a>` : ''}
+                </div>
+            </div>`;
 
                 case 'image_caption':
                     return `
@@ -1269,38 +1269,38 @@ function generateEmailHtml(isLiveSend = false) {
             <tr>
                 <td width="38%" valign="bottom" style="padding: 12px 0 0 15px; line-height: 0;">
                     <img src="${baseUrl}bannerplayer.png" alt="Cotuit Player" style="display: block; max-height: 170px; width: auto; max-width: 100%;">
-                </td>
-                <td width="62%" valign="middle" align="right" style="padding: 20px 25px 20px 10px;">
-                                <div style="font-family: 'Cloister Black', serif; font-size: 34px; line-height: 1.05; text-transform: uppercase; color: #F4F1E1; letter-spacing: 2px; font-weight: bold; text-align: right;">COTUIT<br>KETTLEERS</div>
-                            </td>
-                        </tr>
-        </table>
-    ` : '';
+                        </td>
+                        <td width="62%" valign="middle" align="right" style="padding: 20px 25px 20px 10px;">
+                            <div style="font-family: 'Rye', serif; font-size: 34px; line-height: 1.05; text-transform: uppercase; color: #F4F1E1; letter-spacing: 2px; font-weight: bold; text-align: right;">COTUIT<br>KETTLEERS</div>
+                        </td>
+                    </tr>
+                </table>
+            `;
 
-    return `
-    <!DOCTYPE html>
-    <html>
-<head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;700&display=swap" rel="stylesheet"></head>        ${preheaderHtml}
-        <div style="max-width: ${settings.maxWidth || '620px'}; margin: 0 auto; background-color: ${style.contentBg}; box-shadow: 0 4px 10px rgba(0,0,0,0.15); ${!isLiveSend ? 'width: 100%;' : ''}">
-            ${browserLinkHtml}
-            ${bannerHtml}
-            ${blocksHtml}
-            <div style="text-align: center; padding: 20px 10px 25px 10px; border-top: 1px solid #EEEEEE; background-color: #FAFAFA;">
-                <p style="margin: 0; font-size: 11px; color: #888888; font-family: ${style.fontFamily};">${escapeHtml(settings.footerText || defaultSettings.footerText)}</p>
+            return `
+            <!DOCTYPE html>
+            <html>
+            <head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Rye&family=Zilla+Slab:wght@400;700&display=swap" rel="stylesheet"></head>
+            ${preheaderHtml}
+            <div style="max-width: ${settings.maxWidth || '620px'}; margin: 0 auto; background-color: ${style.contentBg}; box-shadow: 0 4px 10px rgba(0,0,0,0.15); ${!isLiveSend ? 'width: 100%;' : ''}">
+                ${browserLinkHtml}
+                ${bannerHtml}
+                ${blocksHtml}
+                <div style="text-align: center; padding: 20px 10px 25px 10px; border-top: 1px solid #EEEEEE; background-color: #FAFAFA;">
+                    <p style="margin: 0; font-size: 11px; color: #888888; font-family: ${style.fontFamily};">${escapeHtml(settings.footerText || defaultSettings.footerText)}</p>
+                </div>
             </div>
-        </div>
-    </body>
-    </html>
-    `;
-}
+            </body>
+            </html>
+            `;
+        }
 
-function renderEmailPreview() {
-    const container = document.getElementById('email-preview-container');
-    if (container) {
-        container.innerHTML = generateEmailHtml(false);
-    }
-}
-
+        function renderEmailPreview() {
+            const container = document.getElementById('email-preview-container');
+            if (container) {
+                container.innerHTML = generateEmailHtml(false);
+            }
+        }
 // -------------------------------------------------------------
 // Campaigns & Wizard Navigation
 // -------------------------------------------------------------
