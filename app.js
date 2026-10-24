@@ -1543,6 +1543,7 @@ function setPreviewDevice(device) {
     if (device === 'mobile') {
         if (container) {
             container.classList.add('preview-mobile');
+            container.style.height = '600px';
             container.style.overflowY = 'auto';
             container.style.overflowX = 'hidden';
         }
@@ -1551,6 +1552,7 @@ function setPreviewDevice(device) {
     } else {
         if (container) {
             container.classList.remove('preview-mobile');
+            container.style.height = 'auto';
             container.style.overflowY = 'visible';
             container.style.overflowX = 'visible';
         }
