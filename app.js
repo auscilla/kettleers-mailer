@@ -25,16 +25,6 @@ const ALL_AUDIENCE_SEGMENTS = ['General Fan', 'All-Star Member', 'Supporter', 'H
 const defaultStyle = {
     canvasBg: '#E8E4D1',
     contentBg: '#ffffff',
-    headerBg: '#1A2B4C',
-    accentColor: '#611724',
-    fontFamily: 'Arial, Helvetica, sans-serif',
-    buttonBg: '#2E5B82',
-    buttonRadius: '4px'
-};
-
-const defaultStyle = {
-    canvasBg: '#E8E4D1',
-    contentBg: '#ffffff',
     headerBg: '#611724', // Updated to Kettleer red
     accentColor: '#611724',
     fontFamily: 'Arial, Helvetica, sans-serif',
