@@ -32,22 +32,24 @@ const defaultStyle = {
     buttonRadius: '4px'
 };
 
+const defaultStyle = {
+    canvasBg: '#E8E4D1',
+    contentBg: '#ffffff',
+    headerBg: '#611724', // Updated to Kettleer red
+    accentColor: '#611724',
+    fontFamily: 'Arial, Helvetica, sans-serif',
+    buttonBg: '#2E5B82',
+    buttonRadius: '4px'
+};
+
 const defaultSettings = {
     preheader: '',
     maxWidth: '620px',
     showBanner: true,
     showBrowserLink: true,
-    footerText: '© 2026 Cotuit Kettleers Baseball. Lowell Park, Cotuit, MA.'
-};
-
-let wizardData = {
-    segments: ['all'],
-    title: '',
-    subject: '',
-    template: 'Blank Canvas',
-    blocks: [],
-    style: { ...defaultStyle },
-    settings: { ...defaultSettings }
+    footerText: '© 2026 Cotuit Kettleers Baseball. Lowell Park, Cotuit, MA.',
+    bannerText: 'COTUIT<br>KETTLEERS',
+    bannerImage: 'bannerplayer.png'
 };
 
 // -------------------------------------------------------------
@@ -1268,10 +1270,10 @@ function generateEmailHtml(isLiveSend = false) {
         <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: ${style.headerBg};">
             <tr>
                 <td width="38%" valign="bottom" style="padding: 12px 0 0 15px; line-height: 0;">
-                    <img src="${baseUrl}bannerplayer.png" alt="Cotuit Player" style="display: block; max-height: 170px; width: auto; max-width: 100%;">
+                    <img src="${baseUrl}${settings.bannerImage || 'bannerplayer.png'}" alt="Cotuit Player" style="display: block; max-height: 170px; width: auto; max-width: 100%;">
                 </td>
                 <td width="62%" valign="middle" align="right" style="padding: 20px 25px 20px 10px;">
-                    <div style="font-family: 'Rye', serif; font-size: 34px; line-height: 1.05; text-transform: uppercase; color: #F4F1E1; letter-spacing: 2px; font-weight: bold; text-align: right;">COTUIT<br>KETTLEERS</div>
+                    <div style="font-family: 'Rye', serif; font-size: 34px; line-height: 1.05; text-transform: uppercase; color: #F4F1E1; letter-spacing: 2px; font-weight: bold; text-align: right;">${settings.bannerText || 'COTUIT<br>KETTLEERS'}</div>
                 </td>
             </tr>
         </table>
