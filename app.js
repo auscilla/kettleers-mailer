@@ -661,9 +661,11 @@ async function loadDashboardAndCampaigns() {
                     ? `<span class="text-xs text-gray-400 italic font-sans">—</span>`
                     : `<span class="text-sm font-bold text-black">${c.open_rate}% Open / ${c.click_rate}% CTR</span>`;
                 
-                const actionBtn = isDraft 
-    ? `<button onclick="editCampaign(${c.id})" class="bg-[#4f111c] text-[#F4F1E1] text-xs font-bold px-3 py-1.5 rounded uppercase hover:bg-black transition-colors">Edit</button>`
-    : `<button onclick="openReportView(${c.id})" class="bg-[#387843] text-white text-xs font-bold px-3 py-1.5 rounded uppercase hover:bg-black transition-colors">Report</button>`;
+                const actionBtn = isDraft  
+    ? `<button onclick="editCampaign(${c.id})" class="bg-[#4f111c] text-[#F4F1E1] text-xs font-bold px-3 py-1.5 rounded uppercase hover:bg-black transition-colors">Edit</button>
+       <button onclick="deleteCampaign(${c.id})" class="ml-2 bg-red-100 text-red-600 text-xs font-bold px-3 py-1.5 rounded uppercase hover:bg-red-200 transition-colors">Delete</button>`
+    : `<button onclick="openReportView(${c.id})" class="bg-[#387843] text-white text-xs font-bold px-3 py-1.5 rounded uppercase hover:bg-black transition-colors">Report</button>
+       <button onclick="deleteCampaign(${c.id})" class="ml-2 bg-red-100 text-red-600 text-xs font-bold px-3 py-1.5 rounded uppercase hover:bg-red-200 transition-colors">Delete</button>`;
                 const dateDisplay = c.target_date || (c.created_at ? new Date(c.created_at).toLocaleDateString() : 'N/A');
 
                 return `
