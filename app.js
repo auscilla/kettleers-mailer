@@ -850,9 +850,17 @@ function renderEditorBlocks() {
                     <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Heading</label>
                     <input type="text" value="${escapeHtml(block.heading || '')}" oninput="updateBlock(${i}, 'heading', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-sm focus:border-[#4f111c] focus:outline-none">
                 </div>
-                <div>
+                <div class="mb-3">
                     <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Body</label>
                     <textarea rows="4" oninput="updateBlock(${i}, 'body', this.value)" class="w-full bg-white border border-gray-300 rounded p-2 text-sm focus:border-[#4f111c] focus:outline-none resize-none leading-relaxed">${escapeHtml(block.body || '')}</textarea>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Alignment</label>
+                    <select onchange="updateBlock(${i}, 'align', this.value)" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
+                        <option value="left" ${block.align === 'left' || !block.align ? 'selected' : ''}>Left</option>
+                        <option value="center" ${block.align === 'center' ? 'selected' : ''}>Center</option>
+                        <option value="right" ${block.align === 'right' ? 'selected' : ''}>Right</option>
+                    </select>
                 </div>
             `;
         } else if (block.type === 'boxed_text') {
@@ -1104,7 +1112,7 @@ function generateEmailHtml(isLiveSend = false) {
             switch (b.type) {
                 case 'text':
                     return `
-                    <div style="padding: 20px 25px; margin: 10px 15px; font-family: 'Clean Sans', sans-serif;">
+                    <div style="padding: 20px 25px; margin: 10px 15px; font-family: 'Clean Sans', sans-serif; text-align: ${b.align || 'left'};">
                         <h2 style="margin: 0 0 10px 0; color: #111827; font-size: 22px; font-family: 'Zilla Slab', serif;">${escapeHtml(b.heading || '')}</h2>
                         <p style="margin: 0; line-height: 1.6; color: #374151; font-size: 15px; font-family: 'Clean Sans', sans-serif;">${escapeHtml(b.body || '').replace(/\n/g, '<br>')}</p>
                     </div>`;
@@ -1184,10 +1192,10 @@ function generateEmailHtml(isLiveSend = false) {
                         <p style="margin: 0 0 12px 0; font-size: 12px; font-weight: bold; color: #4f111c; text-transform: uppercase; letter-spacing: 1px; font-family: ${style.fontFamily};">Follow The Cotuit Kettleers</p>
                         <table align="center" cellpadding="0" cellspacing="0" border="0">
                             <tr>
-                                <td style="padding: 0 6px;"><a href="${b.facebook_url || 'https://facebook.com/kettleers'}" target="_blank" style="display:inline-block;background-color:#1A2B4C;color:#ffffff;padding:6px 12px;font-size:11px;font-weight:bold;text-decoration:none;border-radius:4px;">Facebook</a></td>
-                                <td style="padding: 0 6px;"><a href="${b.instagram_url || 'https://instagram.com/kettleers'}" target="_blank" style="display:inline-block;background-color:#8a2b3d;color:#ffffff;padding:6px 12px;font-size:11px;font-weight:bold;text-decoration:none;border-radius:4px;">Instagram</a></td>
-                                <td style="padding: 0 6px;"><a href="${b.twitter_url || 'https://x.com/kettleers'}" target="_blank" style="display:inline-block;background-color:#111111;color:#ffffff;padding:6px 12px;font-size:11px;font-weight:bold;text-decoration:none;border-radius:4px;">X</a></td>
-                                <td style="padding: 0 6px;"><a href="${b.website_url || 'https://kettleers.org'}" target="_blank" style="display:inline-block;background-color:#387843;color:#ffffff;padding:6px 12px;font-size:11px;font-weight:bold;text-decoration:none;border-radius:4px;">Website</a></td>
+                                <td style="padding: 0 8px;"><a href="${b.facebook_url || 'https://facebook.com/kettleers'}" target="_blank" style="display:inline-block;"><img src="https://cdn-images.mailchimp.com/icons/social-block-v2/color-facebook-48.png" alt="Facebook" style="width: 32px; height: 32px; display: block; border: 0;"></a></td>
+                                <td style="padding: 0 8px;"><a href="${b.instagram_url || 'https://instagram.com/kettleers'}" target="_blank" style="display:inline-block;"><img src="https://cdn-images.mailchimp.com/icons/social-block-v2/color-instagram-48.png" alt="Instagram" style="width: 32px; height: 32px; display: block; border: 0;"></a></td>
+                                <td style="padding: 0 8px;"><a href="${b.twitter_url || 'https://x.com/kettleers'}" target="_blank" style="display:inline-block;"><img src="https://cdn-images.mailchimp.com/icons/social-block-v2/color-twitter-48.png" alt="X" style="width: 32px; height: 32px; display: block; border: 0;"></a></td>
+                                <td style="padding: 0 8px;"><a href="${b.website_url || 'https://kettleers.org'}" target="_blank" style="display:inline-block;"><img src="https://cdn-images.mailchimp.com/icons/social-block-v2/color-link-48.png" alt="Website" style="width: 32px; height: 32px; display: block; border: 0;"></a></td>
                             </tr>
                         </table>
                     </div>`;
@@ -1283,7 +1291,8 @@ function generateEmailHtml(isLiveSend = false) {
                 ${bannerHtml}
                 ${blocksHtml}
                 <div style="text-align: center; padding: 20px 10px 25px 10px; border-top: 1px solid #EEEEEE; background-color: #FAFAFA;">
-                    <p style="margin: 0; font-size: 11px; color: #888888; font-family: ${style.fontFamily};">${escapeHtml(settings.footerText || defaultSettings.footerText)}</p>
+                    <p style="margin: 0 0 10px 0; font-size: 11px; color: #888888; font-family: ${style.fontFamily}; line-height: 1.4;">${escapeHtml(settings.footerText || defaultSettings.footerText)}</p>
+                    <p style="margin: 0; font-size: 11px; font-family: ${style.fontFamily};"><a href="#" style="color: #6b7280; text-decoration: underline;">Unsubscribe from this list</a></p>
                 </div>
             </div>
             </body>
@@ -1532,11 +1541,19 @@ function setPreviewDevice(device) {
     const mobileBtn = document.getElementById('preview-btn-mobile');
 
     if (device === 'mobile') {
-        if (container) container.classList.add('preview-mobile');
+        if (container) {
+            container.classList.add('preview-mobile');
+            container.style.overflowY = 'auto';
+            container.style.overflowX = 'hidden';
+        }
         if (desktopBtn) desktopBtn.className = "flex items-center gap-1.5 px-3 py-1 rounded text-xs font-bold text-gray-500 hover:text-black transition-colors";
         if (mobileBtn) mobileBtn.className = "flex items-center gap-1.5 px-3 py-1 rounded text-xs font-bold text-[#611724] bg-gray-200 transition-colors";
     } else {
-        if (container) container.classList.remove('preview-mobile');
+        if (container) {
+            container.classList.remove('preview-mobile');
+            container.style.overflowY = 'visible';
+            container.style.overflowX = 'visible';
+        }
         if (desktopBtn) desktopBtn.className = "flex items-center gap-1.5 px-3 py-1 rounded text-xs font-bold text-[#611724] bg-gray-200 transition-colors";
         if (mobileBtn) mobileBtn.className = "flex items-center gap-1.5 px-3 py-1 rounded text-xs font-bold text-gray-500 hover:text-black transition-colors";
     }
