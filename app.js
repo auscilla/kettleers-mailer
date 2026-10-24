@@ -1320,6 +1320,20 @@ function startNewCampaignWizardWithTemplate(templateName) {
     goToWizardStep('setup');
 }
 
+async function deleteCampaign(campaignId) {
+    if (!confirm("Are you sure you want to permanently delete this campaign?")) return;
+    
+    try {
+        const { error } = await db.from('campaigns').delete().eq('id', campaignId);
+        if (error) throw error;
+        
+        loadDashboardAndCampaigns();
+    } catch (err) {
+        console.error('Error deleting campaign:', err);
+        alert('Could not delete campaign: ' + err.message);
+    }
+}
+
 function editCampaign(campaignId) {
     const c = loadedCampaigns.find(item => item.id === campaignId);
     if (!c) return;
