@@ -765,6 +765,8 @@ function syncStyleAndSettingsUI() {
     const cfg = wizardData.settings || defaultSettings;
     setVal('settings-preheader', cfg.preheader || '');
     setVal('settings-max-width', cfg.maxWidth || '620px');
+    setVal('settings-banner-text', cfg.bannerText || 'COTUIT<br>KETTLEERS');
+    setVal('settings-banner-image', cfg.bannerImage || 'bannerplayer.png');
     setVal('settings-footer-text', cfg.footerText || defaultSettings.footerText);
 
     const bannerCheck = document.getElementById('settings-show-banner');
@@ -1262,7 +1264,7 @@ function generateEmailHtml(isLiveSend = false) {
 
     const browserLinkHtml = settings.showBrowserLink !== false ? `
         <div style="text-align: right; font-size: 11px; color: #777777; padding: 10px 18px; border-bottom: 1px solid #f0f0f0;">
-            <a href="#" style="color: #666666; text-decoration: underline;">View this email in your browser</a>
+            <a href="${isLiveSend ? 'https://kettleers.org' : '#'}" ${!isLiveSend ? `onclick="const w = window.open(); w.document.write(document.getElementById('email-preview-container').innerHTML); w.document.close(); return false;"` : ''} target="_blank" style="color: #666666; text-decoration: underline;">View this email in your browser</a>
         </div>
     ` : '';
 
