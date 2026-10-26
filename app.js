@@ -1349,7 +1349,12 @@ async function deleteCampaign(campaignId) {
         
         loadDashboardAndCampaigns();
     } catch (err) {
-        function editCampaign(campaignId) {
+        console.error('Error deleting campaign:', err);
+        alert('Could not delete campaign: ' + err.message);
+    }
+}
+
+function editCampaign(campaignId) {
     const c = loadedCampaigns.find(item => item.id === campaignId);
     if (!c) return;
 
