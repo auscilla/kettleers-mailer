@@ -1436,10 +1436,9 @@ function editCampaign(campaignId) {
         settings: loadedSettings
     };
 
-    // Set step index directly to design (step 3) so wizard navigation doesn't wipe state
-    currentWizardStepIndex = 3;
+    currentWizardStepIndex = 0;
     switchTab('campaign-editor');
-    goToWizardStep('design');
+    goToWizardStep('recipients');
 
     // Populate the setup inputs with our loaded campaign data
     const titleInput = document.getElementById('wizard-campaign-title');
@@ -1447,13 +1446,16 @@ function editCampaign(campaignId) {
     if (titleInput) titleInput.value = c.title || '';
     if (subjectInput) subjectInput.value = c.subject || '';
 
-    // Render the blocks and email preview
+    // Pre-render the blocks and preview so they are ready when you step into Design
     renderEditorBlocks();
     renderEmailPreview();
 }
 
 function selectWizardTemplate(templateName) {
     wizardData.template = templateName;
+    if (currentEditingCampaignId && wizardData.blocks && wizardData.blocks.length > 0) {
+        return;
+    }
     
     // Check for saved custom template in LocalStorage first
     const savedCustom = localStorage.getItem('kettleers_template_' + templateName);
