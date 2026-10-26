@@ -1320,6 +1320,13 @@ function startNewCampaignWizard() {
     const footer = document.querySelector('#view-campaign-editor .sticky.bottom-0');
     if (footer) footer.classList.remove('hidden-view');
 
+    // Restore Back button destination
+    const backBtn = document.querySelector('#view-campaign-editor [onclick*="switchTab"]');
+    if (backBtn) {
+        backBtn.setAttribute('onclick', "switchTab('campaigns')");
+        backBtn.innerHTML = '<i data-lucide="chevron-left" class="w-4 h-4 md:w-5 md:h-5"></i> Back to Campaigns';
+    }
+
     wizardData = {
         segments: ['all'],
         title: '',
@@ -1366,6 +1373,13 @@ function editCampaign(campaignId) {
     // Restore the wizard progress footer
     const footer = document.querySelector('#view-campaign-editor .sticky.bottom-0');
     if (footer) footer.classList.remove('hidden-view');
+
+    // Restore Back button destination
+    const backBtn = document.querySelector('#view-campaign-editor [onclick*="switchTab"]');
+    if (backBtn) {
+        backBtn.setAttribute('onclick', "switchTab('campaigns')");
+        backBtn.innerHTML = '<i data-lucide="chevron-left" class="w-4 h-4 md:w-5 md:h-5"></i> Back to Campaigns';
+    }
 
     let loadedBlocks = [];
     let loadedStyle = { ...defaultStyle };
@@ -1496,10 +1510,13 @@ function goToWizardStep(stepName) {
     const targetIndex = WIZARD_STEPS.indexOf(stepName);
     if (targetIndex === -1) return;
 
-    if (targetIndex > 0 && !validateCurrentStep()) return;
-    if (targetIndex > 1) {
-        currentWizardStepIndex = 1;
-        if (!validateCurrentStep()) return;
+    // Only enforce title/subject/audience validation when building actual campaigns
+    if (!isEditingTemplate) {
+        if (targetIndex > 0 && !validateCurrentStep()) return;
+        if (targetIndex > 1) {
+            currentWizardStepIndex = 1;
+            if (!validateCurrentStep()) return;
+        }
     }
 
     currentWizardStepIndex = targetIndex;
@@ -1978,53 +1995,56 @@ function editTemplate(templateName) {
     isEditingTemplate = true;
     currentEditingTemplateName = templateName;
 
-    // First load from localStorage to get the exact saved template
+    // Dummy values to satisfy any lingering checks
+    wizardData = {
+        segments: ['all'],
+        title: templateName,
+        subject: 'Template Preview',
+        template: templateName,
+        blocks: [],
+        style: typeof defaultStyle !== 'undefined' ? { ...defaultStyle } : {},
+        settings: typeof defaultSettings !== 'undefined' ? { ...defaultSettings } : {}
+    };
+
+    // Load from localStorage if a saved customized version exists
     const savedCustom = localStorage.getItem('kettleers_template_' + templateName);
-    
     if (savedCustom) {
         try {
             const parsed = JSON.parse(savedCustom);
-            wizardData = {
-                segments: ['all'],
-                title: templateName,
-                subject: '',
-                template: templateName,
-                blocks: parsed.blocks || [],
-                style: parsed.style ? { ...defaultStyle, ...parsed.style } : { ...defaultStyle },
-                settings: parsed.settings ? { ...defaultSettings, ...parsed.settings } : { ...defaultSettings }
-            };
+            wizardData.blocks = parsed.blocks || [];
+            if (parsed.style) wizardData.style = { ...defaultStyle, ...parsed.style };
+            if (parsed.settings) wizardData.settings = { ...defaultSettings, ...parsed.settings };
         } catch(e) {
             console.error('Error parsing template for editor');
         }
     } else {
-        // Build fresh template if none exists in storage
-        wizardData = {
-            segments: ['all'],
-            title: templateName,
-            subject: '',
-            template: templateName,
-            blocks: [],
-            style: typeof defaultStyle !== 'undefined' ? { ...defaultStyle } : {},
-            settings: typeof defaultSettings !== 'undefined' ? { ...defaultSettings } : {}
-        };
         selectWizardTemplate(templateName);
     }
 
+    // Switch to editor view
     switchTab('campaign-editor');
     
-    // Jump straight to the Design view
-    goToWizardStep('design'); 
-    
-    // Force hide the wizard progress footer using the Tailwind class
+    // Jump directly to the design pane
+    goToWizardStep('design');
+
+    // Force hide the wizard steps footer
     const footer = document.querySelector('#view-campaign-editor .sticky.bottom-0');
     if (footer) footer.classList.add('hidden-view');
-    
-    // Update the top header
+
+    // Update top header bar for pure template editing
     const titleEl = document.getElementById('editor-title');
     if (titleEl) titleEl.innerText = "Editing Template: " + templateName;
-    
+
+    // Adjust Back button to return to Templates instead of Campaigns
+    const backBtn = document.querySelector('#view-campaign-editor header button, #view-campaign-editor [onclick*="switchTab(\'campaigns\')"]');
+    if (backBtn) {
+        backBtn.setAttribute('onclick', "switchTab('templates')");
+        backBtn.innerHTML = '<i data-lucide="chevron-left" class="w-4 h-4 md:w-5 md:h-5"></i> Back to Templates';
+    }
+
     renderEditorBlocks();
     renderEmailPreview();
+    safeCreateIcons();
 }
 
 function clearAnalyticsDateFilter() {
