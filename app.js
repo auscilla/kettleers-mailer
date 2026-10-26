@@ -1315,8 +1315,10 @@ function startNewCampaignWizard() {
     currentEditingCampaignId = null;
     isEditingTemplate = false;
     currentEditingTemplateName = null;
+    
+    // Restore the wizard progress footer
     const footer = document.querySelector('#view-campaign-editor .sticky.bottom-0');
-    if (footer) footer.style.display = 'flex';
+    if (footer) footer.classList.remove('hidden-view');
 
     wizardData = {
         segments: ['all'],
@@ -1355,15 +1357,11 @@ async function deleteCampaign(campaignId) {
     
     isEditingTemplate = false;
     currentEditingTemplateName = null;
-    const footer = document.querySelector('#view-campaign-editor .sticky.bottom-0');
-    if (footer) footer.style.display = 'flex';
-
-    let loadedBlocks = [];
-    let loadedStyle = { ...defaultStyle };
-    if (!c) return;
-
-    currentEditingCampaignId = c.id;
     
+    // Restore the wizard progress footer
+    const footer = document.querySelector('#view-campaign-editor .sticky.bottom-0');
+    if (footer) footer.classList.remove('hidden-view');
+
     let loadedBlocks = [];
     let loadedStyle = { ...defaultStyle };
     let loadedSettings = { ...defaultSettings };
@@ -1975,28 +1973,53 @@ function editTemplate(templateName) {
     isEditingTemplate = true;
     currentEditingTemplateName = templateName;
 
-    wizardData = {
-        segments: ['all'],
-        title: templateName,
-        subject: '',
-        template: templateName,
-        blocks: [],
-        style: typeof defaultStyle !== 'undefined' ? { ...defaultStyle } : {},
-        settings: typeof defaultSettings !== 'undefined' ? { ...defaultSettings } : {}
-    };
+    // First load from localStorage to get the exact saved template
+    const savedCustom = localStorage.getItem('kettleers_template_' + templateName);
     
-    selectWizardTemplate(templateName);
+    if (savedCustom) {
+        try {
+            const parsed = JSON.parse(savedCustom);
+            wizardData = {
+                segments: ['all'],
+                title: templateName,
+                subject: '',
+                template: templateName,
+                blocks: parsed.blocks || [],
+                style: parsed.style ? { ...defaultStyle, ...parsed.style } : { ...defaultStyle },
+                settings: parsed.settings ? { ...defaultSettings, ...parsed.settings } : { ...defaultSettings }
+            };
+        } catch(e) {
+            console.error('Error parsing template for editor');
+        }
+    } else {
+        // Build fresh template if none exists in storage
+        wizardData = {
+            segments: ['all'],
+            title: templateName,
+            subject: '',
+            template: templateName,
+            blocks: [],
+            style: typeof defaultStyle !== 'undefined' ? { ...defaultStyle } : {},
+            settings: typeof defaultSettings !== 'undefined' ? { ...defaultSettings } : {}
+        };
+        selectWizardTemplate(templateName);
+    }
+
     switchTab('campaign-editor');
     
     // Jump straight to the Design view
     goToWizardStep('design'); 
     
-    // Hide the wizard progress footer
+    // Force hide the wizard progress footer using the Tailwind class
     const footer = document.querySelector('#view-campaign-editor .sticky.bottom-0');
-    if (footer) footer.style.display = 'none';
+    if (footer) footer.classList.add('hidden-view');
     
+    // Update the top header
     const titleEl = document.getElementById('editor-title');
     if (titleEl) titleEl.innerText = "Editing Template: " + templateName;
+    
+    renderEditorBlocks();
+    renderEmailPreview();
 }
 
 function clearAnalyticsDateFilter() {
