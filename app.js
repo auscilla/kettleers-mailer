@@ -1436,9 +1436,18 @@ function editCampaign(campaignId) {
         settings: loadedSettings
     };
 
-    syncWizardUI();
+    // Set step index directly to design (step 3) so wizard navigation doesn't wipe state
+    currentWizardStepIndex = 3;
     switchTab('campaign-editor');
     goToWizardStep('design');
+
+    // Populate the setup inputs with our loaded campaign data
+    const titleInput = document.getElementById('wizard-campaign-title');
+    const subjectInput = document.getElementById('wizard-email-subject');
+    if (titleInput) titleInput.value = c.title || '';
+    if (subjectInput) subjectInput.value = c.subject || '';
+
+    // Render the blocks and email preview
     renderEditorBlocks();
     renderEmailPreview();
 }
