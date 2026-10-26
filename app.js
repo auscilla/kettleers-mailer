@@ -16,6 +16,8 @@ let loadedCampaigns = [];
 let allSubscribers = [];
 let currentEditingCampaignId = null;
 let currentEditingSubscriberId = null;
+let isEditingTemplate = false;
+let currentEditingTemplateName = null;
 
 const WIZARD_STEPS = ['recipients', 'setup', 'template', 'design', 'confirm'];
 let currentWizardStepIndex = 0;
@@ -1311,6 +1313,11 @@ function generateEmailHtml(isLiveSend = false) {
 // -------------------------------------------------------------
 function startNewCampaignWizard() {
     currentEditingCampaignId = null;
+    isEditingTemplate = false;
+    currentEditingTemplateName = null;
+    const footer = document.querySelector('#view-campaign-editor .sticky.bottom-0');
+    if (footer) footer.style.display = 'flex';
+
     wizardData = {
         segments: ['all'],
         title: '',
@@ -1340,13 +1347,19 @@ async function deleteCampaign(campaignId) {
         
         loadDashboardAndCampaigns();
     } catch (err) {
-        console.error('Error deleting campaign:', err);
-        alert('Could not delete campaign: ' + err.message);
-    }
-}
-
-function editCampaign(campaignId) {
+        function editCampaign(campaignId) {
     const c = loadedCampaigns.find(item => item.id === campaignId);
+    if (!c) return;
+
+    currentEditingCampaignId = c.id;
+    
+    isEditingTemplate = false;
+    currentEditingTemplateName = null;
+    const footer = document.querySelector('#view-campaign-editor .sticky.bottom-0');
+    if (footer) footer.style.display = 'flex';
+
+    let loadedBlocks = [];
+    let loadedStyle = { ...defaultStyle };
     if (!c) return;
 
     currentEditingCampaignId = c.id;
@@ -1388,13 +1401,25 @@ function editCampaign(campaignId) {
 function selectWizardTemplate(templateName) {
     wizardData.template = templateName;
     
-    if (templateName === 'Blank Canvas') {
-        wizardData.blocks = [];
-    } else if (templateName === 'The Weekly Ballpark Bulletin' || templateName === 'The Kettleers Gazette') {
-        wizardData.blocks = [
-            { type: 'text', heading: 'Welcome to the Newsletter!', body: 'The first update from Kettleers Nation!' },
-            { type: 'promo', heading: 'Stocking Stuffers Promo', body: 'The Perfect Stocking Stuffers! Use code FANS20 for 20% off all caps, tees, and collectibles.', cta: 'Shop Holiday Special', image: 'StockingStuffer.png' }
-        ];
+    // Check for saved custom template in LocalStorage first
+    const savedCustom = localStorage.getItem('kettleers_template_' + templateName);
+    if (savedCustom) {
+        try {
+            const parsed = JSON.parse(savedCustom);
+            wizardData.blocks = parsed.blocks || [];
+            if (parsed.style) wizardData.style = { ...defaultStyle, ...parsed.style };
+            if (parsed.settings) wizardData.settings = { ...defaultSettings, ...parsed.settings };
+        } catch(e) { console.error('Error loading saved template'); }
+    } else {
+        // Fallback to hardcoded defaults
+        if (templateName === 'Blank Canvas') {
+            wizardData.blocks = [];
+        } else if (templateName === 'The Weekly Ballpark Bulletin' || templateName === 'The Kettleers Gazette') {
+            wizardData.blocks = [
+                { type: 'text', heading: 'Welcome to the Newsletter!', body: 'The first update from Kettleers Nation!' },
+                { type: 'promo', heading: 'Stocking Stuffers Promo', body: 'The Perfect Stocking Stuffers! Use code FANS20 for 20% off.', cta: 'Shop Holiday Special', image: 'StockingStuffer.png' }
+            ];
+        }
     }
 
     document.querySelectorAll('.template-wizard-card').forEach(card => {
@@ -1779,6 +1804,21 @@ async function saveCampaign(exitAfterSave = false) {
     if (statusText) statusText.textContent = 'Saving...';
     if (saveBtn) saveBtn.disabled = true;
 
+    // Intercept: If editing a template, save to local storage instead of campaigns database
+    if (isEditingTemplate && currentEditingTemplateName) {
+        const templateData = {
+            blocks: wizardData.blocks || [],
+            style: wizardData.style || defaultStyle,
+            settings: wizardData.settings || defaultSettings
+        };
+        localStorage.setItem('kettleers_template_' + currentEditingTemplateName, JSON.stringify(templateData));
+        
+        if (statusText) statusText.textContent = 'Template Saved';
+        if (saveBtn) saveBtn.disabled = false;
+        if (exitAfterSave) switchTab('templates');
+        return;
+    }
+
     let firstHeadline = 'Kettleers Broadcast';
     if (wizardData.blocks && wizardData.blocks.length > 0) {
         const textBlock = wizardData.blocks.find(b => b.type === 'text') || wizardData.blocks[0];
@@ -1932,7 +1972,9 @@ function closeTemplatePreview() {
 }
 
 function editTemplate(templateName) {
-    // Explicitly build the data object to bypass the broken routing function
+    isEditingTemplate = true;
+    currentEditingTemplateName = templateName;
+
     wizardData = {
         segments: ['all'],
         title: templateName,
@@ -1944,15 +1986,15 @@ function editTemplate(templateName) {
     };
     
     selectWizardTemplate(templateName);
-    
-    // Force the exact correct HTML ID to unhide the editor view
     switchTab('campaign-editor');
     
-    // Render the builder inputs and live preview
-    if (typeof renderEditorBlocks === 'function') renderEditorBlocks();
-    if (typeof renderEmailPreview === 'function') renderEmailPreview();
+    // Jump straight to the Design view
+    goToWizardStep('design'); 
     
-    // Update the top header
+    // Hide the wizard progress footer
+    const footer = document.querySelector('#view-campaign-editor .sticky.bottom-0');
+    if (footer) footer.style.display = 'none';
+    
     const titleEl = document.getElementById('editor-title');
     if (titleEl) titleEl.innerText = "Editing Template: " + templateName;
 }
