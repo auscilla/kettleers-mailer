@@ -18,6 +18,13 @@ let currentEditingCampaignId = null;
 let currentEditingSubscriberId = null;
 let isEditingTemplate = false;
 let currentEditingTemplateName = null;
+let wizardData = {
+    segments: ['all'],
+    title: '',
+    subject: '',
+    template: 'Blank Canvas',
+    blocks: []
+};
 
 const WIZARD_STEPS = ['recipients', 'setup', 'template', 'design', 'confirm'];
 let currentWizardStepIndex = 0;
