@@ -1624,7 +1624,7 @@ function switchTab(tabId) {
     const views = [
         'view-dashboard', 'view-campaigns', 'view-templates', 'view-subscribers', 
         'view-campaign-editor', 'view-report', 'view-transactional', 
-        'view-analytics', 'view-settings'
+        'view-analytics', 'view-settings', 'view-users'
     ];
     
     views.forEach(id => { 
@@ -1643,9 +1643,10 @@ function switchTab(tabId) {
     if (tabId === 'dashboard' || tabId === 'campaigns') loadDashboardAndCampaigns();
     if (tabId === 'subscribers') loadSubscribers();
     if (tabId === 'analytics') {
-    initAnalyticsFilters();
-    renderAnalyticsView();
-}
+        initAnalyticsFilters();
+        renderAnalyticsView();
+    }
+    if (tabId === 'users') loadAppUsers();
     safeCreateIcons();
 }
 
@@ -2139,4 +2140,129 @@ function handleAnalyticsCustomDateChange() {
     const select = document.getElementById('analytics-timeframe');
     if (select) select.value = 'custom';
     renderAnalyticsView();
+}
+
+// -------------------------------------------------------------
+// Direct Supabase Auth Users Management
+// -------------------------------------------------------------
+let loadedAppUsers = [];
+
+async function loadAppUsers() {
+    if (!db) return;
+    const tbody = document.getElementById('users-table-body');
+    if (tbody) tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-500 italic">Fetching users...</td></tr>`;
+
+    try {
+        const { data, error } = await db.functions.invoke('manage-users', {
+            body: { action: 'list' }
+        });
+
+        if (error) throw error;
+        if (data && data.error) throw new Error(data.error);
+
+        loadedAppUsers = (data && data.users) ? data.users : [];
+        renderAppUsers();
+    } catch (err) {
+        console.error('Error fetching auth users:', err);
+        if (tbody) tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-red-600">Error loading users: ${escapeHtml(err.message)}</td></tr>`;
+    }
+}
+
+function renderAppUsers() {
+    const tbody = document.getElementById('users-table-body');
+    if (!tbody) return;
+
+    if (loadedAppUsers.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-500 italic">No users found. Click "Add User" above.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = loadedAppUsers.map(u => {
+        const createdDate = u.created_at ? new Date(u.created_at).toLocaleDateString() : 'N/A';
+        const lastSignIn = u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString() : 'Never';
+        return `
+            <tr class="hover:bg-black/5 transition-colors">
+                <td class="py-4 font-bold text-[#611724]">${escapeHtml(u.email)}</td>
+                <td class="py-4 text-gray-600">${createdDate}</td>
+                <td class="py-4 text-gray-600">${lastSignIn}</td>
+                <td class="py-4 text-right pr-2">
+                    <button onclick="deleteAppUser('${u.id}', '${escapeHtml(u.email)}')" class="bg-red-100 text-red-600 text-xs font-bold px-3 py-1.5 rounded uppercase hover:bg-red-200 transition-colors">Remove</button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+
+    safeCreateIcons();
+}
+
+function openAddUserModal() {
+    const modal = document.getElementById('modal-add-user');
+    if (modal) modal.classList.remove('hidden');
+    const input = document.getElementById('new-user-email');
+    if (input) input.focus();
+}
+
+function closeAddUserModal() {
+    const modal = document.getElementById('modal-add-user');
+    if (modal) modal.classList.add('hidden');
+    const err = document.getElementById('add-user-error');
+    if (err) err.classList.add('hidden');
+    const emailEl = document.getElementById('new-user-email');
+    const passEl = document.getElementById('new-user-password');
+    if (emailEl) emailEl.value = '';
+    if (passEl) passEl.value = '';
+}
+
+async function handleAddUser(e) {
+    e.preventDefault();
+    const email = document.getElementById('new-user-email').value.trim().toLowerCase();
+    const password = document.getElementById('new-user-password').value;
+    const btn = document.getElementById('add-user-submit-btn');
+    const errDiv = document.getElementById('add-user-error');
+
+    if (!email || !password) return;
+
+    btn.textContent = 'Creating...';
+    btn.disabled = true;
+    if (errDiv) errDiv.classList.add('hidden');
+
+    try {
+        const { data, error } = await db.functions.invoke('manage-users', {
+            body: { action: 'create', email, password }
+        });
+
+        if (error) throw error;
+        if (data && data.error) throw new Error(data.error);
+
+        closeAddUserModal();
+        loadAppUsers();
+        alert(`User ${email} created! They can now log in immediately.`);
+    } catch (err) {
+        console.error('Error creating user:', err);
+        if (errDiv) {
+            errDiv.textContent = err.message || 'Failed to create user.';
+            errDiv.classList.remove('hidden');
+        }
+    } finally {
+        btn.textContent = 'Create User';
+        btn.disabled = false;
+    }
+}
+
+async function deleteAppUser(userId, userEmail) {
+    if (!confirm(`Are you sure you want to delete ${userEmail}? They will immediately lose login access.`)) return;
+
+    try {
+        const { data, error } = await db.functions.invoke('manage-users', {
+            body: { action: 'delete', userId }
+        });
+
+        if (error) throw error;
+        if (data && data.error) throw new Error(data.error);
+
+        loadAppUsers();
+    } catch (err) {
+        console.error('Error deleting user:', err);
+        alert('Could not remove user: ' + err.message);
+    }
 }
