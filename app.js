@@ -1294,18 +1294,14 @@ function generateEmailHtml(isLiveSend = false) {
     ` : '';
 
             return `
-            <!DOCTYPE html>
-            <html>
-            <head>
-    <meta charset="utf-8">
-    <style type="text/css">
-        @import url('https://fonts.googleapis.com/css2?family=Rye&family=Zilla+Slab:wght@400;700&display=swap');
-        
-        /* Web-safe fallbacks for clients that strip Google Fonts */
-        body, p, div, td { font-family: 'Zilla Slab', Arial, Helvetica, sans-serif !important; }
-        h1, h2, h3 { font-family: 'Rye', 'Times New Roman', Georgia, serif !important; }
-    </style>
-</head>
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <style type="text/css">
+            @import url('https://fonts.googleapis.com/css2?family=Rye&family=Zilla+Slab:wght@400;700&display=swap');
+        </style>
+    </head>
             ${preheaderHtml}
             <div style="max-width: ${settings.maxWidth || '620px'}; margin: 0 auto; background-color: ${style.contentBg}; box-shadow: 0 4px 10px rgba(0,0,0,0.15); ${!isLiveSend ? 'width: 100%;' : ''}">
                 ${browserLinkHtml}
