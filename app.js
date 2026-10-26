@@ -784,6 +784,7 @@ function syncStyleAndSettingsUI() {
 // Mailchimp 13-Block Engine (Add, Edit, Move, Delete)
 // -------------------------------------------------------------
 function addBlock(type) {
+    recordBuilderHistory();
     if (!wizardData.blocks) wizardData.blocks = [];
 
     switch (type) {
@@ -1087,6 +1088,7 @@ function updateBlock(index, field, value) {
 }
 
 function moveBlock(index, direction) {
+    recordBuilderHistory();
     if (!wizardData.blocks) return;
     const newIndex = index + direction;
     if (newIndex < 0 || newIndex >= wizardData.blocks.length) return;
@@ -1098,6 +1100,7 @@ function moveBlock(index, direction) {
 }
 
 function deleteBlock(index) {
+    recordBuilderHistory();
     if (!wizardData.blocks) return;
     wizardData.blocks.splice(index, 1);
     renderEditorBlocks();
@@ -2265,4 +2268,22 @@ async function deleteAppUser(userId, userEmail) {
         console.error('Error deleting user:', err);
         alert('Could not remove user: ' + err.message);
     }
+}
+let builderHistory = [];
+
+function recordBuilderHistory() {
+    if (!wizardData || !wizardData.blocks) return;
+    builderHistory.push(JSON.stringify(wizardData.blocks));
+    if (builderHistory.length > 25) builderHistory.shift(); 
+}
+
+function undoLastBlockAction() {
+    if (builderHistory.length === 0) {
+        alert("Nothing to undo.");
+        return;
+    }
+    wizardData.blocks = JSON.parse(builderHistory.pop());
+    renderEditorBlocks();
+    renderEmailPreview();
+    safeCreateIcons();
 }
