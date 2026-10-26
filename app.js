@@ -1823,7 +1823,15 @@ function escapeHtml(str) {
 // -------------------------------------------------------------
 // Save & Send Data
 // -------------------------------------------------------------
-// Intercept: If editing a template, save to local storage instead of campaigns database
+async function saveCampaign(exitAfterSave = false) {
+    syncSetupFields();
+    const statusText = document.getElementById('editor-status-text');
+    const saveBtn = document.getElementById('editor-save-btn');
+
+    if (statusText) statusText.textContent = 'Saving...';
+    if (saveBtn) saveBtn.disabled = true;
+
+    // Intercept: If editing a template, save to local storage instead of campaigns database
     if (isEditingTemplate && currentEditingTemplateName) {
         const templateData = {
             blocks: wizardData.blocks || [],
@@ -1845,7 +1853,7 @@ function escapeHtml(str) {
         }
         return;
     }
-
+    
     let firstHeadline = 'Kettleers Broadcast';
     if (wizardData.blocks && wizardData.blocks.length > 0) {
         const textBlock = wizardData.blocks.find(b => b.type === 'text') || wizardData.blocks[0];
