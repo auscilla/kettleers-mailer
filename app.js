@@ -36,7 +36,7 @@ const defaultStyle = {
     contentBg: '#ffffff',
     headerBg: '#611724', // Updated to Kettleer red
     accentColor: '#611724',
-    fontFamily: 'Arial, Helvetica, sans-serif',
+    fontFamily: "'Zilla Slab', 'Rockwell', 'Clarendon', Georgia, serif",
     buttonBg: '#2E5B82',
     buttonRadius: '4px'
 };
@@ -1123,18 +1123,18 @@ function generateEmailHtml(isLiveSend = false) {
         blocksHtml = wizardData.blocks.map(b => {
             switch (b.type) {
                 case 'text':
-                    return `
-                    <div style="padding: 20px 25px; margin: 10px 15px; font-family: 'Clean Sans', sans-serif; text-align: ${b.align || 'left'};">
-                        <h2 style="margin: 0 0 10px 0; color: #111827; font-size: 22px; font-family: 'Zilla Slab', serif;">${escapeHtml(b.heading || '')}</h2>
-                        <p style="margin: 0; line-height: 1.6; color: #374151; font-size: 15px; font-family: 'Clean Sans', sans-serif;">${escapeHtml(b.body || '').replace(/\n/g, '<br>')}</p>
-                    </div>`;
+                return `
+                <div style="padding: 20px 25px; margin: 10px 15px; font-family: 'Clean Sans', sans-serif; text-align: ${b.align || 'left'};">
+                    <h2 style="margin: 0 0 10px 0; color: #111827; font-size: 22px; font-family: 'Zilla Slab', 'Rockwell', 'Clarendon', Georgia, serif;">${escapeHtml(b.heading || '')}</h2>
+                    <p style="margin: 0; line-height: 1.6; color: #374151; font-size: 15px; font-family: 'Clean Sans', sans-serif;">${escapeHtml(b.body || '').replace(/\n/g, '<br>')}</p>
+                </div>`;
 
                 case 'boxed_text':
-                    return `
-                    <div style="margin: 15px; padding: 22px 20px; background-color: ${b.bg_color || '#F4F1E1'}; border: 2px solid ${b.border_color || style.accentColor}; border-radius: 6px; font-family: 'Clean Sans', sans-serif;">
-                        <h3 style="margin: 0 0 8px 0; color: ${b.border_color || style.accentColor}; font-size: 18px; font-weight: bold; font-family: 'Zilla Slab', serif;">${escapeHtml(b.heading || '')}</h3>
-                        <p style="margin: 0; line-height: 1.5; color: #374151; font-size: 14px; font-family: 'Clean Sans', sans-serif;">${escapeHtml(b.body || '').replace(/\n/g, '<br>')}</p>
-                    </div>`;
+                return `
+                <div style="margin: 15px; padding: 22px 20px; background-color: ${b.bg_color || '#F4F1E1'}; border: 2px solid ${b.border_color || style.accentColor}; border-radius: 6px; font-family: 'Clean Sans', sans-serif;">
+                    <h3 style="margin: 0 0 8px 0; color: ${b.border_color || style.accentColor}; font-size: 18px; font-weight: bold; font-family: 'Zilla Slab', 'Rockwell', 'Clarendon', Georgia, serif;">${escapeHtml(b.heading || '')}</h3>
+                    <p style="margin: 0; line-height: 1.5; color: #374151; font-size: 14px; font-family: 'Clean Sans', sans-serif;">${escapeHtml(b.body || '').replace(/\n/g, '<br>')}</p>
+                </div>`;
 
                 case 'divider':
                     return `
@@ -1172,7 +1172,7 @@ function generateEmailHtml(isLiveSend = false) {
             <div style="margin: 15px; background-color: ${b.bg_color || '#FFFDFB'}; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
                 <img src="${baseUrl}${b.image_url || 'StockingStuffer.png'}" alt="Card" style="width: 100%; height: auto; display: block;">
                 <div style="padding: 20px; font-family: sans-serif; text-align: center;">
-                    <h3 style="margin: 0 0 10px 0; font-size: 20px; color: #111827; font-family: 'Zilla Slab', serif;">${escapeHtml(b.heading || '')}</h3>
+                    <h3 style="margin: 0 0 10px 0; font-size: 20px; color: #111827; font-family: 'Zilla Slab', 'Rockwell', 'Clarendon', Georgia, serif;">${escapeHtml(b.heading || '')}</h3>
                     <p style="margin: 0 0 15px 0; font-size: 14px; line-height: 1.5; color: #4b5563;">${escapeHtml(b.body || '').replace(/\n/g, '<br>')}</p>
                     ${b.cta_text ? `<a href="${b.cta_url || '#'}" style="display: inline-block; background-color: ${style.buttonBg}; color: #ffffff; padding: 10px 24px; font-size: 13px; font-weight: bold; text-decoration: none; border-radius: 4px;">${escapeHtml(b.cta_text)}</a>` : ''}
                 </div>
@@ -1287,7 +1287,7 @@ function generateEmailHtml(isLiveSend = false) {
                     <img src="${baseUrl}${settings.bannerImage || 'bannerplayer.png'}" alt="Cotuit Player" style="display: block; max-height: 170px; width: auto; max-width: 100%;">
                 </td>
                 <td width="62%" valign="middle" align="right" style="padding: 20px 25px 20px 10px;">
-                    <div style="font-family: 'Rye', Georgia, 'Times New Roman', serif; font-size: 34px; line-height: 1.05; text-transform: uppercase; color: #F4F1E1; letter-spacing: 2px; font-weight: bold; text-align: right;">${settings.bannerText || 'COTUIT<br>KETTLEERS'}</div>
+                    <div style="font-family: 'Rye', 'Rockwell Extra Bold', 'Rockwell', 'Clarendon', 'Copperplate', Georgia, serif; font-size: 34px; line-height: 1.05; text-transform: uppercase; color: #F4F1E1; letter-spacing: 2px; font-weight: bold; text-align: right;">${settings.bannerText || 'COTUIT<br>KETTLEERS'}</div>
                 </td>
             </tr>
         </table>
