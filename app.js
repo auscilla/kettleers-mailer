@@ -1823,26 +1823,26 @@ function escapeHtml(str) {
 // -------------------------------------------------------------
 // Save & Send Data
 // -------------------------------------------------------------
-async function saveCampaign(exitAfterSave = false) {
-    syncSetupFields();
-    const statusText = document.getElementById('editor-status-text');
-    const saveBtn = document.getElementById('editor-save-btn');
-
-    if (statusText) statusText.textContent = 'Saving...';
-    if (saveBtn) saveBtn.disabled = true;
-
-    // Intercept: If editing a template, save to local storage instead of campaigns database
+// Intercept: If editing a template, save to local storage instead of campaigns database
     if (isEditingTemplate && currentEditingTemplateName) {
         const templateData = {
             blocks: wizardData.blocks || [],
-            style: wizardData.style || defaultStyle,
-            settings: wizardData.settings || defaultSettings
+            style: wizardData.style || { ...defaultStyle },
+            settings: wizardData.settings || { ...defaultSettings }
         };
-        localStorage.setItem('kettleers_template_' + currentEditingTemplateName, JSON.stringify(templateData));
+        try {
+            localStorage.setItem('kettleers_template_' + currentEditingTemplateName, JSON.stringify(templateData));
+        } catch (err) {
+            console.error('LocalStorage save error:', err);
+        }
         
         if (statusText) statusText.textContent = 'Template Saved';
         if (saveBtn) saveBtn.disabled = false;
-        if (exitAfterSave) switchTab('templates');
+        if (exitAfterSave) {
+            switchTab('templates');
+        } else {
+            alert('Template "' + currentEditingTemplateName + '" saved successfully!');
+        }
         return;
     }
 
@@ -1967,30 +1967,43 @@ async function sendTestEmail() {
     }
 }
 function openTemplatePreview(templateName) {
-    document.getElementById('preview-modal-title').innerText = templateName;
+    const titleEl = document.getElementById('preview-modal-title');
+    if (titleEl) titleEl.innerText = templateName;
     const contentContainer = document.getElementById('preview-modal-content');
+    if (!contentContainer) return;
     
-    // Safely store previous data to prevent JSON.parse errors if wizardData is empty
+    // Safely store previous state
     const previousData = (typeof wizardData !== 'undefined' && wizardData) ? JSON.stringify(wizardData) : null;
     
-    // Temporarily build out the template object
-    wizardData = {
-        blocks: [],
-        style: typeof defaultStyle !== 'undefined' ? { ...defaultStyle } : {},
-        settings: typeof defaultSettings !== 'undefined' ? { ...defaultSettings } : {}
-    };
-    
-    selectWizardTemplate(templateName);
-    contentContainer.innerHTML = generateEmailHtml(false);
-    
-    // Restore the user's actual data safely
-    if (previousData) {
-        wizardData = JSON.parse(previousData);
+    // Check localStorage first for any saved edits
+    const savedCustom = localStorage.getItem('kettleers_template_' + templateName);
+    if (savedCustom) {
+        try {
+            const parsed = JSON.parse(savedCustom);
+            wizardData = {
+                blocks: parsed.blocks || [],
+                style: parsed.style ? { ...defaultStyle, ...parsed.style } : { ...defaultStyle },
+                settings: parsed.settings ? { ...defaultSettings, ...parsed.settings } : { ...defaultSettings }
+            };
+        } catch (e) {
+            wizardData = { blocks: [], style: { ...defaultStyle }, settings: { ...defaultSettings } };
+            selectWizardTemplate(templateName);
+        }
     } else {
-        wizardData = null; 
+        wizardData = { blocks: [], style: { ...defaultStyle }, settings: { ...defaultSettings } };
+        selectWizardTemplate(templateName);
     }
     
-    document.getElementById('modal-template-preview').classList.remove('hidden');
+    contentContainer.innerHTML = generateEmailHtml(false);
+    
+    // Restore previous state
+    if (previousData) {
+        wizardData = JSON.parse(previousData);
+    }
+    
+    const modal = document.getElementById('modal-template-preview');
+    if (modal) modal.classList.remove('hidden');
+    safeCreateIcons();
 }
 
 function closeTemplatePreview() {
