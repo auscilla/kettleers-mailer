@@ -318,6 +318,9 @@
                         <span id="editor-title" class="font-display text-2xl md:text-3xl tracking-wider truncate">Campaign Studio</span>
                     </div>
                     <div class="text-xs md:text-sm flex flex-wrap gap-x-4 gap-y-2 items-center text-white/80 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+                        <button type="button" onclick="undoLastBlockAction()" class="bg-[#F4F1E1] text-[#4f111c] border border-gray-300 px-3 py-1.5 rounded text-xs font-bold uppercase hover:bg-white flex items-center gap-1 shadow-sm">
+    <i data-lucide="undo" class="w-4 h-4"></i> Undo
+</button>
                         <button onclick="sendTestEmail()" class="hover:text-white flex items-center gap-1 md:border-l border-white/20 md:pl-6 shrink-0">Send Test Email <i data-lucide="send" class="w-3 h-3 md:w-4 md:h-4"></i></button>
                         <button onclick="saveCampaign(false)" class="hover:text-white md:border-l border-white/20 md:pl-6 shrink-0">Save Draft</button>
                         <button onclick="saveCampaign(true)" class="hover:text-white flex items-center gap-1 border-l border-white/20 pl-4 md:pl-6 shrink-0 text-[#F4F1E1] font-bold">Save & Exit <i data-lucide="check" class="w-3 h-3 md:w-4 md:h-4"></i></button>
