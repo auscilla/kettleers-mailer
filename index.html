@@ -233,29 +233,29 @@
                             </p>
                         </div>
                         <div class="flex gap-3 pt-4 border-t border-gray-300">
-    <button onclick="openTemplatePreview('The Weekly Ballpark Bulletin')" class="flex-1 bg-white border-2 border-[#4f111c] text-[#4f111c] font-display text-sm uppercase py-2 rounded shadow hover:bg-gray-100 transition-colors">See Template</button>
-    <button onclick="startNewCampaignWizardWithTemplate('The Weekly Ballpark Bulletin')" class="flex-1 bg-[#4f111c] text-[#F4F1E1] font-display text-sm uppercase py-2.5 rounded shadow hover:bg-black transition-colors">Use In Campaign</button>
-</div>
+                            <button onclick="openTemplatePreview('The Weekly Ballpark Bulletin')" class="flex-1 bg-white border-2 border-[#4f111c] text-[#4f111c] font-display text-sm uppercase py-2 rounded shadow hover:bg-gray-100 transition-colors">See Template</button>
+                            <button onclick="editTemplate('The Weekly Ballpark Bulletin')" class="flex-1 bg-white border-2 border-[#4f111c] text-[#4f111c] font-display text-sm uppercase py-2 rounded shadow hover:bg-gray-100 transition-colors">Edit</button>
+                            <button onclick="startNewCampaignWizardWithTemplate('The Weekly Ballpark Bulletin')" class="flex-1 bg-[#4f111c] text-[#F4F1E1] font-display text-sm uppercase py-2.5 rounded shadow hover:bg-black transition-colors">Use In Campaign</button>
+                        </div>
                     </div>
 
                     <div class="bg-[#F4F1E1] rounded-2xl p-6 shadow-2xl border-4 border-[#e8e4d1] flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-start mb-4">
-                                <span class="bg-[#8a2b3d] text-[#F4F1E1] text-xs font-bold uppercase tracking-wider px-3 py-1 rounded">Monthly & Offseason</span>
-                                <span class="text-xs text-gray-500 font-sans font-bold">Updated Oct 2026</span>
+                            <div>
+                                <div class="flex justify-between items-start mb-4">
+                                    <span class="bg-[#8a2b3d] text-[#F4F1E1] text-xs font-bold uppercase tracking-wider px-3 py-1 rounded">Monthly & Offseason</span>
+                                    <span class="text-xs text-gray-500 font-sans font-bold">Updated Oct 2026</span>
+                                </div>
+                                <h3 class="font-display text-3xl text-[#611724] mb-2 uppercase">The Kettleers Gazette</h3>
+                                <p class="text-gray-700 text-sm md:text-base leading-relaxed mb-6 font-sans">
+                                    Long-form human interest publication. Focuses on host family spotlights, player draft updates, MLB alumni features, Cotuit Athletic Association donor campaigns, and offseason store merchandise.
+                                </p>
                             </div>
-                            <h3 class="font-display text-3xl text-[#611724] mb-2 uppercase">The Kettleers Gazette</h3>
-                            <p class="text-gray-700 text-sm md:text-base leading-relaxed mb-6 font-sans">
-                                Long-form human interest publication. Focuses on host family spotlights, player draft updates, MLB alumni features, Cotuit Athletic Association donor campaigns, and offseason store merchandise.
-                            </p>
+                            <div class="flex gap-3 pt-4 border-t border-gray-300">
+                                <button onclick="openTemplatePreview('The Kettleers Gazette')" class="flex-1 bg-white border-2 border-[#4f111c] text-[#4f111c] font-display text-sm uppercase py-2 rounded shadow hover:bg-gray-100 transition-colors">See Template</button>
+                                <button onclick="editTemplate('The Kettleers Gazette')" class="flex-1 bg-white border-2 border-[#4f111c] text-[#4f111c] font-display text-sm uppercase py-2 rounded shadow hover:bg-gray-100 transition-colors">Edit</button>
+                                <button onclick="startNewCampaignWizardWithTemplate('The Kettleers Gazette')" class="flex-1 bg-[#4f111c] text-[#F4F1E1] font-display text-sm uppercase py-2.5 rounded shadow hover:bg-black transition-colors">Use In Campaign</button>
+                            </div>
                         </div>
-                        <div class="flex gap-3 pt-4 border-t border-gray-300">
-    <button onclick="openTemplatePreview('The Kettleers Gazette')" class="flex-1 bg-white border-2 border-[#4f111c] text-[#4f111c] font-display text-sm uppercase py-2 rounded shadow hover:bg-gray-100 transition-colors">See Template</button>
-    <button onclick="startNewCampaignWizardWithTemplate('The Kettleers Gazette')" class="flex-1 bg-[#4f111c] text-[#F4F1E1] font-display text-sm uppercase py-2.5 rounded shadow hover:bg-black transition-colors">Use In Campaign</button>
-</div>
-                    </div>
-                </div>
-            </div>
 
             <!-- ================= 4. SUBSCRIBERS VIEW ================= -->
             <div id="view-subscribers" class="hidden-view flex-1 flex flex-col p-4 md:p-10 overflow-y-auto max-w-6xl mx-auto w-full">
@@ -1128,8 +1128,8 @@
                 <h3 id="preview-modal-title" class="font-display text-2xl uppercase tracking-wider">Template Preview</h3>
                 <button onclick="closeTemplatePreview()" class="hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
-            <div class="p-6 overflow-y-auto flex-1 text-center bg-gray-100">
-                <img id="preview-modal-image" src="" alt="Template Preview" class="max-w-full h-auto mx-auto shadow-md border border-gray-300">
+            <div class="p-6 overflow-y-auto flex-1 bg-[#E8E6D9] flex justify-center">
+                <div id="preview-modal-content" class="w-full max-w-[620px] bg-white shadow-xl transition-all"></div>
             </div>
         </div>
     </div>
