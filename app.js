@@ -1900,19 +1900,33 @@ async function sendTestEmail() {
     }
 }
 function openTemplatePreview(templateName) {
-    const modal = document.getElementById('modal-template-preview');
-    const title = document.getElementById('preview-modal-title');
-    const img = document.getElementById('preview-modal-image');
+    document.getElementById('preview-modal-title').innerText = templateName;
+    const contentContainer = document.getElementById('preview-modal-content');
     
-    if (modal && title && img) {
-        title.textContent = templateName;
-        if (templateName === 'The Weekly Ballpark Bulletin') {
-            img.src = 'StockingStuffer.png';
-        } else {
-            img.src = 'bannerplayer.png';
-        }
-        modal.classList.remove('hidden');
-    }
+    // Temporarily load template data into the wizard state to generate the 1-to-1 HTML
+    const previousData = JSON.stringify(wizardData);
+    wizardData = {
+        blocks: [],
+        style: { ...defaultStyle },
+        settings: { ...defaultSettings }
+    };
+    
+    // Apply the requested template
+    applyTemplate(templateName);
+    
+    // Generate the exact live HTML and inject it into the modal
+    contentContainer.innerHTML = generateEmailHtml(false);
+    
+    // Restore the wizard data so we don't overwrite any ongoing campaign drafts
+    wizardData = JSON.parse(previousData);
+    
+    document.getElementById('modal-template-preview').classList.remove('hidden');
+}
+
+function editTemplate(templateName) {
+    // Loads the template into the builder for editing
+    startNewCampaignWizardWithTemplate(templateName);
+    document.getElementById('editor-title').innerText = "Editing Template: " + templateName;
 }
 
 function closeTemplatePreview() {
