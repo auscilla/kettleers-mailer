@@ -581,7 +581,7 @@ function renderSubscribers(dataToRender) {
                 <td class="py-3 md:py-5 font-bold text-[#611724]">${escapeHtml(sub.name)}</td>
                 <td class="py-3 md:py-5 text-gray-800 text-sm md:text-lg">${escapeHtml(sub.email)}</td>
                 <td class="py-3 md:py-5 text-gray-800 text-sm md:text-lg">${escapeHtml(sub.segment || 'General Fan')}</td>
-                <td class="py-3 md:py-5 text-center"><span class="bg-kettleer-green text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded tracking-wider uppercase">${escapeHtml(sub.status || 'Active')}</span></td>
+                <td class="py-3 md:py-5 text-center"><span class="${sub.status === 'Unsubscribed' ? 'bg-red-600' : 'bg-kettleer-green'} text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded tracking-wider uppercase">${escapeHtml(sub.status || 'Active')}</span></td>
                 <td class="py-3 md:py-5 text-gray-800 text-right pr-2 text-sm md:text-lg">${dateJoined}</td>
             </tr>
         `;
