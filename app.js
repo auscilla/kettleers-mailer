@@ -1287,7 +1287,7 @@ function generateEmailHtml(isLiveSend = false) {
                     <img src="${baseUrl}${settings.bannerImage || 'bannerplayer.png'}" alt="Cotuit Player" style="display: block; max-height: 170px; width: auto; max-width: 100%;">
                 </td>
                 <td width="62%" valign="middle" align="right" style="padding: 20px 25px 20px 10px;">
-                    <div style="font-family: 'Rye', serif; font-size: 34px; line-height: 1.05; text-transform: uppercase; color: #F4F1E1; letter-spacing: 2px; font-weight: bold; text-align: right;">${settings.bannerText || 'COTUIT<br>KETTLEERS'}</div>
+                    <div style="font-family: 'Rye', Georgia, 'Times New Roman', serif; font-size: 34px; line-height: 1.05; text-transform: uppercase; color: #F4F1E1; letter-spacing: 2px; font-weight: bold; text-align: right;">${settings.bannerText || 'COTUIT<br>KETTLEERS'}</div>
                 </td>
             </tr>
         </table>
@@ -1401,19 +1401,30 @@ function editCampaign(campaignId) {
     let loadedSettings = { ...defaultSettings };
 
     try {
-        if (c.body_text && c.body_text.trim().startsWith('{')) {
-            const parsed = JSON.parse(c.body_text);
-            loadedBlocks = parsed.blocks || [];
-            loadedStyle = { ...defaultStyle, ...(parsed.style || {}) };
-            loadedSettings = { ...defaultSettings, ...(parsed.settings || {}) };
-        } else if (c.body_text && c.body_text.trim().startsWith('[')) {
-            loadedBlocks = JSON.parse(c.body_text);
-        } else {
-            loadedBlocks = [{ type: 'text', heading: c.headline || c.title || 'Welcome', body: c.body_text || '' }];
+            let parsed = c.body_text;
+            if (typeof parsed === 'string') {
+                try {
+                    parsed = JSON.parse(parsed);
+                } catch (_) {
+                    parsed = null;
+                }
+            }
+
+            if (parsed && typeof parsed === 'object') {
+                if (Array.isArray(parsed)) {
+                    loadedBlocks = parsed;
+                } else {
+                    loadedBlocks = Array.isArray(parsed.blocks) ? parsed.blocks : [];
+                    if (parsed.style) loadedStyle = { ...defaultStyle, ...parsed.style };
+                    if (parsed.settings) loadedSettings = { ...defaultSettings, ...parsed.settings };
+                }
+            } else if (c.body_text) {
+                loadedBlocks = [{ type: 'text', heading: c.headline || c.title || 'Welcome', body: String(c.body_text) }];
+            }
+        } catch (e) {
+            console.error('Error loading campaign data:', e);
+            loadedBlocks = [{ type: 'text', heading: c.headline || c.title || 'Welcome', body: '' }];
         }
-    } catch (e) {
-        loadedBlocks = [{ type: 'text', heading: c.headline || c.title || 'Welcome', body: c.body_text || '' }];
-    }
 
     wizardData = {
         segments: ['all'],
@@ -1898,7 +1909,7 @@ async function saveCampaign(exitAfterSave = false) {
     let response;
     try {
         if (currentEditingCampaignId) {
-            response = await db.from('campaigns').update(payload).eq('id', currentEditingCampaignId);
+            response = await db.from('campaigns').update(payload).eq('id', currentEditingCampaignId).select();
         } else {
             response = await db.from('campaigns').insert([payload]).select();
             if (response.data && response.data.length > 0) { 
