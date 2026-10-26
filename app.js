@@ -1903,35 +1903,53 @@ function openTemplatePreview(templateName) {
     document.getElementById('preview-modal-title').innerText = templateName;
     const contentContainer = document.getElementById('preview-modal-content');
     
-    // Temporarily load template data into the wizard state to generate the 1-to-1 HTML
-    const previousData = JSON.stringify(wizardData);
+    // Safely store previous data to prevent JSON.parse errors if wizardData is empty
+    const previousData = (typeof wizardData !== 'undefined' && wizardData) ? JSON.stringify(wizardData) : null;
+    
+    // Temporarily build out the template object
     wizardData = {
         blocks: [],
-        style: { ...defaultStyle },
-        settings: { ...defaultSettings }
+        style: typeof defaultStyle !== 'undefined' ? { ...defaultStyle } : {},
+        settings: typeof defaultSettings !== 'undefined' ? { ...defaultSettings } : {}
     };
     
-    // Apply the requested template
     applyTemplate(templateName);
-    
-    // Generate the exact live HTML and inject it into the modal
     contentContainer.innerHTML = generateEmailHtml(false);
     
-    // Restore the wizard data so we don't overwrite any ongoing campaign drafts
-    wizardData = JSON.parse(previousData);
+    // Restore the user's actual data safely
+    if (previousData) {
+        wizardData = JSON.parse(previousData);
+    } else {
+        wizardData = null; 
+    }
     
     document.getElementById('modal-template-preview').classList.remove('hidden');
 }
 
 function editTemplate(templateName) {
-    // Loads the template into the builder for editing
-    startNewCampaignWizardWithTemplate(templateName);
-    document.getElementById('editor-title').innerText = "Editing Template: " + templateName;
-}
-
-function closeTemplatePreview() {
-    const modal = document.getElementById('modal-template-preview');
-    if (modal) modal.classList.add('hidden');
+    // Explicitly build the data object to bypass the broken routing function
+    wizardData = {
+        segments: ['all'],
+        title: templateName,
+        subject: '',
+        template: templateName,
+        blocks: [],
+        style: typeof defaultStyle !== 'undefined' ? { ...defaultStyle } : {},
+        settings: typeof defaultSettings !== 'undefined' ? { ...defaultSettings } : {}
+    };
+    
+    applyTemplate(templateName);
+    
+    // Force the exact correct HTML ID to unhide the editor view
+    switchTab('campaign-editor');
+    
+    // Render the builder inputs and live preview
+    if (typeof renderEditorBlocks === 'function') renderEditorBlocks();
+    if (typeof renderEmailPreview === 'function') renderEmailPreview();
+    
+    // Update the top header
+    const titleEl = document.getElementById('editor-title');
+    if (titleEl) titleEl.innerText = "Editing Template: " + templateName;
 }
 function clearAnalyticsDateFilter() {
     const startDateInput = document.getElementById('analytics-start-date');
