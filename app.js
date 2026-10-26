@@ -1642,7 +1642,10 @@ function switchTab(tabId) {
     if (window.innerWidth < 768 && sidebar) { sidebar.classList.add('hidden'); }
     if (tabId === 'dashboard' || tabId === 'campaigns') loadDashboardAndCampaigns();
     if (tabId === 'subscribers') loadSubscribers();
-    if (tabId === 'analytics') renderAnalyticsView();
+    if (tabId === 'analytics') {
+    initAnalyticsFilters();
+    renderAnalyticsView();
+}
     safeCreateIcons();
 }
 
@@ -2088,10 +2091,52 @@ async function editTemplate(templateName) {
     safeCreateIcons();
 }
 
-function clearAnalyticsDateFilter() {
-    const startDateInput = document.getElementById('analytics-start-date');
-    const endDateInput = document.getElementById('analytics-end-date');
-    if (startDateInput) startDateInput.value = '';
-    if (endDateInput) endDateInput.value = '';
+function initAnalyticsFilters() {
+    const startInput = document.getElementById('analytics-start-date');
+    const endInput = document.getElementById('analytics-end-date');
+    
+    if (startInput && endInput && !startInput.value) {
+        const today = new Date();
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(today.getDate() - 30);
+        
+        endInput.value = today.toISOString().split('T')[0];
+        startInput.value = thirtyDaysAgo.toISOString().split('T')[0];
+    }
+}
+
+function handleAnalyticsTimeframeChange() {
+    const select = document.getElementById('analytics-timeframe');
+    const startInput = document.getElementById('analytics-start-date');
+    const endInput = document.getElementById('analytics-end-date');
+    if (!select || !startInput || !endInput) return;
+
+    const val = select.value;
+    const today = new Date();
+
+    if (val === '30') {
+        const past = new Date();
+        past.setDate(today.getDate() - 30);
+        startInput.value = past.toISOString().split('T')[0];
+        endInput.value = today.toISOString().split('T')[0];
+    } else if (val === '90') {
+        const past = new Date();
+        past.setDate(today.getDate() - 90);
+        startInput.value = past.toISOString().split('T')[0];
+        endInput.value = today.toISOString().split('T')[0];
+    } else if (val === 'year') {
+        startInput.value = '2026-01-01';
+        endInput.value = '2026-12-31';
+    } else if (val === 'all') {
+        startInput.value = '2020-01-01';
+        endInput.value = today.toISOString().split('T')[0];
+    }
+
+    renderAnalyticsView();
+}
+
+function handleAnalyticsCustomDateChange() {
+    const select = document.getElementById('analytics-timeframe');
+    if (select) select.value = 'custom';
     renderAnalyticsView();
 }
