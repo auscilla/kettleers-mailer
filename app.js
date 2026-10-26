@@ -1831,25 +1831,34 @@ async function saveCampaign(exitAfterSave = false) {
     if (statusText) statusText.textContent = 'Saving...';
     if (saveBtn) saveBtn.disabled = true;
 
-    // Intercept: If editing a template, save to local storage instead of campaigns database
+    // Intercept: If editing a template, persist directly to Supabase templates table
     if (isEditingTemplate && currentEditingTemplateName) {
-        const templateData = {
-            blocks: wizardData.blocks || [],
-            style: wizardData.style || { ...defaultStyle },
-            settings: wizardData.settings || { ...defaultSettings }
+        const templatePayload = {
+            name: currentEditingTemplateName,
+            body_text: JSON.stringify({
+                blocks: wizardData.blocks || [],
+                style: wizardData.style || defaultStyle,
+                settings: wizardData.settings || defaultSettings
+            }),
+            updated_at: new Date().toISOString()
         };
-        try {
-            localStorage.setItem('kettleers_template_' + currentEditingTemplateName, JSON.stringify(templateData));
-        } catch (err) {
-            console.error('LocalStorage save error:', err);
-        }
-        
-        if (statusText) statusText.textContent = 'Template Saved';
+
+        const { error } = await db.from('templates').upsert(templatePayload, { onConflict: 'name' });
+
         if (saveBtn) saveBtn.disabled = false;
+
+        if (error) {
+            console.error('Error saving template to Supabase:', error);
+            if (statusText) statusText.textContent = 'Save failed';
+            alert('Could not save template to database: ' + error.message);
+            return;
+        }
+
+        if (statusText) statusText.textContent = 'Template Saved';
         if (exitAfterSave) {
             switchTab('templates');
         } else {
-            alert('Template "' + currentEditingTemplateName + '" saved successfully!');
+            alert('Template "' + currentEditingTemplateName + '" saved to database!');
         }
         return;
     }
@@ -1974,37 +1983,40 @@ async function sendTestEmail() {
         alert('Error sending email: ' + (error.message || 'Check console'));
     }
 }
-function openTemplatePreview(templateName) {
+async function openTemplatePreview(templateName) {
     const titleEl = document.getElementById('preview-modal-title');
     if (titleEl) titleEl.innerText = templateName;
     const contentContainer = document.getElementById('preview-modal-content');
     if (!contentContainer) return;
     
-    // Safely store previous state
     const previousData = (typeof wizardData !== 'undefined' && wizardData) ? JSON.stringify(wizardData) : null;
     
-    // Check localStorage first for any saved edits
-    const savedCustom = localStorage.getItem('kettleers_template_' + templateName);
-    if (savedCustom) {
-        try {
-            const parsed = JSON.parse(savedCustom);
-            wizardData = {
-                blocks: parsed.blocks || [],
-                style: parsed.style ? { ...defaultStyle, ...parsed.style } : { ...defaultStyle },
-                settings: parsed.settings ? { ...defaultSettings, ...parsed.settings } : { ...defaultSettings }
-            };
-        } catch (e) {
-            wizardData = { blocks: [], style: { ...defaultStyle }, settings: { ...defaultSettings } };
-            selectWizardTemplate(templateName);
+    wizardData = {
+        blocks: [],
+        style: { ...defaultStyle },
+        settings: { ...defaultSettings }
+    };
+
+    let loaded = false;
+    try {
+        const { data } = await db.from('templates').select('body_text').eq('name', templateName).maybeSingle();
+        if (data && data.body_text) {
+            const parsed = JSON.parse(data.body_text);
+            wizardData.blocks = parsed.blocks || [];
+            if (parsed.style) wizardData.style = { ...defaultStyle, ...parsed.style };
+            if (parsed.settings) wizardData.settings = { ...defaultSettings, ...parsed.settings };
+            loaded = true;
         }
-    } else {
-        wizardData = { blocks: [], style: { ...defaultStyle }, settings: { ...defaultSettings } };
+    } catch (e) {
+        console.warn('Preview fallback');
+    }
+
+    if (!loaded) {
         selectWizardTemplate(templateName);
     }
-    
+
     contentContainer.innerHTML = generateEmailHtml(false);
     
-    // Restore previous state
     if (previousData) {
         wizardData = JSON.parse(previousData);
     }
@@ -2019,51 +2031,52 @@ function closeTemplatePreview() {
     if (modal) modal.classList.add('hidden');
 }
 
-function editTemplate(templateName) {
+async function editTemplate(templateName) {
     isEditingTemplate = true;
     currentEditingTemplateName = templateName;
 
-    // Dummy values to satisfy any lingering checks
     wizardData = {
         segments: ['all'],
         title: templateName,
         subject: 'Template Preview',
         template: templateName,
         blocks: [],
-        style: typeof defaultStyle !== 'undefined' ? { ...defaultStyle } : {},
-        settings: typeof defaultSettings !== 'undefined' ? { ...defaultSettings } : {}
+        style: { ...defaultStyle },
+        settings: { ...defaultSettings }
     };
 
-    // Load from localStorage if a saved customized version exists
-    const savedCustom = localStorage.getItem('kettleers_template_' + templateName);
-    if (savedCustom) {
-        try {
-            const parsed = JSON.parse(savedCustom);
+    // Attempt to load from Supabase database first
+    let loadedFromDb = false;
+    try {
+        const { data, error } = await db.from('templates').select('body_text').eq('name', templateName).maybeSingle();
+        if (data && data.body_text) {
+            const parsed = JSON.parse(data.body_text);
             wizardData.blocks = parsed.blocks || [];
             if (parsed.style) wizardData.style = { ...defaultStyle, ...parsed.style };
             if (parsed.settings) wizardData.settings = { ...defaultSettings, ...parsed.settings };
-        } catch(e) {
-            console.error('Error parsing template for editor');
+            loadedFromDb = true;
         }
-    } else {
+    } catch (e) {
+        console.warn('Could not fetch template from database, checking fallback...');
+    }
+
+    // Fall back to default template layout if not found in database
+    if (!loadedFromDb) {
         selectWizardTemplate(templateName);
     }
 
-    // Switch to editor view
     switchTab('campaign-editor');
-    
-    // Jump directly to the design pane
     goToWizardStep('design');
 
-    // Force hide the wizard steps footer
+    // Hide bottom wizard steps footer
     const footer = document.querySelector('#view-campaign-editor .sticky.bottom-0');
     if (footer) footer.classList.add('hidden-view');
 
-    // Update top header bar for pure template editing
+    // Set editor header
     const titleEl = document.getElementById('editor-title');
     if (titleEl) titleEl.innerText = "Editing Template: " + templateName;
 
-    // Adjust Back button to return to Templates instead of Campaigns
+    // Adjust Back button to return to Templates
     const backBtn = document.querySelector('#view-campaign-editor header button, #view-campaign-editor [onclick*="switchTab(\'campaigns\')"]');
     if (backBtn) {
         backBtn.setAttribute('onclick', "switchTab('templates')");
