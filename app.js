@@ -1913,7 +1913,7 @@ function openTemplatePreview(templateName) {
         settings: typeof defaultSettings !== 'undefined' ? { ...defaultSettings } : {}
     };
     
-    applyTemplate(templateName);
+    selectWizardTemplate(templateName);
     contentContainer.innerHTML = generateEmailHtml(false);
     
     // Restore the user's actual data safely
@@ -1924,6 +1924,11 @@ function openTemplatePreview(templateName) {
     }
     
     document.getElementById('modal-template-preview').classList.remove('hidden');
+}
+
+function closeTemplatePreview() {
+    const modal = document.getElementById('modal-template-preview');
+    if (modal) modal.classList.add('hidden');
 }
 
 function editTemplate(templateName) {
@@ -1938,7 +1943,7 @@ function editTemplate(templateName) {
         settings: typeof defaultSettings !== 'undefined' ? { ...defaultSettings } : {}
     };
     
-    applyTemplate(templateName);
+    selectWizardTemplate(templateName);
     
     // Force the exact correct HTML ID to unhide the editor view
     switchTab('campaign-editor');
@@ -1946,6 +1951,11 @@ function editTemplate(templateName) {
     // Render the builder inputs and live preview
     if (typeof renderEditorBlocks === 'function') renderEditorBlocks();
     if (typeof renderEmailPreview === 'function') renderEmailPreview();
+    
+    // Update the top header
+    const titleEl = document.getElementById('editor-title');
+    if (titleEl) titleEl.innerText = "Editing Template: " + templateName;
+}
     
     // Update the top header
     const titleEl = document.getElementById('editor-title');
