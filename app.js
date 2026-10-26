@@ -1956,11 +1956,7 @@ function editTemplate(templateName) {
     const titleEl = document.getElementById('editor-title');
     if (titleEl) titleEl.innerText = "Editing Template: " + templateName;
 }
-    
-    // Update the top header
-    const titleEl = document.getElementById('editor-title');
-    if (titleEl) titleEl.innerText = "Editing Template: " + templateName;
-}
+
 function clearAnalyticsDateFilter() {
     const startDateInput = document.getElementById('analytics-start-date');
     const endDateInput = document.getElementById('analytics-end-date');
