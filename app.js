@@ -1439,6 +1439,8 @@ function editCampaign(campaignId) {
     syncWizardUI();
     switchTab('campaign-editor');
     goToWizardStep('design');
+    renderEditorBlocks();
+    renderEmailPreview();
 }
 
 function selectWizardTemplate(templateName) {
