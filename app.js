@@ -1433,8 +1433,8 @@ function editCampaign(campaignId) {
 
     wizardData = {
         segments: ['all'],
-        title: c.title || '',
-        subject: c.subject || '',
+        title: c.title || c.name || '',
+        subject: c.subject || c.subject_line || '',
         template: c.template_name || 'Blank Canvas',
         blocks: loadedBlocks,
         style: loadedStyle,
@@ -1445,11 +1445,19 @@ function editCampaign(campaignId) {
     switchTab('campaign-editor');
     goToWizardStep('recipients');
 
-    // Populate the setup inputs with our loaded campaign data
-    const titleInput = document.getElementById('wizard-campaign-title');
-    const subjectInput = document.getElementById('wizard-email-subject');
-    if (titleInput) titleInput.value = c.title || '';
-    if (subjectInput) subjectInput.value = c.subject || '';
+    // Populate setup inputs with loaded campaign data
+        const campaignTitle = c.title || c.name || '';
+        const campaignSubject = c.subject || c.subject_line || '';
+
+        const syncSetupInputs = () => {
+            const titleInput = document.getElementById('wizard-campaign-title') || document.querySelector('input[placeholder*="Harwich"]');
+            const subjectInput = document.getElementById('wizard-email-subject') || document.querySelector('input[placeholder*="Holiday Special"]');
+            if (titleInput && campaignTitle) titleInput.value = campaignTitle;
+            if (subjectInput && campaignSubject) subjectInput.value = campaignSubject;
+        };
+
+        syncSetupInputs();
+        setTimeout(syncSetupInputs, 150);
 
     // Pre-render the blocks and preview so they are ready when you step into Design
     renderEditorBlocks();
