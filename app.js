@@ -1359,6 +1359,18 @@ function startNewCampaignWizard() {
     syncWizardUI();
     switchTab('campaign-editor');
     goToWizardStep('recipients');
+    // Remove the "Continue with Existing Design" banner and un-dim template cards
+    const existingBanner = document.getElementById('continue-existing-design-banner');
+    if (existingBanner) existingBanner.remove();
+    const templateGrid = document.querySelector('#wizard-templates-grid') || document.querySelector('#wizard-step-template .grid');
+    if (templateGrid) templateGrid.style.opacity = '1';
+
+    // Reset the final dispatch button back to its initial clickable state
+    const dispatchBtn = document.getElementById('confirm-dispatch-btn');
+    if (dispatchBtn) {
+        dispatchBtn.disabled = false;
+        dispatchBtn.textContent = 'Send Campaign Now';
+    }
 }
 
 function startNewCampaignWizardWithTemplate(templateName) {
