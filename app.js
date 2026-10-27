@@ -914,9 +914,9 @@ function renderEditorBlocks() {
         } else if (block.type === 'image') {
             innerInputs = `
                 <div class="mb-3">
-                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Image URL / Filename</label>
-                    <input type="text" value="${escapeHtml(block.image_url || '')}" oninput="updateBlock(${i}, 'image_url', this.value)" placeholder="StockingStuffer.png or https://..." class="w-full bg-white border border-gray-300 rounded p-2 text-sm focus:border-[#4f111c] focus:outline-none">
-                </div>
+    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Upload Image</label>
+    <input type="file" accept="image/*" onchange="handleImageUpload(event, ${i}, 'image_url')" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs cursor-pointer">
+</div>
                 <div class="mb-3">
                     <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Link URL (Optional)</label>
                     <input type="text" value="${escapeHtml(block.link_url || '')}" oninput="updateBlock(${i}, 'link_url', this.value)" placeholder="https://kettleers.org" class="w-full bg-white border border-gray-300 rounded p-2 text-sm focus:border-[#4f111c] focus:outline-none">
@@ -1034,10 +1034,6 @@ function renderEditorBlocks() {
                 <div class="mb-2">
                     <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Video URL (YouTube/Vimeo)</label>
                     <input type="text" value="${escapeHtml(block.video_url || '')}" oninput="updateBlock(${i}, 'video_url', this.value)" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Video Thumbnail Image</label>
-                    <input type="text" value="${escapeHtml(block.thumbnail_url || '')}" oninput="updateBlock(${i}, 'thumbnail_url', this.value)" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
                 </div>
             `;
         } else if (block.type === 'promo') {
@@ -1281,7 +1277,7 @@ function generateEmailHtml(isLiveSend = false) {
     ` : '';
 
     const bannerHtml = settings.showBanner !== false ? `
-        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: ${style.headerBg};">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" class="responsive-header" style="background-color: ${style.headerBg};">
             <tr>
                 <td width="38%" valign="bottom" style="padding: 12px 0 0 15px; line-height: 0;">
                     <img src="${baseUrl}${settings.bannerImage || 'bannerplayer.png'}" alt="Cotuit Player" style="display: block; max-height: 170px; width: auto; max-width: 100%;">
@@ -1300,6 +1296,11 @@ function generateEmailHtml(isLiveSend = false) {
         <meta charset="utf-8">
         <style type="text/css">
             @import url('https://fonts.googleapis.com/css2?family=Rye&family=Zilla+Slab:wght@400;700&display=swap');
+            @media only screen and (max-width: 600px) {
+                .responsive-header td { display: block !important; width: 100% !important; text-align: center !important; padding: 10px !important; }
+                .responsive-header img { margin: 0 auto !important; max-height: 160px !important; }
+                .responsive-header div { text-align: center !important; font-size: 32px !important; }
+            }
         </style>
     </head>
             ${preheaderHtml}
@@ -2315,4 +2316,24 @@ function undoLastBlockAction() {
     renderEditorBlocks();
     renderEmailPreview();
     safeCreateIcons();
+}
+async function handleImageUpload(event, blockIndex, field) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Optional: disable input during upload
+    event.target.disabled = true;
+    
+    const fileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '')}`;
+    const { data, error } = await db.storage.from('campaign-images').upload(fileName, file);
+    
+    if (error) {
+        console.error('Upload failed:', error);
+        alert('Failed to upload image.');
+        event.target.disabled = false;
+        return;
+    }
+    
+    const { data: publicData } = db.storage.from('campaign-images').getPublicUrl(fileName);
+    updateBlock(blockIndex, field, publicData.publicUrl);
 }
