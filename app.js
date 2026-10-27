@@ -1301,9 +1301,9 @@ function generateEmailHtml(isLiveSend = false) {
         <style type="text/css">
             @import url('https://fonts.googleapis.com/css2?family=Rye&family=Zilla+Slab:wght@400;700&display=swap');
             @media only screen and (max-width: 600px) {
-                .responsive-header td { display: block !important; width: 100% !important; text-align: center !important; padding: 10px !important; }
-                .responsive-header img { margin: 0 auto !important; max-height: 160px !important; }
-                .responsive-header div { text-align: center !important; font-size: 32px !important; }
+                .responsive-header td { padding: 15px 10px !important; }
+                .responsive-header img { max-height: 130px !important; width: auto !important; }
+                .responsive-header div { font-size: 24px !important; letter-spacing: 1px !important; }
             }
         </style>
     </head>
