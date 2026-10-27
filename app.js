@@ -1225,9 +1225,13 @@ function generateEmailHtml(isLiveSend = false) {
                     return `<div style="padding: 10px 15px;">${b.html_code || ''}</div>`;
 
                 case 'video':
-                    return `
-                    <div style="padding: 18px 25px; text-align: center;">
-                        <div style="position: relative; max-width: 560px; margin: 0 auto; background: #000; border-radius: 8px; overflow: hidden;">
+            const ytMatch = (b.video_url || '').match(/(?:v=|youtu\.be\/|\/embed\/)([0-9A-Za-z_-]{11})/);
+            const ytId = ytMatch ? ytMatch[1] : '';
+            const thumbSrc = ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : (b.thumbnail_url || 'bannerplayer.png');
+            
+            return `
+            <div style="padding: 18px 25px; text-align: center;">
+                <div style="position: relative; max-width: 560px; margin: 0 auto; background: #000; border-radius: 8px; overflow: hidden;">
                             <a href="${b.video_url || 'https://youtube.com'}" target="_blank" style="display: block; text-decoration: none;">
                                 <img src="${baseUrl}${b.thumbnail_url || 'bannerplayer.png'}" alt="Video" style="width: 100%; height: auto; display: block; opacity: 0.85;">
                                 <div style="padding: 12px; background-color: #1A2B4C; color: #F4F1E1; font-weight: bold; font-size: 13px; text-align: center; text-transform: uppercase; letter-spacing: 1px;">
