@@ -190,47 +190,67 @@ function toggleAudienceSegment(clickedSegment) {
 }
 
 function renderAudienceCardsState() {
-    const isAll = wizardData.segments && wizardData.segments.includes('all');
-    const summaryBadge = document.getElementById('audience-selection-summary');
+  const isAll = wizardData.segments && wizardData.segments.includes('all');
+  const summaryBadge = document.getElementById('audience-selection-summary');
+  const activeSubs = (allSubscribers || []).filter(s => (s.status || '').toLowerCase() === 'active');
 
-    const updateCard = (id, checkId, isSelected) => {
-        const card = document.getElementById(id);
-        const check = document.getElementById(checkId);
-        if (card) {
-            if (isSelected) {
-                card.classList.remove('border-gray-200', 'bg-white');
-                card.classList.add('border-[#611724]', 'bg-[#F4F1E1]/40');
-            } else {
-                card.classList.remove('border-[#611724]', 'bg-[#F4F1E1]/40');
-                card.classList.add('border-gray-200', 'bg-white');
-            }
-        }
-        if (check) {
-            if (isSelected) {
-                check.className = 'w-4 h-4 rounded border border-[#611724] bg-[#611724] text-white flex items-center justify-center text-[10px] font-bold';
-            } else {
-                check.className = 'w-4 h-4 rounded border border-gray-400 bg-white text-transparent flex items-center justify-center text-[10px] font-bold';
-            }
-        }
-    };
-
-    updateCard('segment-card-all', 'segment-check-all', isAll);
-
-    ALL_AUDIENCE_SEGMENTS.forEach(seg => {
-        const isSelected = isAll || (wizardData.segments && wizardData.segments.includes(seg));
-        updateCard(`segment-card-${seg}`, `segment-check-${seg}`, isSelected);
-    });
-
-    if (summaryBadge) {
-        if (isAll) {
-            summaryBadge.textContent = `All Active Subscribers (${allSubscribers.length} fans)`;
-        } else if (!wizardData.segments || wizardData.segments.length === 0) {
-            summaryBadge.textContent = `0 Groups Selected`;
-        } else {
-            const count = allSubscribers.filter(s => wizardData.segments.includes(s.segment)).length;
-            summaryBadge.textContent = `${wizardData.segments.length} Groups Selected (${count} fans)`;
-        }
+  const updateCard = (id, checkId, isSelected) => {
+    const card = document.getElementById(id);
+    const check = document.getElementById(checkId);
+    if (card) {
+      if (isSelected) {
+        card.classList.remove('border-gray-200', 'bg-white');
+        card.classList.add('border-[#611724]', 'bg-[#F4F1E1]/40');
+      } else {
+        card.classList.remove('border-[#611724]', 'bg-[#F4F1E1]/40');
+        card.classList.add('border-gray-200', 'bg-white');
+      }
     }
+    if (check) {
+      if (isSelected) {
+        check.className = 'w-4 h-4 rounded border border-[#611724] bg-[#611724] text-white flex items-center justify-center text-[10px] font-bold';
+      } else {
+        check.className = 'w-4 h-4 rounded border border-gray-400 bg-white text-transparent flex items-center justify-center text-[10px] font-bold';
+      }
+    }
+  };
+
+  updateCard('segment-card-all', 'segment-check-all', isAll);
+
+  // Update count badge on "All Active Subscribers" card
+  const allCardBadge = document.querySelector('#segment-card-all .text-xs, #segment-card-all span[class*="fans"], #segment-card-all span.font-bold');
+  if (allCardBadge) allCardBadge.textContent = `${activeSubs.length} fans`;
+
+  ALL_AUDIENCE_SEGMENTS.forEach(seg => {
+    const isSelected = isAll || (wizardData.segments && wizardData.segments.includes(seg));
+    updateCard(`segment-card-${seg}`, `segment-check-${seg}`, isSelected);
+
+    // Update count badge on each specific segment card using active subscribers only
+    const segCardBadge = document.querySelector(`#segment-card-${seg} .text-xs, #segment-card-${seg} span[class*="fans"], #segment-card-${seg} span.font-bold`);
+    if (segCardBadge) {
+      const normalizedSeg = seg.toLowerCase().trim().replace(/s$/, '');
+      const count = activeSubs.filter(s => {
+        const subSeg = (s.segment || '').toLowerCase().trim().replace(/s$/, '');
+        return normalizedSeg === subSeg || normalizedSeg.includes(subSeg) || subSeg.includes(normalizedSeg);
+      }).length;
+      segCardBadge.textContent = `${count} fans`;
+    }
+  });
+
+  if (summaryBadge) {
+    if (isAll) {
+      summaryBadge.textContent = `All Active Subscribers (${activeSubs.length} fans)`;
+    } else if (!wizardData.segments || wizardData.segments.length === 0) {
+      summaryBadge.textContent = '0 Groups Selected';
+    } else {
+      const normalizedTargets = wizardData.segments.map(s => s.toLowerCase().trim().replace(/s$/, ''));
+      const count = activeSubs.filter(s => {
+        const subSeg = (s.segment || '').toLowerCase().trim().replace(/s$/, '');
+        return normalizedTargets.some(t => t === subSeg || t.includes(subSeg) || subSeg.includes(t));
+      }).length;
+      summaryBadge.textContent = `${wizardData.segments.length} Groups Selected (${count} fans)`;
+    }
+  }
 }
 
 // -------------------------------------------------------------
@@ -1595,13 +1615,18 @@ function populateConfirmStep() {
     syncSetupFields();
     
     const segments = wizardData.segments || ['all'];
-    let audienceName = 'All Active Subscribers';
-    let audienceCount = allSubscribers.length;
+  let audienceName = 'All Active Subscribers';
+  const activeSubs = (allSubscribers || []).filter(s => (s.status || '').toLowerCase() === 'active');
+  let audienceCount = activeSubs.length;
 
-    if (!segments.includes('all')) {
-        audienceName = segments.join(', ');
-        audienceCount = allSubscribers.filter(s => segments.includes(s.segment)).length;
-    }
+  if (!segments.includes('all')) {
+    audienceName = segments.join(', ');
+    const normalizedTargets = segments.map(seg => seg.toLowerCase().trim().replace(/s$/, ''));
+    audienceCount = activeSubs.filter(s => {
+      const subSeg = (s.segment || '').toLowerCase().trim().replace(/s$/, '');
+      return normalizedTargets.some(t => t === subSeg || t.includes(subSeg) || subSeg.includes(t));
+    }).length;
+  }
     
     const audEl = document.getElementById('confirm-review-audience');
     const subEl = document.getElementById('confirm-review-subject');
