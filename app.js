@@ -217,23 +217,24 @@ function renderAudienceCardsState() {
 
   updateCard('segment-card-all', 'segment-check-all', isAll);
 
-  // Update count badge on "All Active Subscribers" card
-  const allCardBadge = document.querySelector('#segment-card-all .text-xs, #segment-card-all span[class*="fans"], #segment-card-all span.font-bold');
-  if (allCardBadge) allCardBadge.textContent = `${activeSubs.length} fans`;
+  // Target the pill badge on "All Active Subscribers" by its exact HTML ID
+  const allCountBadge = document.getElementById('segment-count-all');
+  if (allCountBadge) allCountBadge.textContent = `${activeSubs.length} fans`;
 
   ALL_AUDIENCE_SEGMENTS.forEach(seg => {
     const isSelected = isAll || (wizardData.segments && wizardData.segments.includes(seg));
     updateCard(`segment-card-${seg}`, `segment-check-${seg}`, isSelected);
 
-    // Update count badge on each specific segment card using active subscribers only
-    const segCardBadge = document.querySelector(`#segment-card-${seg} .text-xs, #segment-card-${seg} span[class*="fans"], #segment-card-${seg} span.font-bold`);
-    if (segCardBadge) {
+    // Target the pill badge on each individual card by ID or selector
+    const segCountBadge = document.getElementById(`segment-count-${seg}`) || 
+                          document.querySelector(`#segment-card-${CSS.escape(seg)} [id^="segment-count"]`);
+    if (segCountBadge) {
       const normalizedSeg = seg.toLowerCase().trim().replace(/s$/, '');
       const count = activeSubs.filter(s => {
         const subSeg = (s.segment || '').toLowerCase().trim().replace(/s$/, '');
         return normalizedSeg === subSeg || normalizedSeg.includes(subSeg) || subSeg.includes(normalizedSeg);
       }).length;
-      segCardBadge.textContent = `${count} fans`;
+      segCountBadge.textContent = `${count} fans`;
     }
   });
 
