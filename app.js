@@ -1404,7 +1404,7 @@ function editCampaign(campaignId) {
     let loadedBlocks = [];
     let loadedStyle = { ...defaultStyle };
     let loadedSettings = { ...defaultSettings };
-
+    let loadedSegments = ['all'];
     try {
             let parsed = c.body_text;
             if (typeof parsed === 'string') {
@@ -1422,6 +1422,7 @@ function editCampaign(campaignId) {
                     loadedBlocks = Array.isArray(parsed.blocks) ? parsed.blocks : [];
                     if (parsed.style) loadedStyle = { ...defaultStyle, ...parsed.style };
                     if (parsed.settings) loadedSettings = { ...defaultSettings, ...parsed.settings };
+                    if (parsed.segments && Array.isArray(parsed.segments)) loadedSegments = parsed.segments;
                 }
             } else if (c.body_text) {
                 loadedBlocks = [{ type: 'text', heading: c.headline || c.title || 'Welcome', body: String(c.body_text) }];
@@ -1432,7 +1433,7 @@ function editCampaign(campaignId) {
         }
 
     wizardData = {
-        segments: ['all'],
+        segments: loadedSegments,
         title: c.title || c.name || '',
         subject: c.subject || c.subject_line || '',
         template: c.template_name || 'Blank Canvas',
@@ -1444,6 +1445,16 @@ function editCampaign(campaignId) {
     currentWizardStepIndex = 0;
     switchTab('campaign-editor');
     goToWizardStep('recipients');
+    setTimeout(() => {
+            document.querySelectorAll('[data-segment]').forEach(el => {
+                const seg = el.getAttribute('data-segment');
+                const isSelected = loadedSegments.includes(seg) || (loadedSegments.includes('all') && seg === 'all');
+                el.classList.toggle('border-[#6a1528]', isSelected);
+                el.classList.toggle('bg-[#fcf8f2]', isSelected);
+                const check = el.querySelector('svg, i, input[type="checkbox"]');
+                if (check && check.type === 'checkbox') check.checked = isSelected;
+            });
+        }, 100);
 
     // Populate setup inputs with loaded campaign data
         const campaignTitle = c.title || c.name || '';
@@ -1462,13 +1473,44 @@ function editCampaign(campaignId) {
     // Pre-render the blocks and preview so they are ready when you step into Design
     renderEditorBlocks();
     renderEmailPreview();
+    setTimeout(injectExistingDesignOption, 150);
 }
+function injectExistingDesignOption() {
+    const templateContainer = document.querySelector('#wizard-step-template, [data-step="template"]') || document.querySelector('.template-selection-container');
+    const existingBanner = document.getElementById('continue-existing-design-banner');
+    if (existingBanner) existingBanner.remove();
 
-function selectWizardTemplate(templateName) {
-    wizardData.template = templateName;
     if (currentEditingCampaignId && wizardData.blocks && wizardData.blocks.length > 0) {
+        const grid = document.querySelector('#wizard-templates-grid') || (templateContainer ? templateContainer.querySelector('.grid') : null);
+        
+        const banner = document.createElement('div');
+        banner.id = 'continue-existing-design-banner';
+        banner.className = 'w-full mb-6 p-4 rounded-xl border-2 border-[#1A2B4C] bg-[#F4F1E1] flex items-center justify-between shadow-sm cursor-pointer hover:bg-[#eae5d0] transition';
+        banner.innerHTML = `
+            <div>
+                <h4 class="font-bold text-[#1A2B4C] text-lg">Continue with Existing Design</h4>
+                <p class="text-sm text-gray-600">Keep the layout, blocks, and content already saved for this campaign.</p>
+            </div>
+            <button type="button" class="px-5 py-2.5 bg-[#1A2B4C] text-white font-bold rounded-lg text-sm hover:opacity-95">
+                Use Current Design &rarr;
+            </button>
+        `;
+        banner.onclick = () => selectWizardTemplate('__KEEP_EXISTING__');
+
+        if (grid) {
+            grid.parentElement.insertBefore(banner, grid);
+            grid.style.opacity = '0.55';
+        } else if (templateContainer) {
+            templateContainer.prepend(banner);
+        }
+    }
+}
+function selectWizardTemplate(templateName) {
+    if (templateName === '__KEEP_EXISTING__') {
+        goToWizardStep('design');
         return;
     }
+    wizardData.template = templateName;
     
     // Check for saved custom template in LocalStorage first
     const savedCustom = localStorage.getItem('kettleers_template_' + templateName);
@@ -1923,10 +1965,11 @@ async function saveCampaign(exitAfterSave = false) {
         subject: (wizardData.subject || '').trim() || 'No Subject',
         headline: firstHeadline,
         body_text: JSON.stringify({
-            blocks: wizardData.blocks || [],
-            style: wizardData.style || defaultStyle,
-            settings: wizardData.settings || defaultSettings
-        }), 
+                blocks: wizardData.blocks || [],
+                style: wizardData.style || defaultStyle,
+                settings: wizardData.settings || defaultSettings,
+                segments: wizardData.segments || ['all']
+            }), 
         template_name: wizardData.template || 'Blank Canvas',
         status: 'Draft',
         html_content: generateEmailHtml(true)
