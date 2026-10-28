@@ -2064,6 +2064,7 @@ async function dispatchCampaignBlast() {
     try {
         const { data, error } = await db.functions.invoke('send-campaign', {
             body: { 
+                campaign_id: currentEditingCampaignId,
                 subject, 
                 html_content, 
                 is_test: false, 
