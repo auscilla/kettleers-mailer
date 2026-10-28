@@ -86,6 +86,7 @@ if (db) {
             try { initDashboardFilters(); } catch (e) { console.warn(e); }
             try { loadSubscribers(); } catch (e) { console.warn(e); }
             try { loadDashboardAndCampaigns(); } catch (e) { console.warn(e); }
+            try { loadTemplateBadgeDates(); } catch (e) { console.warn(e); }
         } else {
             setViewAuthenticated(false);
         }
@@ -1773,6 +1774,7 @@ function switchTab(tabId) {
     if (window.innerWidth < 768 && sidebar) { sidebar.classList.add('hidden'); }
     if (tabId === 'dashboard' || tabId === 'campaigns') loadDashboardAndCampaigns();
     if (tabId === 'subscribers') loadSubscribers();
+    if (tabId === 'templates') loadTemplateBadgeDates();
     if (tabId === 'analytics') {
         initAnalyticsFilters();
         renderAnalyticsView();
@@ -2006,7 +2008,28 @@ async function saveCampaign(exitAfterSave = false) {
         }
         return;
     }
-    
+async function loadTemplateBadgeDates() {
+  try {
+    const { data, error } = await db.from('templates').select('name, updated_at');
+    if (error || !data) return;
+
+    data.forEach(tpl => {
+      if (!tpl.updated_at) return;
+      const d = new Date(tpl.updated_at);
+      const dateStr = `Updated ${d.toLocaleString('en-US', { month: 'short' })} ${d.getFullYear()}`;
+
+      if (tpl.name && tpl.name.includes("Bulletin")) {
+        const b = document.getElementById("template-date-bulletin");
+        if (b) b.textContent = dateStr;
+      } else if (tpl.name && tpl.name.includes("Gazette")) {
+        const g = document.getElementById("template-date-gazette");
+        if (g) g.textContent = dateStr;
+      }
+    });
+  } catch (err) {
+    console.warn("Could not load template dates:", err);
+  }
+}
     let firstHeadline = 'Kettleers Broadcast';
     if (wizardData.blocks && wizardData.blocks.length > 0) {
         const textBlock = wizardData.blocks.find(b => b.type === 'text') || wizardData.blocks[0];
