@@ -1988,7 +1988,16 @@ async function saveCampaign(exitAfterSave = false) {
             alert('Could not save template to database: ' + error.message);
             return;
         }
-
+// Update template badge in the UI
+      const now = new Date();
+      const dateStr = `Updated ${now.toLocaleString('en-US', { month: 'short' })} ${now.getFullYear()}`;
+      if (currentEditingTemplateName.includes("Bulletin")) {
+        const b = document.getElementById("template-date-bulletin");
+        if (b) b.textContent = dateStr;
+      } else if (currentEditingTemplateName.includes("Gazette")) {
+        const g = document.getElementById("template-date-gazette");
+        if (g) g.textContent = dateStr;
+      }
         if (statusText) statusText.textContent = 'Template Saved';
         if (exitAfterSave) {
             switchTab('templates');
