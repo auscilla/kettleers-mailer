@@ -2008,28 +2008,6 @@ async function saveCampaign(exitAfterSave = false) {
         }
         return;
     }
-async function loadTemplateBadgeDates() {
-  try {
-    const { data, error } = await db.from('templates').select('name, updated_at');
-    if (error || !data) return;
-
-    data.forEach(tpl => {
-      if (!tpl.updated_at) return;
-      const d = new Date(tpl.updated_at);
-      const dateStr = `Updated ${d.toLocaleString('en-US', { month: 'short' })} ${d.getFullYear()}`;
-
-      if (tpl.name && tpl.name.includes("Bulletin")) {
-        const b = document.getElementById("template-date-bulletin");
-        if (b) b.textContent = dateStr;
-      } else if (tpl.name && tpl.name.includes("Gazette")) {
-        const g = document.getElementById("template-date-gazette");
-        if (g) g.textContent = dateStr;
-      }
-    });
-  } catch (err) {
-    console.warn("Could not load template dates:", err);
-  }
-}
     let firstHeadline = 'Kettleers Broadcast';
     if (wizardData.blocks && wizardData.blocks.length > 0) {
         const textBlock = wizardData.blocks.find(b => b.type === 'text') || wizardData.blocks[0];
@@ -2468,4 +2446,26 @@ async function handleImageUpload(event, blockIndex, field) {
     
     const { data: publicData } = db.storage.from('campaign-images').getPublicUrl(fileName);
     updateBlock(blockIndex, field, publicData.publicUrl);
+}
+async function loadTemplateBadgeDates() {
+  try {
+    const { data, error } = await db.from('templates').select('name, updated_at');
+    if (error || !data) return;
+
+    data.forEach(tpl => {
+      if (!tpl.updated_at) return;
+      const d = new Date(tpl.updated_at);
+      const dateStr = `Updated ${d.toLocaleString('en-US', { month: 'short' })} ${d.getFullYear()}`;
+
+      if (tpl.name && tpl.name.includes("Bulletin")) {
+        const b = document.getElementById("template-date-bulletin");
+        if (b) b.textContent = dateStr;
+      } else if (tpl.name && tpl.name.includes("Gazette")) {
+        const g = document.getElementById("template-date-gazette");
+        if (g) g.textContent = dateStr;
+      }
+    });
+  } catch (err) {
+    console.warn("Could not load template dates:", err);
+  }
 }
