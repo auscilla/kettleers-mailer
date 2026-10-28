@@ -951,13 +951,15 @@ function renderEditorBlocks() {
             innerInputs = `
                 <div class="p-2 border border-gray-200 rounded mb-3 bg-gray-50">
                     <label class="block text-[10px] font-bold uppercase text-gray-700 mb-1">Left Image</label>
-                    <input type="text" value="${escapeHtml(block.image1_url || '')}" oninput="updateBlock(${i}, 'image1_url', this.value)" placeholder="Image 1 URL" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs mb-1">
-                    <input type="text" value="${escapeHtml(block.link1_url || '')}" oninput="updateBlock(${i}, 'link1_url', this.value)" placeholder="Click Link 1" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
+                    <input type="file" accept="image/*" onchange="handleImageUpload(event, ${i}, 'image1_url')" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs cursor-pointer mb-2">
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Destination URL</label>
+                    <input type="text" value="${escapeHtml(block.link1_url || '')}" oninput="updateBlock(${i}, 'link1_url', this.value)" placeholder="https://kettleers.org" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
                 </div>
                 <div class="p-2 border border-gray-200 rounded bg-gray-50">
                     <label class="block text-[10px] font-bold uppercase text-gray-700 mb-1">Right Image</label>
-                    <input type="text" value="${escapeHtml(block.image2_url || '')}" oninput="updateBlock(${i}, 'image2_url', this.value)" placeholder="Image 2 URL" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs mb-1">
-                    <input type="text" value="${escapeHtml(block.link2_url || '')}" oninput="updateBlock(${i}, 'link2_url', this.value)" placeholder="Click Link 2" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
+                    <input type="file" accept="image/*" onchange="handleImageUpload(event, ${i}, 'image2_url')" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs cursor-pointer mb-2">
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Destination URL</label>
+                    <input type="text" value="${escapeHtml(block.link2_url || '')}" oninput="updateBlock(${i}, 'link2_url', this.value)" placeholder="https://kettleers.org" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
                 </div>
             `;
         } else if (block.type === 'image_card') {
@@ -1067,9 +1069,13 @@ function renderEditorBlocks() {
                     <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Promo Details</label>
                     <textarea rows="2" oninput="updateBlock(${i}, 'body', this.value)" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs resize-none">${escapeHtml(block.body || '')}</textarea>
                 </div>
-                <div>
+                <div class="mb-2">
                     <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Button Text</label>
                     <input type="text" value="${escapeHtml(block.cta || '')}" oninput="updateBlock(${i}, 'cta', this.value)" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Destination URL</label>
+                    <input type="text" value="${escapeHtml(block.cta_url || '')}" oninput="updateBlock(${i}, 'cta_url', this.value)" class="w-full bg-white border border-gray-300 rounded p-1.5 text-xs">
                 </div>
             `;
         }
@@ -1279,7 +1285,7 @@ function generateEmailHtml(isLiveSend = false) {
                             </tr>
                         </table>
                         <div style="text-align: center; margin-top: 10px;">
-                            <a href="#" style="display: inline-block; background-color: ${style.buttonBg}; color: #ffffff; padding: 13px 32px; font-family: ${style.fontFamily}; font-size: 14px; font-weight: bold; text-decoration: none; border-radius: ${style.buttonRadius}; text-transform: uppercase; letter-spacing: 1px;">${escapeHtml(b.cta || 'Shop Now')}</a>
+                            <a href="${b.cta_url || '#'}" style="display: inline-block; background-color: ${style.buttonBg}; color: #ffffff; padding: 13px 32px; font-family: ${style.fontFamily}; font-size: 14px; font-weight: bold; text-decoration: none; border-radius: ${style.buttonRadius}; text-transform: uppercase; letter-spacing: 1px;">${escapeHtml(b.cta || 'Shop Now')}</a>
                         </div>
                     </div>`;
 
