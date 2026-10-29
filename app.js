@@ -46,7 +46,7 @@ const defaultSettings = {
     maxWidth: '620px',
     showBanner: true,
     showBrowserLink: true,
-    footerText: '© 2026 Cotuit Kettleers Baseball. Lowell Park, Cotuit, MA.',
+    footerText: '© 2026 Cotuit Kettleers Baseball. Cotuit Athletic Association, P.O. Box 411, Cotuit, MA 02635.',
     bannerText: 'COTUIT<br>KETTLEERS',
     bannerImage: 'bannerplayer.png'
 };
