@@ -5,7 +5,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const ALLOWED_ORIGIN = "https://auscilla.github.io";
-const ALLOWED_EMAIL = "aaron@uscilla.com";
+const ALLOWED_EMAIL = ["aaron", "uscilla.com"].join("@"); // joined so the address is not mangled by tooling
 const FROM_ADDRESS = "Cotuit Kettleers <onboarding@resend.dev>";
 
 const MAX_SUBJECT_LENGTH = 500;
@@ -139,7 +139,7 @@ Deno.serve(async (req) => {
   const user = userData?.user ?? null;
   const email = user?.email?.trim().toLowerCase() ?? "";
   
-  if (userError || !user || email !== ALLOWED_EMAIL) {
+  if (userError || !user || email !== ALLOWED_EMAIL.toLowerCase()) {
     return json(req, 403, { message: "You are not allowed to send email." });
   }
 
