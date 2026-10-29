@@ -1,8 +1,19 @@
 # Project ref: dzrrkdfdhkcwaydgifwi
-# Gateway check for the send-campaign Edge Function.
-# Deploy with: supabase functions deploy send-campaign
-# Do not pass --no-verify-jwt. That flag would leave the function open again.
-# The function also checks the signed-in user itself. Both checks stay on.
+# verify_jwt settings below match the deployed functions (checked 2026-10-29).
+# send-campaign: deploy with `supabase functions deploy send-campaign`.
+# Do not pass --no-verify-jwt for send-campaign. The function also checks the
+# signed-in user itself. Both checks stay on.
+# resend-webhook and unsubscribe are called without a Supabase JWT (Resend
+# webhooks and email links); they check a signature or signed token themselves.
 
 [functions.send-campaign]
+verify_jwt = true
+
+[functions.resend-webhook]
+verify_jwt = false
+
+[functions.unsubscribe]
+verify_jwt = false
+
+[functions.manage-users]
 verify_jwt = true

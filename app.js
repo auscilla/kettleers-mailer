@@ -1246,7 +1246,7 @@ function generateEmailHtml(isLiveSend = false) {
             return `
             <div style="padding: 20px 25px; text-align: center; border-top: 1px solid #eee; background-color: #FAFAFA; font-family: ${style.fontFamily};">
                 <p style="margin: 0 0 5px 0; font-size: 12px; color: #887258; line-height: 1.4;">${escapeHtml(b.text || '')}</p>
-                <p style="margin: 0; font-size: 11px; color: #5cadaf;">Lowell Park, Cotuit, MA 02635 • <a href="https://dzrrkdfdhkcwaydgifwi.supabase.co/functions/v1/unsubscribe?email={{email}}" target="_blank" style="color:#6b7280;text-decoration:underline;">Unsubscribe</a></p>
+                <p style="margin: 0; font-size: 11px; color: #5cadaf;">Cotuit Athletic Association, P.O. Box 411, Cotuit, MA 02635 • <a href="https://dzrrkdfdhkcwaydgifwi.supabase.co/functions/v1/unsubscribe?email={{email}}" target="_blank" style="color:#6b7280;text-decoration:underline;">Unsubscribe</a></p>
             </div>`;
 
                 case 'code':

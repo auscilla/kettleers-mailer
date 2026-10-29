@@ -11,7 +11,7 @@ const FROM_ADDRESS = "Cotuit Kettleers <onboarding@resend.dev>";
 const MAX_SUBJECT_LENGTH = 500;
 const MAX_HTML_LENGTH = 1_000_000;
 const RATE_WINDOW_MS = 10 * 60 * 1000;
-const RATE_MAX_SENDS = 12; // Slightly increased to allow for multi-chunk batching
+const RATE_MAX_SENDS = 12;
 
 const recentSends = new Map<string, number[]>();
 
@@ -64,6 +64,30 @@ function json(req: Request, status: number, body: Record<string, unknown>): Resp
   const headers = corsHeaders(req);
   headers.set("Content-Type", "application/json");
   return new Response(JSON.stringify(body), { status, headers });
+}
+
+// ---- Unsubscribe link signing (HMAC-SHA256 with a key this function already has) ----
+function b64url(bytes: Uint8Array): string {
+  let bin = "";
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+async function unsubscribeToken(email: string, secret: string): Promise<string> {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey("raw", enc.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const sig = await crypto.subtle.sign("HMAC", key, enc.encode("unsubscribe:v1:" + email));
+  return b64url(new Uint8Array(sig));
+}
+
+async function personalizeHtml(html: string, email: string, supabaseUrl: string, secret: string): Promise<string> {
+  const token = await unsubscribeToken(email, secret);
+  const url = `${supabaseUrl.replace(/\/+$/, "")}/functions/v1/unsubscribe?email=${encodeURIComponent(email)}&amp;token=${token}`;
+  // Footer block link that carried the {{email}} placeholder
+  let out = html.replace(/https:\/\/[a-z0-9]+\.supabase\.co\/functions\/v1\/unsubscribe\?email=\{\{email\}\}/gi, () => url);
+  // Default footer link that was href="#"
+  out = out.replace(/<a\s+href="#"([^>]*)>(\s*Unsubscribe[^<]*)<\/a>/gi, (_m, rest, text) => `<a href="${url}"${rest}>${text}</a>`);
+  return out;
 }
 
 function tooManySends(userId: string): boolean {
@@ -130,76 +154,109 @@ Deno.serve(async (req) => {
   const record = payload as Record<string, unknown>;
   const subject = typeof record.subject === "string" ? record.subject.replace(/[\r\n]/g, " ").trim() : "";
   const html = typeof record.html_content === "string" ? record.html_content : "";
-  
-  // Flag indicating if this is a test or live batch
   const isTest = record.is_test === true;
-  const segment = typeof record.segment === "string" ? record.segment : "all";
+  
+  const rawSegments = Array.isArray(record.segments)
+    ? (record.segments as string[])
+    : (typeof record.segment === "string" ? record.segment.split(",").map(s => s.trim()) : ["all"]);
 
   if (!subject || subject.length > MAX_SUBJECT_LENGTH) return json(req, 400, { message: "A subject line is required." });
   if (!html.trim() || html.length > MAX_HTML_LENGTH) return json(req, 400, { message: "Email content is required." });
 
   const resendKey = resendApiKey();
   if (!resendKey) return json(req, 500, { message: "Email service is not configured." });
+  const signingKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+  if (!signingKey) return json(req, 500, { message: "Email service is not configured." });
 
   let recipients: string[] = [];
 
   if (isTest) {
     recipients = [ALLOWED_EMAIL];
   } else {
-    // Live Batch Dispatch: Query Supabase for subscribers
-    let query = supabase.from('subscribers').select('email').eq('status', 'Active');
-    if (segment !== 'all' && segment !== 'All Active Subscribers') {
-      query = query.eq('segment', segment);
+    // 1. Fetch all active subscribers first so we are immune to exact segment plural/singular bugs
+    const { data: subData, error: subError } = await supabase
+      .from('subscribers')
+      .select('email, segment, status')
+      .ilike('status', 'active');
+
+    if (subError) {
+      console.error("DB Error querying subscribers:", subError);
+      return json(req, 500, { message: "Failed to retrieve subscriber list: " + subError.message });
     }
 
-    const { data: subData, error: subError } = await query;
-    if (subError) {
-      console.error("Error querying subscribers:", subError);
-      return json(req, 500, { message: "Failed to retrieve subscriber list." });
-    }
+    console.log("Raw active subscribers in DB:", JSON.stringify(subData));
+    console.log("Requested segments:", JSON.stringify(rawSegments));
+
     if (!subData || subData.length === 0) {
-      return json(req, 400, { message: "No active subscribers found for this segment." });
+      return json(req, 400, { message: "No active subscribers found in database." });
     }
-    recipients = subData.map(s => s.email).filter(Boolean);
+
+    const isAll = rawSegments.some(s => s.toLowerCase() === 'all' || s.toLowerCase() === 'all active subscribers');
+
+    let matched = subData;
+    if (!isAll) {
+      const normalizedTargets = rawSegments.map(s => s.toLowerCase().trim().replace(/s$/, '')); // strips trailing 's'
+      matched = subData.filter(s => {
+        const seg = (s.segment || '').toLowerCase().trim().replace(/s$/, '');
+        return normalizedTargets.some(target => target.includes(seg) || seg.includes(target));
+      });
+    }
+
+    console.log("Subscribers after segment match:", JSON.stringify(matched));
+
+    recipients = matched.map(s => s.email?.trim()).filter(Boolean);
+
+    // Sandbox safeguard: filter strictly for allowed addresses
+    if (FROM_ADDRESS.includes('onboarding@resend.dev')) {
+      recipients = recipients.filter(email => {
+        const lower = email.toLowerCase();
+        return lower === ALLOWED_EMAIL.toLowerCase() || lower === 'delivered@resend.dev';
+      });
+    }
+
+    console.log("Final dispatch recipients list:", JSON.stringify(recipients));
+
+    if (recipients.length === 0) {
+      return json(req, 400, { 
+        message: "No permitted recipients found. Make sure your active subscriber email matches " + ALLOWED_EMAIL 
+      });
+    }
   }
 
-  // Resend Batch API logic (up to 100 emails per request)
-  const CHUNK_SIZE = 100;
+  // Dispatch via Resend
   let successfulDispatches = 0;
-
-  for (let i = 0; i < recipients.length; i += CHUNK_SIZE) {
-    const chunk = recipients.slice(i, i + CHUNK_SIZE);
-    
-    const batchPayload = chunk.map(recipientEmail => ({
-      from: FROM_ADDRESS,
-      to: [recipientEmail],
-      subject: subject,
-      html: html
-    }));
-
-    const endpoint = (isTest || chunk.length === 1) ? "https://api.resend.com/emails" : "https://api.resend.com/emails/batch";
-    const reqBody = (isTest || chunk.length === 1) ? batchPayload[0] : batchPayload;
-
-    const resendResponse = await fetch(endpoint, {
+  for (const recipientEmail of recipients) {
+    const resendResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${resendKey}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(reqBody),
+      body: JSON.stringify({
+        from: FROM_ADDRESS,
+        to: [recipientEmail],
+        subject: subject,
+        html: await personalizeHtml(html, recipientEmail, supabaseUrl, signingKey),
+        tags: record.campaign_id ? [{ name: "campaign_id", value: String(record.campaign_id) }] : undefined
+      }),
     });
 
-    if (!resendResponse.ok) {
-        const resendText = await resendResponse.text();
-        console.error("Resend API rejected a batch:", resendResponse.status, resendText);
-        if (isTest) return json(req, 502, { message: "The email service rejected the test message." });
+    const resendResult = await resendResponse.text();
+    console.log(`Resend response for ${recipientEmail}: status ${resendResponse.status}\n${resendResult}`);
+
+    if (resendResponse.ok) {
+      successfulDispatches++;
     } else {
-        successfulDispatches += chunk.length;
+      console.error(`Resend failed for ${recipientEmail}:`, resendResult);
     }
   }
 
+  if (successfulDispatches === 0) {
+    return json(req, 502, { message: "Resend failed to deliver to any recipients. Check function logs for details." });
+  }
+
   return json(req, 200, { 
-      ok: true, 
-      message: `Dispatched successfully to ${successfulDispatches} recipients.` 
+    ok: true, 
+    message: `Dispatched successfully to ${successfulDispatches} recipients.` 
   });
 });
