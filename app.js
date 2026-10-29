@@ -28,6 +28,9 @@ let wizardData = {
 
 const WIZARD_STEPS = ['recipients', 'setup', 'template', 'design', 'confirm'];
 let currentWizardStepIndex = 0;
+// Bumped on every framework selection and when a draft is opened or reset,
+// so a slow templates query cannot overwrite a newer choice or a saved campaign.
+let wizardTemplateLoadSeq = 0;
 
 const ALL_AUDIENCE_SEGMENTS = ['General Fan', 'All-Star Member', 'Supporter', 'Host Family', 'Alumni'];
 
@@ -1360,6 +1363,7 @@ function generateEmailHtml(isLiveSend = false) {
 // Campaigns & Wizard Navigation
 // -------------------------------------------------------------
 function startNewCampaignWizard() {
+    wizardTemplateLoadSeq++;
     currentEditingCampaignId = null;
     isEditingTemplate = false;
     currentEditingTemplateName = null;
@@ -1401,10 +1405,11 @@ function startNewCampaignWizard() {
     }
 }
 
-function startNewCampaignWizardWithTemplate(templateName) {
+async function startNewCampaignWizardWithTemplate(templateName) {
     startNewCampaignWizard();
-    selectWizardTemplate(templateName);
+    const pending = selectWizardTemplateAsync(templateName);
     goToWizardStep('setup');
+    await pending;
 }
 
 async function deleteCampaign(campaignId) {
@@ -1422,6 +1427,7 @@ async function deleteCampaign(campaignId) {
 }
 
 function editCampaign(campaignId) {
+    wizardTemplateLoadSeq++;
     const c = loadedCampaigns.find(item => item.id === campaignId);
     if (!c) return;
 
@@ -1545,8 +1551,23 @@ function injectExistingDesignOption() {
         }
     }
 }
+function highlightWizardTemplateCard(templateName) {
+    document.querySelectorAll('.template-wizard-card').forEach(card => {
+        card.classList.remove('border-[#4f111c]', 'shadow-lg');
+        card.classList.add('border-gray-200');
+    });
+    const activeCard = document.getElementById(`template-card-${templateName}`);
+    if (activeCard) {
+        activeCard.classList.remove('border-gray-200');
+        activeCard.classList.add('border-[#4f111c]', 'shadow-lg');
+    }
+}
+
+// Synchronous local fallback used by syncWizardUI (Blank Canvas reset) and by
+// preview/edit when the database row is already known to be missing.
 function selectWizardTemplate(templateName) {
     if (templateName === '__KEEP_EXISTING__') {
+        wizardTemplateLoadSeq++;
         goToWizardStep('design');
         return;
     }
@@ -1573,14 +1594,55 @@ function selectWizardTemplate(templateName) {
         }
     }
 
-    document.querySelectorAll('.template-wizard-card').forEach(card => {
-        card.classList.remove('border-[#4f111c]', 'shadow-lg');
-        card.classList.add('border-gray-200');
-    });
-    const activeCard = document.getElementById(`template-card-${templateName}`);
-    if (activeCard) {
-        activeCard.classList.remove('border-gray-200');
-        activeCard.classList.add('border-[#4f111c]', 'shadow-lg');
+    highlightWizardTemplateCard(templateName);
+
+    renderEditorBlocks();
+    renderEmailPreview();
+}
+
+// Framework picker. Saved row wins over localStorage; localStorage wins over the
+// built-in promo defaults. Only the latest selection is applied.
+async function selectWizardTemplateAsync(templateName) {
+    if (templateName === '__KEEP_EXISTING__') {
+        selectWizardTemplate(templateName);
+        return;
+    }
+
+    const seq = ++wizardTemplateLoadSeq;
+    wizardData.template = templateName;
+    highlightWizardTemplateCard(templateName);
+
+    if (templateName === 'Blank Canvas') {
+        wizardData.blocks = [];
+        wizardData.style = { ...defaultStyle };
+        wizardData.settings = { ...defaultSettings };
+        renderEditorBlocks();
+        renderEmailPreview();
+        return;
+    }
+
+    let loaded = false;
+    try {
+        if (db) {
+            const { data, error } = await db.from('templates').select('body_text').eq('name', templateName).maybeSingle();
+            if (seq !== wizardTemplateLoadSeq) return;
+            if (!error && data && data.body_text) {
+                const parsed = typeof data.body_text === 'string' ? JSON.parse(data.body_text) : data.body_text;
+                wizardData.blocks = parsed.blocks || [];
+                if (parsed.style) wizardData.style = { ...defaultStyle, ...parsed.style };
+                if (parsed.settings) wizardData.settings = { ...defaultSettings, ...parsed.settings };
+                loaded = true;
+            }
+        }
+    } catch (e) {
+        console.warn('Could not fetch template from database, checking fallback...');
+    }
+
+    if (seq !== wizardTemplateLoadSeq) return;
+
+    if (!loaded) {
+        selectWizardTemplate(templateName);
+        return;
     }
 
     renderEditorBlocks();
